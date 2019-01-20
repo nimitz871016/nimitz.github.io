@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[网站测试]]></title>
+  <title><![CDATA[Orz~Orz]]></title>
   <link href="webtest/atom.xml" rel="self"/>
   <link href="webtest/"/>
-  <updated>2019-01-20T21:50:06+08:00</updated>
+  <updated>2019-01-20T22:12:19+08:00</updated>
   <id>webtest/</id>
   <author>
     <name><![CDATA[]]></name>
     
   </author>
-  <generator uri="http://www.mweb.im">MWeb</generator>
-
+  <generator uri="http://www.mweb.im/">MWeb</generator>
   
   <entry>
     <title type="html"><![CDATA[可伸缩服务架构：框架与中间件 —— 读书笔记]]></title>
@@ -58,6 +57,35 @@
 <li>对文中提到的Spring配置有些陌生，无法建立一个比较好的理解方式。</li>
 </ul></li>
 </ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[为什么需要内部类-P204]]></title>
+    <link href="webtest/15232874346595.html"/>
+    <updated>2018-04-09T23:23:54+08:00</updated>
+    <id>webtest/15232874346595.html</id>
+    <content type="html"><![CDATA[
+<ol>
+<li>比如A类已经实现了一个接口，但是还想实现一个。怎么办？用内部类。</li>
+<li>闭包</li>
+</ol>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Java垃圾回收机制]]></title>
+    <link href="webtest/15232855256347.html"/>
+    <updated>2018-04-09T22:52:05+08:00</updated>
+    <id>webtest/15232855256347.html</id>
+    <content type="html"><![CDATA[
+<ol>
+<li>了解Java垃圾回收机制的基本概念</li>
+<li>了解Java垃圾回收机制的坑点。</li>
+<li>进一步了解一些深入的原理等等</li>
+</ol>
 
 ]]></content>
   </entry>
