@@ -1,0 +1,459 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+    
+  LeetCode - 沧海一粟No.1
+  
+  </title>
+  
+  
+  <link href="atom.xml" rel="alternate" title="沧海一粟No.1" type="application/atom+xml">
+    <link rel="stylesheet" href="asset/css/foundation.min.css" />
+    <link rel="stylesheet" href="asset/css/docs.css" />
+    <script src="asset/js/vendor/modernizr.js"></script>
+    <script src="asset/js/vendor/jquery.js"></script>
+  <script src="asset/highlightjs/highlight.pack.js"></script>
+  <link href="asset/highlightjs/styles/github.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script>hljs.initHighlightingOnLoad();</script>
+<script type="text/javascript">
+  function before_search(){
+    var searchVal = 'site:webtest ' + document.getElementById('search_input').value;
+    document.getElementById('search_q').value = searchVal;
+    return true;
+  }
+</script>
+  </head>
+  <body class="antialiased hide-extras">
+    
+    <div class="marketing off-canvas-wrap" data-offcanvas>
+      <div class="inner-wrap">
+
+
+<nav class="top-bar docs-bar hide-for-small" data-topbar>
+
+
+  <section class="top-bar-section">
+  <div class="row">
+      <div style="position: relative;width:100%;"><div style="position: absolute; width:100%;">
+        <ul id="main-menu" class="left">
+        
+        <li id=""><a target="self" href="index.html">Home</a></li>
+        
+        <li id=""><a target="_self" href="archives.html">Archives</a></li>
+        
+        </ul>
+
+        <ul class="right" id="search-wrap">
+          <li>
+<form target="_blank" onsubmit="return before_search();" action="https://google.com/search" method="get">
+    <input type="hidden" id="search_q" name="q" value="" />
+    <input tabindex="1" type="search" id="search_input"  placeholder="Search"/>
+</form>
+</li>
+          </ul>
+      </div></div>
+  </div>
+  </section>
+
+</nav>
+
+        <nav class="tab-bar show-for-small">
+  <a href="javascript:void(0)" class="left-off-canvas-toggle menu-icon">
+    <span> &nbsp; 沧海一粟No.1</span>
+  </a>
+</nav>
+
+<aside class="left-off-canvas-menu">
+      <ul class="off-canvas-list">
+        
+        <li><a target="self" href="index.html">Home</a></li>
+        
+        <li><a target="_self" href="archives.html">Archives</a></li>
+        
+
+    <li><label>Categories</label></li>
+
+        
+            <li><a href="Java.html">Java</a></li>
+        
+            <li><a href="MongoDB.html">MongoDB</a></li>
+        
+            <li><a href="iOS.html">iOS</a></li>
+        
+            <li><a href="LeetCode.html">LeetCode</a></li>
+         
+
+      </ul>
+    </aside>
+
+<a class="exit-off-canvas" href="#"></a>
+
+
+        <section id="main-content" role="main" class="scroll-container">
+        
+       
+
+ <script type="text/javascript">
+	$(function(){
+		$('#menu_item_index').addClass('is_active');
+	});
+</script>
+<div class="row">
+	<div class="large-8 medium-8 columns">
+		<div class="markdown-body home-categories">
+		
+			<div class="article">
+                <a class="clearlink" href="15480002725541.html">
+                
+                  <h1>32. 最长有效括号</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<p><a href="https://leetcode-cn.com/problems/longest-valid-parentheses/description/">https://leetcode-cn.com/problems/longest-valid-parentheses/description/</a></p>
+
+<p>给定一个只包含  &#39;(&#39; 和  &#39;)&#39; 的字符串，找出最长的包含有效括号的子串的长度。</p>
+
+<p>示例 1:</p>
+
+<pre><code class="language-text">输入: &quot;(()&quot;
+输出: 2
+解释: 最长有效括号子串为 &quot;()&quot;
+示例 2:
+
+输入: &quot;)()())&quot;
+输出: 4
+解释: 最长有效括号子串为 &quot;()()&quot;
+</code></pre>
+
+<p>代码：</p>
+
+<pre><code class="language-text">public int longestValidParentheses(String s) {
+    int[] dp = new int[s.length()];
+    int max = 0;
+    for (int i = 1; i &lt; s.length(); i++){
+        if (s.charAt(i) == &#39;(&#39;){
+            dp[i] = 0;
+        }else{
+            if (dp[i - 1] != 0) {
+                int index = i - dp[i - 1] - 1;
+                if (index &gt;= 0 &amp;&amp; s.charAt(index) == &#39;(&#39;) {
+                    dp[i] = dp[i - 1] + 2;
+                    if (index - 1 &gt;= 0 ){
+                        dp[i] += dp[index - 1];
+                    }
+                }
+            }
+            if (s.charAt(i - 1) == &#39;(&#39;){
+                if (i &gt;= 2) {
+                    dp[i] = dp[i] &gt; dp[i - 2] + 2 ? dp[i] : dp[i - 2] + 2;
+                }else{
+                    dp[i] = 2;
+                }
+            }
+            if (max &lt; dp[i]){
+                max = dp[i];
+            }
+        }
+    }
+    return max;
+}
+</code></pre>
+
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                  
+                    <span class="date">2019/1/21</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='LeetCode.html'>LeetCode</a></span>
+          				   
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15480003648444.html">
+                
+                  <h1>39. 组合总和</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<p><a href="https://leetcode-cn.com/problems/combination-sum/description/">https://leetcode-cn.com/problems/combination-sum/description/</a></p>
+
+<p>给定一个无重复元素的数组  candidates 和一个目标数  target ，找出  candidates 中所有可以使数字和为  target 的组合。</p>
+
+<p>candidates 中的数字可以无限制重复被选取。</p>
+
+<p>说明：</p>
+
+<p>所有数字（包括  target）都是正整数。<br/>
+解集不能包含重复的组合。 </p>
+
+<pre><code class="language-text">示例 1:
+
+输入: candidates = [2,3,6,7], target = 7,
+所求解集为:
+[
+  [7],
+  [2,2,3]
+]
+示例 2:
+
+输入: candidates = [2,3,5], target = 8,
+所求解集为:
+[
+  [2,2,2,2],
+  [2,3,3],
+  [3,5]
+]
+</code></pre>
+
+<p>题目分析：</p>
+
+<ol>
+<li>一看到这道题，就感觉要用递归来做，应该是回溯算法。百度证实无误。</li>
+<li>然后自己还没有生写过回溯。想了一会儿，结果不对，和正确解法做了一下比较，修改了一下自己的算法。标答是C++的，在java上需要修改一下，一些特别的地方要处理一下。</li>
+</ol>
+
+<p>直接上代码：</p>
+
+<pre><code class="language-text">/**
+ * 核心算法
+ * @param candidates 数组
+ * @param target 当前递归子问题需要计算的target
+ * @param start 开始查找的index
+ * @param result 当前递归的result数组
+ * @param ans 最后的答案
+ */
+private void findOne(int[] candidates, int target, int start, List&lt;Integer&gt; result, List&lt;List&lt;Integer&gt;&gt; ans){
+    if (target == 0){
+        List&lt;Integer&gt; list = new ArrayList&lt;&gt;(result); //这里需要新开一个数组，否则会一直复用这个对象，导致结果不对
+        ans.add(list);
+        return;
+    }else if(target &lt; candidates[start]){
+        return; //不符合的结果，不处理。
+    }else{
+        for (int i = start; i &lt; candidates.length; i++){
+            result.add(candidates[i]);
+            findOne(candidates, target - candidates[i], i, result, ans);
+            result.remove(result.size() - 1);
+            //这里有点像树的遍历，这里就是要一个节点和不要一个节点的分支。然后可以重复使用元素，所以递归子问题，仍然从i开始。
+        }
+    }
+}
+
+public List&lt;List&lt;Integer&gt;&gt; combinationSum(int[] candidates, int target) {
+    List&lt;List&lt;Integer&gt;&gt; ans = new ArrayList&lt;&gt;();
+    Arrays.sort(candidates); //题目没有说排好序的数组，所以这里要先拍个序
+    findOne(candidates, target, 0, new ArrayList&lt;&gt;(), ans);
+    return ans;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</code></pre>
+
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                  
+                    <span class="date">2019/1/21</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='LeetCode.html'>LeetCode</a></span>
+          				   
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+              
+
+
+			<div class="row">
+			  <div class="large-6 columns">
+			  <p class="text-left" style="padding-top:25px;">
+			   
+			  </p>
+			  </div>
+			  <div class="large-6 columns">
+			<p class="text-right" style="padding-top:25px;">
+			
+			</p>
+			  </div>
+			</div>
+		</div>
+	</div><!-- large 8 -->
+
+ <div class="large-4 medium-4 columns">
+  <div class="hide-for-small">
+    <div id="sidebar" class="sidebar">
+          <div id="site-info" class="site-info">
+            
+                <div class="site-a-logo"><img src="asset/img/icon.jpg" /></div>
+            
+                <h1>沧海一粟No.1</h1>
+                <div class="site-des">沧海一粟No.1的个人小站</div>
+                <div class="social">
+
+
+
+
+
+
+
+
+
+<a target="_blank" class="github" target="_blank" href="https://github.com/nimitz871016" title="GitHub">GitHub</a>
+<a target="_blank" class="email" href="mailto:nimitz_007@163.com" title="Email">Email</a>
+  <a target="_blank" class="rss" href="atom.xml" title="RSS">RSS</a>
+                
+              	 </div>
+          	</div>
+
+             
+
+              <div id="site-categories" class="side-item ">
+                <div class="side-header">
+                  <h2>Categories</h2>
+                </div>
+                <div class="side-content">
+
+      	<p class="cat-list">
+        
+            <a href="Java.html"><strong>Java</strong></a>
+        
+            <a href="MongoDB.html"><strong>MongoDB</strong></a>
+        
+            <a href="iOS.html"><strong>iOS</strong></a>
+        
+            <a href="LeetCode.html"><strong>LeetCode</strong></a>
+         
+        </p>
+
+
+                </div>
+              </div>
+
+              <div id="site-categories" class="side-item">
+                <div class="side-header">
+                  <h2>Recent Posts</h2>
+                </div>
+                <div class="side-content">
+                <ul class="posts-list">
+	      
+		      
+			      <li class="post">
+			        <a href="15480002725541.html">32. 最长有效括号</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="15480003648444.html">39. 组合总和</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="15479962056718.html">Java并发编程</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="15479997745467.html">MongoDB的启动和停止</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="15480007861723.html">RAC中的宏定义魔法</a>
+			      </li>
+		     
+		  
+		      
+		   
+		  		</ul>
+                </div>
+              </div>
+        </div><!-- sidebar -->
+      </div><!-- hide for small -->
+</div><!-- large 4 -->
+
+</div><!-- row -->
+
+ <div class="page-bottom clearfix">
+  <div class="row">
+   <p class="copyright">Copyright &copy; 2015
+Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a>,&nbsp; 
+Theme used <a target="_blank" href="http://github.com">GitHub CSS</a>.</p>
+  </div>
+</div>
+
+        </section>
+      </div>
+    </div>
+
+  
+    
+
+    <script src="asset/js/foundation.min.js"></script>
+    <script>
+      $(document).foundation();
+      function fixSidebarHeight(){
+        var w1 = $('.markdown-body').height();
+          var w2 = $('#sidebar').height();
+          if (w1 > w2) { $('#sidebar').height(w1); };
+      }
+      $(function(){
+        fixSidebarHeight();
+      })
+      $(window).load(function(){
+          fixSidebarHeight();
+      });
+     
+    </script>
+
+    
+
+
+
+  </body>
+</html>

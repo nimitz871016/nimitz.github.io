@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>
     
-  Archives - 沧海一粟No.1
+  MongoDB的启动和停止 - 沧海一粟No.1
   
   </title>
   
@@ -98,112 +98,150 @@
 
  <script type="text/javascript">
   $(function(){
-    $('#menu_item_archives').addClass('is_active');
+    $('#menu_item_index').addClass('is_active');
   });
 </script>
 <div class="row">
   <div class="large-8 medium-8 columns">
-    <div id="archives-page-wrap">
-        <h1>Archives</h1>
-        <div class="markdown-body archives-wrap">
+      <div class="markdown-body article-wrap">
+       <div class="article">
           
-             
-                <h1>2019</h1>
-            
-            <div class="article">
-              <a class="clearlink" href="15480007861723.html">
-                <h1>RAC中的宏定义魔法</h1>
-              </a>
-              <div class="read-more clearfix">
-                <span class="date">2019/1/21</span>
-                <span>posted in&nbsp;</span> 
-                
-                    <span class="posted-in"><a href='iOS.html'>iOS</a></span>
-                 
-              </div>
-            </div><!-- article -->
+          <h1>MongoDB的启动和停止</h1>
+     
+        <div class="read-more clearfix">
+          <span class="date">2019/1/20</span>
 
+          <span>posted in&nbsp;</span> 
           
-            
-            <div class="article">
-              <a class="clearlink" href="15480003648444.html">
-                <h1>39. 组合总和</h1>
-              </a>
-              <div class="read-more clearfix">
-                <span class="date">2019/1/21</span>
-                <span>posted in&nbsp;</span> 
-                
-                    <span class="posted-in"><a href='LeetCode.html'>LeetCode</a></span>
-                 
-              </div>
-            </div><!-- article -->
-
-          
-            
-            <div class="article">
-              <a class="clearlink" href="15480002725541.html">
-                <h1>32. 最长有效括号</h1>
-              </a>
-              <div class="read-more clearfix">
-                <span class="date">2019/1/21</span>
-                <span>posted in&nbsp;</span> 
-                
-                    <span class="posted-in"><a href='LeetCode.html'>LeetCode</a></span>
-                 
-              </div>
-            </div><!-- article -->
-
-          
-            
-            <div class="article">
-              <a class="clearlink" href="15479997745467.html">
-                <h1>MongoDB的启动和停止</h1>
-              </a>
-              <div class="read-more clearfix">
-                <span class="date">2019/1/20</span>
-                <span>posted in&nbsp;</span> 
-                
-                    <span class="posted-in"><a href='MongoDB.html'>MongoDB</a></span>
-                 
-              </div>
-            </div><!-- article -->
-
-          
-            
-            <div class="article">
-              <a class="clearlink" href="15479962056718.html">
-                <h1>Java并发编程</h1>
-              </a>
-              <div class="read-more clearfix">
-                <span class="date">2019/1/20</span>
-                <span>posted in&nbsp;</span> 
-                
-                    <span class="posted-in"><a href='Java.html'>Java</a></span>
-                 
-              </div>
-            </div><!-- article -->
-
-          
-             
-                <h1>2018</h1>
-            
-            <div class="article">
-              <a class="clearlink" href="15216334372729.html">
-                <h1>Realm学习笔记</h1>
-              </a>
-              <div class="read-more clearfix">
-                <span class="date">2018/3/21</span>
-                <span>posted in&nbsp;</span> 
-                
-                    <span class="posted-in"><a href='iOS.html'>iOS</a></span>
-                 
-              </div>
-            </div><!-- article -->
-
+              <span class="posted-in"><a href='MongoDB.html'>MongoDB</a></span>
            
+         
+          <span class="comments">
+            
+
+            
+          </span>
+
+        </div>
+      </div><!-- article -->
+
+      <div class="article-content">
+      <h2 id="toc_0">1. 启动</h2>
+
+<ol>
+<li>用命令行，加各种的特殊参数</li>
+<li><p>用命令行，但是所有的参数都放在一个配置文件中。如</p>
+<pre><code class="language-text">mongod -f /etc/mongod.conf
+</code></pre></li>
+<li><p>用传统的service mongod start</p></li>
+</ol>
+
+<h3 id="toc_1">1.1. service mongod start</h3>
+
+<ul>
+<li>该命令本身没有任何问题。只需要注意配置启动的时候执行的语句就可以达到同样的效果。在实际使用的过程中，并不会频繁的变更需求和配置，因此用service来启动足以。</li>
+<li><p>另外如果用命令行启动，还存在权限问题。<br/>
+用mongod启动了以后，权限全部变为root。这时候再用service mongod start来启动就会有各种各样的权限问题。</p></li>
+<li><p>service start启动的脚本</p>
+<pre><code class="language-text">/usr/lib/systemd/system/mongod.service
+</code></pre></li>
+</ul>
+
+<pre><code class="language-text">[Unit]
+Description=MongoDB Database Server
+After=network.target
+Documentation=https://docs.mongodb.org/manual
+
+[Service]
+User=mongod
+Group=mongod
+Environment=&quot;OPTIONS=-f /etc/mongod.conf&quot;
+EnvironmentFile=-/etc/sysconfig/mongod
+ExecStart=/usr/bin/mongod $OPTIONS
+ExecStartPre=/usr/bin/mkdir -p /var/run/mongodb
+ExecStartPre=/usr/bin/chown mongod:mongod /var/run/mongodb
+ExecStartPre=/usr/bin/chmod 0755 /var/run/mongodb
+PermissionsStartOnly=true
+PIDFile=/var/run/mongodb/mongod.pid
+Type=forking
+# file size
+LimitFSIZE=infinity
+# cpu time
+LimitCPU=infinity
+# virtual memory size
+LimitAS=infinity
+# open files
+LimitNOFILE=64000
+# processes/threads
+LimitNPROC=64000
+# locked memory
+LimitMEMLOCK=infinity
+# total threads (user+kernel)
+TasksMax=infinity
+TasksAccounting=false
+# Recommended limits for for mongod as specified in
+# http://docs.mongodb.org/manual/reference/ulimit/#recommended-settings
+
+[Install]
+WantedBy=multi-user.target
+</code></pre>
+
+<h2 id="toc_2">2. 停止</h2>
+
+<p>强制关闭MongoDB（不建议使用）；<br/>
+service mongod stop<br/>
+或者，从MongoDB的admin中关闭（推荐用这种方法）：</p>
+
+<pre><code class="language-text">&gt;use admin
+switched to db admin
+&gt;db.shutdownServer()
+server should be down...
+</code></pre>
+
+<p>或者</p>
+
+<pre><code class="language-text">mongod --shutdown
+</code></pre>
+
+<p>使用shutdownServer关闭MongoDB，如有MongoDB主从服务器，则在服务关闭前同步主从服务器；强制关闭则不会；</p>
+
+
+    
+
+      </div>
+
+      <div class="row">
+        <div class="large-6 columns">
+        <p class="text-left" style="padding:15px 0px;">
+      
+          <a href="15479962056718.html" 
+          title="Previous Post: Java并发编程">&laquo; Java并发编程</a>
+      
+        </p>
+        </div>
+        <div class="large-6 columns">
+      <p class="text-right" style="padding:15px 0px;">
+      
+          <a  href="15480007861723.html" 
+          title="Next Post: RAC中的宏定义魔法">RAC中的宏定义魔法 &raquo;</a>
+      
+      </p>
         </div>
       </div>
-  </div>
+      <div class="comments-wrap">
+        <div class="share-comments">
+          
+
+          
+
+          
+        </div>
+      </div>
+    </div><!-- article-wrap -->
+  </div><!-- large 8 -->
+
+
+
 
  <div class="large-4 medium-4 columns">
   <div class="hide-for-small">

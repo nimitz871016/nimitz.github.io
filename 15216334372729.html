@@ -1,0 +1,576 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+    
+  Realm学习笔记 - 沧海一粟No.1
+  
+  </title>
+  
+  
+  <link href="atom.xml" rel="alternate" title="沧海一粟No.1" type="application/atom+xml">
+    <link rel="stylesheet" href="asset/css/foundation.min.css" />
+    <link rel="stylesheet" href="asset/css/docs.css" />
+    <script src="asset/js/vendor/modernizr.js"></script>
+    <script src="asset/js/vendor/jquery.js"></script>
+  <script src="asset/highlightjs/highlight.pack.js"></script>
+  <link href="asset/highlightjs/styles/github.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script>hljs.initHighlightingOnLoad();</script>
+<script type="text/javascript">
+  function before_search(){
+    var searchVal = 'site:webtest ' + document.getElementById('search_input').value;
+    document.getElementById('search_q').value = searchVal;
+    return true;
+  }
+</script>
+  </head>
+  <body class="antialiased hide-extras">
+    
+    <div class="marketing off-canvas-wrap" data-offcanvas>
+      <div class="inner-wrap">
+
+
+<nav class="top-bar docs-bar hide-for-small" data-topbar>
+
+
+  <section class="top-bar-section">
+  <div class="row">
+      <div style="position: relative;width:100%;"><div style="position: absolute; width:100%;">
+        <ul id="main-menu" class="left">
+        
+        <li id=""><a target="self" href="index.html">Home</a></li>
+        
+        <li id=""><a target="_self" href="archives.html">Archives</a></li>
+        
+        </ul>
+
+        <ul class="right" id="search-wrap">
+          <li>
+<form target="_blank" onsubmit="return before_search();" action="https://google.com/search" method="get">
+    <input type="hidden" id="search_q" name="q" value="" />
+    <input tabindex="1" type="search" id="search_input"  placeholder="Search"/>
+</form>
+</li>
+          </ul>
+      </div></div>
+  </div>
+  </section>
+
+</nav>
+
+        <nav class="tab-bar show-for-small">
+  <a href="javascript:void(0)" class="left-off-canvas-toggle menu-icon">
+    <span> &nbsp; 沧海一粟No.1</span>
+  </a>
+</nav>
+
+<aside class="left-off-canvas-menu">
+      <ul class="off-canvas-list">
+        
+        <li><a target="self" href="index.html">Home</a></li>
+        
+        <li><a target="_self" href="archives.html">Archives</a></li>
+        
+
+    <li><label>Categories</label></li>
+
+        
+            <li><a href="Java.html">Java</a></li>
+        
+            <li><a href="MongoDB.html">MongoDB</a></li>
+        
+            <li><a href="iOS.html">iOS</a></li>
+        
+            <li><a href="LeetCode.html">LeetCode</a></li>
+         
+
+      </ul>
+    </aside>
+
+<a class="exit-off-canvas" href="#"></a>
+
+
+        <section id="main-content" role="main" class="scroll-container">
+        
+       
+
+ <script type="text/javascript">
+  $(function(){
+    $('#menu_item_index').addClass('is_active');
+  });
+</script>
+<div class="row">
+  <div class="large-8 medium-8 columns">
+      <div class="markdown-body article-wrap">
+       <div class="article">
+          
+          <h1>Realm学习笔记</h1>
+     
+        <div class="read-more clearfix">
+          <span class="date">2018/3/21</span>
+
+          <span>posted in&nbsp;</span> 
+          
+              <span class="posted-in"><a href='iOS.html'>iOS</a></span>
+           
+         
+          <span class="comments">
+            
+
+            
+          </span>
+
+        </div>
+      </div><!-- article -->
+
+      <div class="article-content">
+      <ul>
+<li>Useful文章</li>
+</ul>
+
+<p><a href="https://www.jianshu.com/p/6704afc62d6c">https://www.jianshu.com/p/6704afc62d6c</a></p>
+
+<p><a href="https://academy.realm.io/cn/posts/jp-simard-realm-core-database-engine/">Realm 核心数据库引擎探秘</a></p>
+
+<h2 id="toc_0">1. 模型定义</h2>
+
+<p>参照官网的demo，建立如下两个类：</p>
+
+<pre><code class="language-text">@interface Dog : RLMObject
+@property NSString *name;
+@property NSData   *picture;
+@property NSInteger age;
+@end
+@implementation Dog
+@end
+RLM_ARRAY_TYPE(Dog)
+@interface Person : RLMObject
+@property NSString             *name;
+@property RLMArray&lt;Dog *&gt;&lt;Dog&gt; *dogs;
+@end
+@implementation Person
+@end
+</code></pre>
+
+<pre><code class="language-text">tips
+
+1. 需要继承RLMObject
+2. 所有的属性都不需要写任何的描述符，原子性，strong, assign等
+3. Array类型需要用RLMArray
+4. 使用Array 需要定义 RLM_ARRAY_TYPE , 这个定义放在类前类后都可以。
+</code></pre>
+
+<h2 id="toc_1">2.CRUD</h2>
+
+<p>Realm采用了MVCC设计架构，因此读写操作是不互斥的。但是写操作最好在一个Seperate thread中执行，否则会降低效率。</p>
+
+<h2 id="toc_2">2.1 创建（Create）</h2>
+
+<pre><code class="language-text">// (1) Create a Dog object and then set its properties
+    Dog *myDog = [[Dog alloc] init];myDog.name = @&quot;Rex&quot;;myDog.age = 10;
+// (2) Create a Dog object from a dictionary
+    Dog *myOtherDog = [[Dog alloc] initWithValue:@{@&quot;name&quot; : @&quot;Pluto&quot;, @&quot;age&quot; : @3}];
+// (3) Create a Dog object from an array
+    Dog *myThirdDog = [[Dog alloc] initWithValue:@[@&quot;Pluto&quot;, @3]];
+</code></pre>
+
+<p>写入数据库</p>
+
+<pre><code class="language-text">    // Get the default Realm
+    RLMRealm *realm = [RLMRealm defaultRealm];
+    // You only need to do this once (per thread)
+    
+    // Add to Realm with transaction
+    [realm beginWriteTransaction];
+    [realm addObject:province];
+    [realm commitWriteTransaction];
+
+</code></pre>
+
+<h2 id="toc_3">2.2 查询（Retrieve）</h2>
+
+<pre><code class="language-text">// 使用断言字符串查询
+    RLMResults&lt;ProvinceEntity *&gt; *provinceArray = [ProvinceEntity objectsWhere:@&quot;shortName = &#39;江苏&#39;&quot;];
+    // 使用 NSPredicate 查询
+    NSPredicate *pred = [NSPredicate predicateWithFormat:@&quot;shortName = &#39;江苏&#39;&quot;];
+    provinceArray = [ProvinceEntity objectsWithPredicate:pred];
+
+</code></pre>
+
+<p>如果有多条件的话，可以用and，也可以分布查询，从查询结果中再做查询，支持链式查询：</p>
+
+<pre><code class="language-text">RLMResults&lt;Dog *&gt; *tanDogs = [Dog objectsWhere:@&quot;color = &#39;棕黄色&#39;&quot;];
+RLMResults&lt;Dog *&gt; *tanDogsWithBNames = [tanDogs objectsWhere:@&quot;name BEGINSWITH &#39;大&#39;&quot;];
+</code></pre>
+
+<p>RLMResults允许您指定一个排序标准，从而可以根据一个或多个属性进行排序。比如说，下列代码将上面例子中返回的狗狗根据名字升序进行排序：</p>
+
+<pre><code class="language-text">// 排序名字以“大”开头的棕黄色狗狗
+RLMResults&lt;Dog *&gt; *sortedDogs = [[Dog objectsWhere:@&quot;color = &#39;棕黄色&#39; AND name BEGINSWITH &#39;大&#39;&quot;] sortedResultsUsingProperty:@&quot;name&quot; ascending:YES];
+</code></pre>
+
+<h2 id="toc_4">2.3 更新（Update）</h2>
+
+<ul>
+<li>你可以找到具体的一条数据然后去更新：</li>
+</ul>
+
+<pre><code class="language-text">    RLMResults&lt;ProvinceEntity *&gt;* provinceArray=[ProvinceEntity allObjects];
+    [[RLMRealm defaultRealm] transactionWithBlock:^{
+        ProvinceEntity *province=[provinceArray firstObject];
+        province.shortName=@&quot;浙江&quot;;
+    }];
+</code></pre>
+
+<ul>
+<li>你也可以设置一个主键，根据主键去更新，更新需要拥有一个主键---Primary Keys：</li>
+</ul>
+
+<pre><code class="language-text">// Creating a book with the same primary key as a previously saved 
+bookBook *cheeseBook = [[Book alloc] init];
+cheeseBook.title = @&quot;Cheese recipes&quot;;
+cheeseBook.price = @9000;
+cheeseBook.id = @1;
+// Updating book with id = 1
+[realm beginWriteTransaction];
+[realm addOrUpdateObject:cheeseBook];
+[realm commitWriteTransaction];
+</code></pre>
+
+<h2 id="toc_5">2.4 删除(Delete)</h2>
+
+<ul>
+<li>单条记录删除</li>
+</ul>
+
+<pre><code class="language-text">// Delete an object with a transaction
+[realm beginWriteTransaction];
+[realm deleteObject:cheeseBook];
+[realm commitWriteTransaction];
+</code></pre>
+
+<ul>
+<li>多条记录删除</li>
+</ul>
+
+<pre><code class="language-text">    [[RLMRealm defaultRealm] transactionWithBlock:^{
+        [[RLMRealm defaultRealm] deleteObjects:result];
+    }];
+</code></pre>
+
+<ul>
+<li>全部删除：</li>
+</ul>
+
+<pre><code class="language-text">// Delete an object with a transaction
+    [[RLMRealm defaultRealm] transactionWithBlock:^{
+        [[RLMRealm defaultRealm] deleteAllObjects];
+    }];
+</code></pre>
+
+<h2 id="toc_6">3.进阶使用</h2>
+
+<ul>
+<li>非空字段(Required properties)</li>
+</ul>
+
+<p>By default, NSString *, NSData *, and NSDate * properties allow you to set them to nil. If you want to require that a value be present, override the +requiredProperties method on your RLMObject subclass.</p>
+
+<p>For example, with the following model definition, trying to set the person’s name to nil will throw an exception, but setting their birthday to nil is allowed:</p>
+
+<pre><code class="language-text">@interface Person : RLMObject
+@property NSString *name;
+@property NSDate *birthday;
+@end
+
+@implementation Person
++ (NSArray *)requiredProperties {
+    return @[@&quot;name&quot;];
+}
+@end
+</code></pre>
+
+<p>例外：RLMObject subclass properties always can be nil, and thus cannot be included in requiredProperties. and RLMArray does not support storing nil.</p>
+
+<ul>
+<li>主键</li>
+</ul>
+
+<p>Override +primaryKey to set the model’s primary key. Declaring a primary key allows objects to be looked up and updated efficiently and enforces uniqueness for each value. Once an object with a primary key is added to a Realm, the primary key cannot be changed.</p>
+
+<pre><code class="language-text">@interface Person : RLMObject
+@property NSInteger id;
+@property NSString *name;
+@end
+
+@implementation Person
++ (NSString *)primaryKey {
+    return @&quot;id&quot;;
+}
+@end
+</code></pre>
+
+<ul>
+<li>索引字段</li>
+</ul>
+
+<p>To index a property, override +indexedProperties. Like primary keys, indexes make writes slightly slower, but makes queries using comparison operators faster. (It also makes your Realm file slightly larger, to store the index.) It’s best to only add indexes when you’re optimizing the read performance for specific situations.</p>
+
+<pre><code class="language-text">@interface Book : RLMObject
+@property float price;
+@property NSString *title;
+@end
+
+@implementation Book
++ (NSArray *)indexedProperties {
+    return @[@&quot;title&quot;];
+}
+@end
+</code></pre>
+
+<ul>
+<li>忽略字段</li>
+</ul>
+
+<p>If you don’t want to save a field in your model to its Realm, override +ignoredProperties. Realm won’t interfere with the regular operation of these properties; they’ll be backed by ivars, and you can freely override their setters and getters.</p>
+
+<pre><code class="language-text">@interface Person : RLMObject
+@property NSInteger tmpID;
+@property (readonly) NSString *name; // read-only properties are automatically ignored
+@property NSString *firstName;
+@property NSString *lastName;
+@end
+
+@implementation Person
++ (NSArray *)ignoredProperties {
+    return @[@&quot;tmpID&quot;];
+}
+- (NSString *)name {
+    return [NSString stringWithFormat:@&quot;%@ %@&quot;, self.firstName, self.lastName];
+}
+@end
+</code></pre>
+
+<ul>
+<li>默认值</li>
+</ul>
+
+<p>Override +defaultPropertyValues to provide default values every time an object is created.</p>
+
+<pre><code class="language-text">@interface Book : RLMObject
+@property float price;
+@property NSString *title;
+@end
+
+@implementation Book
++ (NSDictionary *)defaultPropertyValues {
+    return @{@&quot;price&quot; : @0, @&quot;title&quot;: @&quot;&quot;};
+}
+@end
+</code></pre>
+
+<h2 id="toc_7">4. 特性</h2>
+
+<h2 id="toc_8">5. 疑问</h2>
+
+<p>为什么要这样直接继承不可以吗？是不支持吗？</p>
+
+<pre><code class="language-text">// Base Model
+@interface Animal : RLMObject
+@property NSInteger age;
+@end
+@implementation Animal
+@end
+
+// Models composed with Animal
+@interface Duck : RLMObject
+@property Animal *animal;
+@property NSString *name;
+@end
+@implementation Duck
+@end
+
+@interface Frog : RLMObject
+@property Animal *animal;
+@property NSDate *dateProp;
+@end
+@implementation Frog
+@end
+
+// Usage
+Duck *duck =  [[Duck alloc] initWithValue:@{@&quot;animal&quot; : @{@&quot;age&quot; : @(3)}, @&quot;name&quot; : @&quot;Gustav&quot; }];
+</code></pre>
+
+
+    
+
+      </div>
+
+      <div class="row">
+        <div class="large-6 columns">
+        <p class="text-left" style="padding:15px 0px;">
+      
+          <a href="15480007861723.html" 
+          title="Previous Post: RAC中的宏定义魔法">&laquo; RAC中的宏定义魔法</a>
+      
+        </p>
+        </div>
+        <div class="large-6 columns">
+      <p class="text-right" style="padding:15px 0px;">
+      
+      </p>
+        </div>
+      </div>
+      <div class="comments-wrap">
+        <div class="share-comments">
+          
+
+          
+
+          
+        </div>
+      </div>
+    </div><!-- article-wrap -->
+  </div><!-- large 8 -->
+
+
+
+
+ <div class="large-4 medium-4 columns">
+  <div class="hide-for-small">
+    <div id="sidebar" class="sidebar">
+          <div id="site-info" class="site-info">
+            
+                <div class="site-a-logo"><img src="asset/img/icon.jpg" /></div>
+            
+                <h1>沧海一粟No.1</h1>
+                <div class="site-des">沧海一粟No.1的个人小站</div>
+                <div class="social">
+
+
+
+
+
+
+
+
+
+<a target="_blank" class="github" target="_blank" href="https://github.com/nimitz871016" title="GitHub">GitHub</a>
+<a target="_blank" class="email" href="mailto:nimitz_007@163.com" title="Email">Email</a>
+  <a target="_blank" class="rss" href="atom.xml" title="RSS">RSS</a>
+                
+              	 </div>
+          	</div>
+
+             
+
+              <div id="site-categories" class="side-item ">
+                <div class="side-header">
+                  <h2>Categories</h2>
+                </div>
+                <div class="side-content">
+
+      	<p class="cat-list">
+        
+            <a href="Java.html"><strong>Java</strong></a>
+        
+            <a href="MongoDB.html"><strong>MongoDB</strong></a>
+        
+            <a href="iOS.html"><strong>iOS</strong></a>
+        
+            <a href="LeetCode.html"><strong>LeetCode</strong></a>
+         
+        </p>
+
+
+                </div>
+              </div>
+
+              <div id="site-categories" class="side-item">
+                <div class="side-header">
+                  <h2>Recent Posts</h2>
+                </div>
+                <div class="side-content">
+                <ul class="posts-list">
+	      
+		      
+			      <li class="post">
+			        <a href="15480002725541.html">32. 最长有效括号</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="15480003648444.html">39. 组合总和</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="15479962056718.html">Java并发编程</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="15479997745467.html">MongoDB的启动和停止</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="15480007861723.html">RAC中的宏定义魔法</a>
+			      </li>
+		     
+		  
+		      
+		   
+		  		</ul>
+                </div>
+              </div>
+        </div><!-- sidebar -->
+      </div><!-- hide for small -->
+</div><!-- large 4 -->
+
+</div><!-- row -->
+
+ <div class="page-bottom clearfix">
+  <div class="row">
+   <p class="copyright">Copyright &copy; 2015
+Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a>,&nbsp; 
+Theme used <a target="_blank" href="http://github.com">GitHub CSS</a>.</p>
+  </div>
+</div>
+
+        </section>
+      </div>
+    </div>
+
+  
+    
+
+    <script src="asset/js/foundation.min.js"></script>
+    <script>
+      $(document).foundation();
+      function fixSidebarHeight(){
+        var w1 = $('.markdown-body').height();
+          var w2 = $('#sidebar').height();
+          if (w1 > w2) { $('#sidebar').height(w1); };
+      }
+      $(function(){
+        fixSidebarHeight();
+      })
+      $(window).load(function(){
+          fixSidebarHeight();
+      });
+     
+    </script>
+
+    
+
+
+
+  </body>
+</html>

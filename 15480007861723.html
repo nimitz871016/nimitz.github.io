@@ -1,0 +1,625 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+    
+  RAC中的宏定义魔法 - 沧海一粟No.1
+  
+  </title>
+  
+  
+  <link href="atom.xml" rel="alternate" title="沧海一粟No.1" type="application/atom+xml">
+    <link rel="stylesheet" href="asset/css/foundation.min.css" />
+    <link rel="stylesheet" href="asset/css/docs.css" />
+    <script src="asset/js/vendor/modernizr.js"></script>
+    <script src="asset/js/vendor/jquery.js"></script>
+  <script src="asset/highlightjs/highlight.pack.js"></script>
+  <link href="asset/highlightjs/styles/github.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script>hljs.initHighlightingOnLoad();</script>
+<script type="text/javascript">
+  function before_search(){
+    var searchVal = 'site:webtest ' + document.getElementById('search_input').value;
+    document.getElementById('search_q').value = searchVal;
+    return true;
+  }
+</script>
+  </head>
+  <body class="antialiased hide-extras">
+    
+    <div class="marketing off-canvas-wrap" data-offcanvas>
+      <div class="inner-wrap">
+
+
+<nav class="top-bar docs-bar hide-for-small" data-topbar>
+
+
+  <section class="top-bar-section">
+  <div class="row">
+      <div style="position: relative;width:100%;"><div style="position: absolute; width:100%;">
+        <ul id="main-menu" class="left">
+        
+        <li id=""><a target="self" href="index.html">Home</a></li>
+        
+        <li id=""><a target="_self" href="archives.html">Archives</a></li>
+        
+        </ul>
+
+        <ul class="right" id="search-wrap">
+          <li>
+<form target="_blank" onsubmit="return before_search();" action="https://google.com/search" method="get">
+    <input type="hidden" id="search_q" name="q" value="" />
+    <input tabindex="1" type="search" id="search_input"  placeholder="Search"/>
+</form>
+</li>
+          </ul>
+      </div></div>
+  </div>
+  </section>
+
+</nav>
+
+        <nav class="tab-bar show-for-small">
+  <a href="javascript:void(0)" class="left-off-canvas-toggle menu-icon">
+    <span> &nbsp; 沧海一粟No.1</span>
+  </a>
+</nav>
+
+<aside class="left-off-canvas-menu">
+      <ul class="off-canvas-list">
+        
+        <li><a target="self" href="index.html">Home</a></li>
+        
+        <li><a target="_self" href="archives.html">Archives</a></li>
+        
+
+    <li><label>Categories</label></li>
+
+        
+            <li><a href="Java.html">Java</a></li>
+        
+            <li><a href="MongoDB.html">MongoDB</a></li>
+        
+            <li><a href="iOS.html">iOS</a></li>
+        
+            <li><a href="LeetCode.html">LeetCode</a></li>
+         
+
+      </ul>
+    </aside>
+
+<a class="exit-off-canvas" href="#"></a>
+
+
+        <section id="main-content" role="main" class="scroll-container">
+        
+       
+
+ <script type="text/javascript">
+  $(function(){
+    $('#menu_item_index').addClass('is_active');
+  });
+</script>
+<div class="row">
+  <div class="large-8 medium-8 columns">
+      <div class="markdown-body article-wrap">
+       <div class="article">
+          
+          <h1>RAC中的宏定义魔法</h1>
+     
+        <div class="read-more clearfix">
+          <span class="date">2019/1/21</span>
+
+          <span>posted in&nbsp;</span> 
+          
+              <span class="posted-in"><a href='iOS.html'>iOS</a></span>
+           
+         
+          <span class="comments">
+            
+
+            
+          </span>
+
+        </div>
+      </div><!-- article -->
+
+      <div class="article-content">
+      <p><a href="https://onevcat.com/2014/01/black-magic-in-macro/">https://onevcat.com/2014/01/black-magic-in-macro/</a></p>
+
+<ol>
+<li><h1 id="toc_0">的作用</h1></li>
+<li><h2 id="toc_1">的作用</h2></li>
+<li><p><strong>VA_ARGS</strong>的作用</p></li>
+<li><p>RAC()</p></li>
+</ol>
+
+<p>4.1 函数功能</p>
+
+<p>RAC(),有两种调用方式，一个是两个参数，一个是三个参数的。函数的第一个参数代表着要绑定的对象，第二个参数要绑定的对象的属性，第三个参数代表当追踪的结果为nil时，应该赋予的值。</p>
+
+<p>这里就有一个很有趣的问题，ReactiveCocoa是如何做到用一个函数宏，自动识别参数个数，并调用正确的函数的呢？<br/>
+4.2 实现解析</p>
+
+<p>我们通过一个具体的例子来解析RAC()的宏定义魔法。我们在程序中如此调用：<br/>
+RAC(self.startButton, enabled) = RACObserve(self.viewModel, canStartTimer);</p>
+
+<p>我们来看下，RAC中的宏定义魔法，干了些什么。RAC(TARGET,...)第一步被解析为:<br/>
+RAC(TARGET,...) metamacro_if_eq(1, metamacro_argcount(__VA_ARGS__)) \<br/>
+        (RAC_(TARGET, <strong>VA_ARGS</strong>, nil)) \<br/>
+        (RAC_(TARGET, <strong>VA_ARGS</strong>))</p>
+
+<p>其中,TARGET为self.startButton,那么metamacro_argcount(__VA_ARGS__) 从函数的名字，我们知道其作用是获取参数的个数。我们来看下具体是怎样获得参数的个数的。</p>
+
+<p>本例中为<br/>
+metamacro_argcount(enabled)<br/>
+定义为</p>
+
+<h1 id="toc_2">define metamacro_argcount(...) \</h1>
+
+<pre><code class="language-text">    metamacro_at(20, __VA_ARGS__, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1)
+</code></pre>
+
+<p>本例中为<br/>
+metamacro_at(20,enabled,20,19,18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1)</p>
+
+<p>其中<br/>
+metamacro_at(20, <strong>VA_ARGS</strong>, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1)<br/>
+的定义为</p>
+
+<h1 id="toc_3">define metamacro_at(N, ...) \</h1>
+
+<pre><code class="language-text">    metamacro_concat(metamacro_at, N)(__VA_ARGS__)
+</code></pre>
+
+<p>其中<br/>
+metamacro_concat(metamacro_at, N)(__VA_ARGS__)<br/>
+其中<br/>
+metamacro_concat 的定义为</p>
+
+<h1 id="toc_4">define metamacro_concat(A, B) \</h1>
+
+<pre><code class="language-text">    metamacro_concat_(A, B)
+</code></pre>
+
+<p>--&gt;</p>
+
+<h1 id="toc_5">define metamacro_concat_(A, B) A ## B</h1>
+
+<p>因此，逆推回去<br/>
+metamacro_concat(metamacro_at, N)(__VA_ARGS__)<br/>
+--&gt;<br/>
+metamacro_atN(__VA_ARGS)<br/>
+--&gt;<br/>
+metamacro_at20(__VA_ARGS)<br/>
+本例中为 <br/>
+metamacro_at20(enabled，20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1)<br/>
+拼接处的函数metamacro_at20，其定义为</p>
+
+<h1 id="toc_6">define metamacro_at20(_0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16, _17, _18, _19, ...) metamacro_head(__VA_ARGS__)</h1>
+
+<p>本例中为</p>
+
+<p>metamacro_head(1)</p>
+
+<p>其中<br/>
+metamacro_head(__VA_ARGS__)<br/>
+其定义为<br/>
+metamacro_head_(__VA_ARGS__, 0)</p>
+
+<p>封装了一层，真实为</p>
+
+<h1 id="toc_7">define metamacro_head_(FIRST, ...) FIRST</h1>
+
+<p>本例中为 1</p>
+
+<p>也就是metamacro_argcount(enabled) 的结果为 1。</p>
+
+<p>回到RAC的第一层定义，现在的解析式为<br/>
+metamacro_if_eq(1, 1) \</p>
+
+<pre><code class="language-text">    (RAC_(TARGET, __VA_ARGS__, nil)) \
+
+    (RAC_(TARGET, __VA_ARGS__))
+</code></pre>
+
+<p>下面分析metamacro_if_eq<br/>
+,其定义为</p>
+
+<h1 id="toc_8">define metamacro_if_eq(A, B) \</h1>
+
+<pre><code class="language-text">    metamacro_concat(metamacro_if_eq, A)(B)
+</code></pre>
+
+<p>其中A写死为1，B本例中计算结果为1，本例中变为<br/>
+metamacro_if_eq(1,1) (RAC_(TARGET, <strong>VA_ARGS</strong>, nil)) (RAC_(TARGET, <strong>VA_ARGS</strong>))<br/>
+拼接结果为:<br/>
+metamacro_if_eq1(B)<br/>
+本例中为:<br/>
+metamacro_if_eq1(1)<br/>
+其定义为:</p>
+
+<h1 id="toc_9">define metamacro_if_eq1(VALUE) metamacro_if_eq0(metamacro_dec(VALUE))</h1>
+
+<p>其中</p>
+
+<h1 id="toc_10">define metamacro_dec(VAL) \</h1>
+
+<pre><code class="language-text">    metamacro_at(VAL, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19)
+</code></pre>
+
+<p>本例中为：<br/>
+metamacro_at(1,-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19)<br/>
+拼接后为（metamacro_at的作用上面已经讲过了）<br/>
+metamacro_at1(-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19)<br/>
+其定义为</p>
+
+<h1 id="toc_11">define metamacro_at1(_0, ...) metamacro_head(__VA_ARGS__)</h1>
+
+<p>--&gt; metamacro_head(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19)</p>
+
+<p>--&gt; metamacro_head_(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 0)</p>
+
+<p>--&gt; 0</p>
+
+<p>--&gt; 合并</p>
+
+<p>metamacro_if_eq0（0）</p>
+
+<p>其中</p>
+
+<h1 id="toc_12">define metamacro_if_eq0(VALUE) \</h1>
+
+<pre><code class="language-text">metamacro_concat(metamacro_if_eq0_, VALUE)
+</code></pre>
+
+<p>本例中为metamacro_if_eq0_0。<br/>
+回到原式，与后面的部分拼接结果为</p>
+
+<h1 id="toc_13">define RAC(TARGET, ...) \</h1>
+
+<pre><code class="language-text">metamacro_if_eq(1, metamacro_argcount(__VA_ARGS__)) \
+    (RAC_(TARGET, __VA_ARGS__, nil)) \
+    (RAC_(TARGET, __VA_ARGS__))
+</code></pre>
+
+<p>--&gt; metamacro_if_eq0_0 (RAC_(TARGET, <strong>VA_ARGS</strong>, nil)) (RAC_(TARGET, <strong>VA_ARGS</strong>))<br/>
+metamacro_if_eq0_0定义为</p>
+
+<h1 id="toc_14">define metamacro_if_eq0_0(...) <strong>VA_ARGS</strong> metamacro_consume_</h1>
+
+<p>在本例中化为<br/>
+(RAC_(TARGET, <strong>VA_ARGS</strong>, nil)) metamacro_consume_ (RAC_(TARGET, <strong>VA_ARGS</strong>))<br/>
+--&gt; (RAC_(TARGET, <strong>VA_ARGS</strong>, nil))<br/>
+--&gt; (RAC_(self.startButton, enabled, nil))</p>
+
+<p>ps:</p>
+
+<p>我们再看下，如果参数不为1的情况（这里的1的计数排除了第一项，在本例中排除的是self.startButton）。</p>
+
+<p>如果是不止两个参数的情况那么,设参数个数为x，x&lt;&gt;1,则原式化为<br/>
+metamacro_if_eq(1,x) (RAC_(TARGET, <strong>VA_ARGS</strong>, nil)) (RAC_(TARGET, <strong>VA_ARGS</strong>))</p>
+
+<p>--&gt; metamacro_if_eq1(x)</p>
+
+<p>--&gt; metamacro_at(x,-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19)</p>
+
+<p>这里假设x为2(注意这里x只要不是取1，宏定义展开都是一样的,而在RAC()这个宏，x只可能取1或2)，则</p>
+
+<p>--&gt; metamacro_at2(-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19)</p>
+
+<p>--&gt; metamacro_head(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19)</p>
+
+<p>--&gt; 3</p>
+
+<p>--&gt; metamacro_if_eq0_3(RAC_(TARGET, <strong>VA_ARGS</strong>, nil)) (RAC_(self.startButton, enabled, nil))</p>
+
+<p>由 metamacro_if_eq0_3()的定义，前面一项被吃掉了，所以原式只剩了后一项</p>
+
+<p>--&gt; (RAC_(self.startButton, enabled, nil))<br/>
+至此，由RAC(...)至RAC_(...)的解析完毕！这个宏的作用就是根据参数的个数选择调用函数式子的不同，如果只有1个参数的，就调用(RAC_(self.startButton, enabled, nil))，如果有多个参数的就调用(RAC_(TARGET, <strong>VA_ARGS</strong>))。</p>
+
+<ol>
+<li>RACObserve()</li>
+</ol>
+
+<p>5.1 函数的功能</p>
+
+<p>让我们再看下4.2中提到的例子<br/>
+RAC(self.startButton, enabled) = RACObserve(self.viewModel, canStartTimer);<br/>
+等式的左边的意思是我关注的是self.startButton的enabled属性，我需要将其与self.viewModel的canStartTimer属性绑定起来。那么右边实际上是个KVO。一旦self.viewModel的canStartTimer属性发生变化，self.startButton的enabled相应的发生变化。<br/>
+5.2 函数解析</p>
+
+<p>让我们看下ReactiveCocoa是怎么做到的。<br/>
+我们的例子是RACObserve(self.viewModel, canStartTimer);<br/>
+RACObserve()的定义是</p>
+
+<h1 id="toc_15">define RACObserve(TARGET, KEYPATH) \</h1>
+
+<pre><code class="language-text">[(id)(TARGET) rac_valuesForKeyPath:@keypath(TARGET, KEYPATH) observer:self]
+</code></pre>
+
+<p>因此，在本例中解析为<br/>
+[(id)(self.viewModel) rac_valuesForKeyPath:@keypath(self.viewModel, canStartTimer) observer:self]<br/>
+OK，原来是self.viewModel发送rac_valuesForKeyPath: observer:消息。等等,@keypath是什么鬼？别急，@keypath定义如下：</p>
+
+<h1 id="toc_16">define keypath(...) \</h1>
+
+<pre><code class="language-text">metamacro_if_eq(1, metamacro_argcount(__VA_ARGS__))(keypath1(__VA_ARGS__))(keypath2(__VA_ARGS__))
+</code></pre>
+
+<p>哈哈，原来是我们之前解析过的宏，那么很明显了，如果keypath中的参数个数等于1，那么调用keypath1,否则调用keypath2。在本例中，参数是2。因此应该调用keypath2。</p>
+
+<h1 id="toc_17">define keypath2(OBJ, PATH) \</h1>
+
+<pre><code class="language-text">(((void)(NO &amp;&amp; ((void)OBJ.PATH, NO)), # PATH))
+</code></pre>
+
+<p>带入例子，化为<br/>
+(((void)(NO &amp;&amp; ((void)self.viewModel.canStartTimer, NO)), # canStartTimer))<br/>
+处理一下#操作符，化为<br/>
+(((void)(NO &amp;&amp; ((void)self.viewModel.canStartTimer, NO)), &quot;canStartTimer&quot;))</p>
+
+<p>TODO: @keyPath宏未能解析其生效的原理。根据其注解，这个宏的作用是验证参数的合法性，最后返回的结果是一个NSString，即keypath<br/>
+因此，RACObserve()的作用就是发送rac_valuesForKeyPath: observer:消息。其中根据传入的keypath参数个数，做了一些处理。<br/>
+接下来，我们分析一下rac_valuesForKeyPath: observer:的作用<br/>
+其函数声明为：</p>
+
+<ul>
+<li>(RACSignal *)rac_valuesForKeyPath:(NSString *)keyPath observer:(NSObject *)observer;<br/>
+定义为</li>
+<li>(RACSignal *)rac_valuesForKeyPath:(NSString *)keyPath observer:(NSObject *)observer {<br/>
+return [[[self rac_valuesAndChangesForKeyPath:keyPath options:NSKeyValueObservingOptionInitial observer:observer] reduceEach:<sup>id value, NSDictionary *change</sup> {<br/>
+    return value;<br/>
+}] setNameWithFormat:@&quot;RACObserve(%@, %@)&quot;, self.rac_description, keyPath];<br/>
+}<br/>
+6.@strongify, @ weakify &amp; @unsafeify</li>
+</ul>
+
+<p>@strongify的使用，必须在@weakify使用之后，是成对的操作<br/>
+6.1 @weakify</p>
+
+<p>weakify 定义如下</p>
+
+<h1 id="toc_18">define weakify(...) \</h1>
+
+<pre><code class="language-text">autoreleasepool {} \
+metamacro_foreach_cxt(rac_weakify_,, __weak, __VA_ARGS__)
+</code></pre>
+
+<p>我们的例子是<br/>
+@weakify(self)<br/>
+--&gt; autoreleasepool {} \<br/>
+    metamacro_foreach_cxt(rac_weakify_,, __weak, self)<br/>
+注意这里有两个非法的地方，</p>
+
+<ol>
+<li>rac_weakify_没有参数，这本来是非法的，但是此处编译器还不会检查，因此其真正的展开在之后，我们先列出其定义。</li>
+<li>metamacro_foreach_cxt(rac_weakify_,, __weak, self)中有两个连续逗号，第二个参数失踪了。这是放空的意思。注意，放空是可以的，但是要注意用法，否则编译器会报错。<br/>
+#define rac_weakify_(INDEX, CONTEXT, VAR) \<br/>
+CONTEXT <strong>typeof</strong>(VAR) metamacro_concat(VAR, _weak_) = (VAR);<br/>
+回到metamacro_foreach_cxt的定义为<br/>
+#define metamacro_foreach_cxt(MACRO, SEP, CONTEXT, ...) \<br/>
+    metamacro_concat(metamacro_foreach_cxt, metamacro_argcount(__VA_ARGS__))(MACRO, SEP, CONTEXT, <strong>VA_ARGS</strong>)<br/>
+本例中为<br/>
+metamacro_concat(metamacro_foreach_cxt, metamacro_argcount(__VA_ARGS__))(MACRO, SEP, CONTEXT, <strong>VA_ARGS</strong>)</li>
+</ol>
+
+<p>--&gt; metamacro_argcount(__VA_ARGS__)的结果为1.<br/>
+--&gt; metamacro_foreach_cxt1(MACRO, SEP, CONTEXT, <strong>VA_ARGS</strong>)<br/>
+--&gt; metamacro_foreach_cxt1(rac_weakify_, SEP, __weak, self)<br/>
+metamacro_foreach_cxt1的定义为</p>
+
+<h1 id="toc_19">define metamacro_foreach_cxt1(MACRO, SEP, CONTEXT, _0) MACRO(0, CONTEXT, _0)</h1>
+
+<p>则<br/>
+metamacro_foreach_cxt1(rac_weakify_, SEP, <strong>weak, self)<br/>
+--&gt; rac_weakify_(0,</strong>weak,self)<br/>
+rac_weakify_定义为</p>
+
+<h1 id="toc_20">define rac_weakify_(INDEX, CONTEXT, VAR) \</h1>
+
+<pre><code class="language-text">CONTEXT __typeof__(VAR) metamacro_concat(VAR, _weak_) = (VAR);
+</code></pre>
+
+<p>--&gt; __weak <strong>typeof</strong>(self) self_weak_ = (self);</p>
+
+<p>至此，我们看到了@weakify的作用，其将传入的参数，自动创建一个__weak的对象。<br/>
+TODO：</p>
+
+<ol>
+<li> 多参数传入的解析过程</li>
+<li>@autorelasepool并没有纳入任何东西。</li>
+<li>莫名其妙的连续两个逗号。<br/>
+我们继续来看一下，当weakify传入多个参数，如两个参数的时候，RAC是怎么处理的。<br/>
+当weakify传入两个参数的时候，宏定义展开，某个阶段为<br/>
+metamacro_foreach_cxt2(rac_weakify_, SEP, __weak, <strong>VA_ARGS</strong>)<br/>
+其中__VA_ARGS__是两个参数，假设为self，和self.button<br/>
+metamacro_foreach_cxt2的定义为<br/>
+#define metamacro_foreach_cxt2(MACRO, SEP, CONTEXT, _0, _1) \<br/>
+metamacro_foreach_cxt1(MACRO, SEP, CONTEXT, _0) \<br/>
+SEP \<br/>
+MACRO(1, CONTEXT, _1)<br/>
+--&gt; metamacro_foreach_cxt2(rac_weakify_, SEP, __weak, self, self.button)<br/>
+--&gt; 展开得 metamacro_foreach_cxt1(rac_weakify_, SEP, __weak, self) \<br/>
+SEP \<br/>
+rac_weakify_(1, __weak, self.button)<br/>
+--&gt; __weak <strong>typeof</strong>(self) self_weak_ = (self); __weak <strong>typeof</strong>(self.button) self.button_weak_ = (self.button);<br/>
+6.2 @strongify</li>
+</ol>
+
+
+    
+
+      </div>
+
+      <div class="row">
+        <div class="large-6 columns">
+        <p class="text-left" style="padding:15px 0px;">
+      
+          <a href="15479997745467.html" 
+          title="Previous Post: MongoDB的启动和停止">&laquo; MongoDB的启动和停止</a>
+      
+        </p>
+        </div>
+        <div class="large-6 columns">
+      <p class="text-right" style="padding:15px 0px;">
+      
+          <a  href="15216334372729.html" 
+          title="Next Post: Realm学习笔记">Realm学习笔记 &raquo;</a>
+      
+      </p>
+        </div>
+      </div>
+      <div class="comments-wrap">
+        <div class="share-comments">
+          
+
+          
+
+          
+        </div>
+      </div>
+    </div><!-- article-wrap -->
+  </div><!-- large 8 -->
+
+
+
+
+ <div class="large-4 medium-4 columns">
+  <div class="hide-for-small">
+    <div id="sidebar" class="sidebar">
+          <div id="site-info" class="site-info">
+            
+                <div class="site-a-logo"><img src="asset/img/icon.jpg" /></div>
+            
+                <h1>沧海一粟No.1</h1>
+                <div class="site-des">沧海一粟No.1的个人小站</div>
+                <div class="social">
+
+
+
+
+
+
+
+
+
+<a target="_blank" class="github" target="_blank" href="https://github.com/nimitz871016" title="GitHub">GitHub</a>
+<a target="_blank" class="email" href="mailto:nimitz_007@163.com" title="Email">Email</a>
+  <a target="_blank" class="rss" href="atom.xml" title="RSS">RSS</a>
+                
+              	 </div>
+          	</div>
+
+             
+
+              <div id="site-categories" class="side-item ">
+                <div class="side-header">
+                  <h2>Categories</h2>
+                </div>
+                <div class="side-content">
+
+      	<p class="cat-list">
+        
+            <a href="Java.html"><strong>Java</strong></a>
+        
+            <a href="MongoDB.html"><strong>MongoDB</strong></a>
+        
+            <a href="iOS.html"><strong>iOS</strong></a>
+        
+            <a href="LeetCode.html"><strong>LeetCode</strong></a>
+         
+        </p>
+
+
+                </div>
+              </div>
+
+              <div id="site-categories" class="side-item">
+                <div class="side-header">
+                  <h2>Recent Posts</h2>
+                </div>
+                <div class="side-content">
+                <ul class="posts-list">
+	      
+		      
+			      <li class="post">
+			        <a href="15480002725541.html">32. 最长有效括号</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="15480003648444.html">39. 组合总和</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="15479962056718.html">Java并发编程</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="15479997745467.html">MongoDB的启动和停止</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="15480007861723.html">RAC中的宏定义魔法</a>
+			      </li>
+		     
+		  
+		      
+		   
+		  		</ul>
+                </div>
+              </div>
+        </div><!-- sidebar -->
+      </div><!-- hide for small -->
+</div><!-- large 4 -->
+
+</div><!-- row -->
+
+ <div class="page-bottom clearfix">
+  <div class="row">
+   <p class="copyright">Copyright &copy; 2015
+Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a>,&nbsp; 
+Theme used <a target="_blank" href="http://github.com">GitHub CSS</a>.</p>
+  </div>
+</div>
+
+        </section>
+      </div>
+    </div>
+
+  
+    
+
+    <script src="asset/js/foundation.min.js"></script>
+    <script>
+      $(document).foundation();
+      function fixSidebarHeight(){
+        var w1 = $('.markdown-body').height();
+          var w2 = $('#sidebar').height();
+          if (w1 > w2) { $('#sidebar').height(w1); };
+      }
+      $(function(){
+        fixSidebarHeight();
+      })
+      $(window).load(function(){
+          fixSidebarHeight();
+      });
+     
+    </script>
+
+    
+
+
+
+  </body>
+</html>

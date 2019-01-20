@@ -5,12 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>
     
-  Orz~Orz
+  沧海一粟No.1
   
   </title>
   
   
-  <link href="atom.xml" rel="alternate" title="Orz~Orz" type="application/atom+xml">
+  <link href="atom.xml" rel="alternate" title="沧海一粟No.1" type="application/atom+xml">
     <link rel="stylesheet" href="asset/css/foundation.min.css" />
     <link rel="stylesheet" href="asset/css/docs.css" />
     <script src="asset/js/vendor/modernizr.js"></script>
@@ -62,7 +62,7 @@
 
         <nav class="tab-bar show-for-small">
   <a href="javascript:void(0)" class="left-off-canvas-toggle menu-icon">
-    <span> &nbsp; Orz~Orz</span>
+    <span> &nbsp; 沧海一粟No.1</span>
   </a>
 </nav>
 
@@ -78,6 +78,12 @@
 
         
             <li><a href="Java.html">Java</a></li>
+        
+            <li><a href="MongoDB.html">MongoDB</a></li>
+        
+            <li><a href="iOS.html">iOS</a></li>
+        
+            <li><a href="LeetCode.html">LeetCode</a></li>
          
 
       </ul>
@@ -99,6 +105,204 @@
 	<div class="large-8 medium-8 columns">
 		<div class="markdown-body home-categories">
 		
+			<div class="article">
+                <a class="clearlink" href="15480002725541.html">
+                
+                  <h1>32. 最长有效括号</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<p><a href="https://leetcode-cn.com/problems/longest-valid-parentheses/description/">https://leetcode-cn.com/problems/longest-valid-parentheses/description/</a></p>
+
+<p>给定一个只包含  &#39;(&#39; 和  &#39;)&#39; 的字符串，找出最长的包含有效括号的子串的长度。</p>
+
+<p>示例 1:</p>
+
+<pre><code class="language-text">输入: &quot;(()&quot;
+输出: 2
+解释: 最长有效括号子串为 &quot;()&quot;
+示例 2:
+
+输入: &quot;)()())&quot;
+输出: 4
+解释: 最长有效括号子串为 &quot;()()&quot;
+</code></pre>
+
+<p>代码：</p>
+
+<pre><code class="language-text">public int longestValidParentheses(String s) {
+    int[] dp = new int[s.length()];
+    int max = 0;
+    for (int i = 1; i &lt; s.length(); i++){
+        if (s.charAt(i) == &#39;(&#39;){
+            dp[i] = 0;
+        }else{
+            if (dp[i - 1] != 0) {
+                int index = i - dp[i - 1] - 1;
+                if (index &gt;= 0 &amp;&amp; s.charAt(index) == &#39;(&#39;) {
+                    dp[i] = dp[i - 1] + 2;
+                    if (index - 1 &gt;= 0 ){
+                        dp[i] += dp[index - 1];
+                    }
+                }
+            }
+            if (s.charAt(i - 1) == &#39;(&#39;){
+                if (i &gt;= 2) {
+                    dp[i] = dp[i] &gt; dp[i - 2] + 2 ? dp[i] : dp[i - 2] + 2;
+                }else{
+                    dp[i] = 2;
+                }
+            }
+            if (max &lt; dp[i]){
+                max = dp[i];
+            }
+        }
+    }
+    return max;
+}
+</code></pre>
+
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                  
+                    <span class="date">2019/1/21</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='LeetCode.html'>LeetCode</a></span>
+          				   
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15480003648444.html">
+                
+                  <h1>39. 组合总和</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<p><a href="https://leetcode-cn.com/problems/combination-sum/description/">https://leetcode-cn.com/problems/combination-sum/description/</a></p>
+
+<p>给定一个无重复元素的数组  candidates 和一个目标数  target ，找出  candidates 中所有可以使数字和为  target 的组合。</p>
+
+<p>candidates 中的数字可以无限制重复被选取。</p>
+
+<p>说明：</p>
+
+<p>所有数字（包括  target）都是正整数。<br/>
+解集不能包含重复的组合。 </p>
+
+<pre><code class="language-text">示例 1:
+
+输入: candidates = [2,3,6,7], target = 7,
+所求解集为:
+[
+  [7],
+  [2,2,3]
+]
+示例 2:
+
+输入: candidates = [2,3,5], target = 8,
+所求解集为:
+[
+  [2,2,2,2],
+  [2,3,3],
+  [3,5]
+]
+</code></pre>
+
+<p>题目分析：</p>
+
+<ol>
+<li>一看到这道题，就感觉要用递归来做，应该是回溯算法。百度证实无误。</li>
+<li>然后自己还没有生写过回溯。想了一会儿，结果不对，和正确解法做了一下比较，修改了一下自己的算法。标答是C++的，在java上需要修改一下，一些特别的地方要处理一下。</li>
+</ol>
+
+<p>直接上代码：</p>
+
+<pre><code class="language-text">/**
+ * 核心算法
+ * @param candidates 数组
+ * @param target 当前递归子问题需要计算的target
+ * @param start 开始查找的index
+ * @param result 当前递归的result数组
+ * @param ans 最后的答案
+ */
+private void findOne(int[] candidates, int target, int start, List&lt;Integer&gt; result, List&lt;List&lt;Integer&gt;&gt; ans){
+    if (target == 0){
+        List&lt;Integer&gt; list = new ArrayList&lt;&gt;(result); //这里需要新开一个数组，否则会一直复用这个对象，导致结果不对
+        ans.add(list);
+        return;
+    }else if(target &lt; candidates[start]){
+        return; //不符合的结果，不处理。
+    }else{
+        for (int i = start; i &lt; candidates.length; i++){
+            result.add(candidates[i]);
+            findOne(candidates, target - candidates[i], i, result, ans);
+            result.remove(result.size() - 1);
+            //这里有点像树的遍历，这里就是要一个节点和不要一个节点的分支。然后可以重复使用元素，所以递归子问题，仍然从i开始。
+        }
+    }
+}
+
+public List&lt;List&lt;Integer&gt;&gt; combinationSum(int[] candidates, int target) {
+    List&lt;List&lt;Integer&gt;&gt; ans = new ArrayList&lt;&gt;();
+    Arrays.sort(candidates); //题目没有说排好序的数组，所以这里要先拍个序
+    findOne(candidates, target, 0, new ArrayList&lt;&gt;(), ans);
+    return ans;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</code></pre>
+
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                  
+                    <span class="date">2019/1/21</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='LeetCode.html'>LeetCode</a></span>
+          				   
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
 			<div class="article">
                 <a class="clearlink" href="15479962056718.html">
                 
@@ -376,6 +580,778 @@ condition 是和lock相配合的<br/>
                 </div>
               </div><!-- article -->
         
+			<div class="article">
+                <a class="clearlink" href="15479997745467.html">
+                
+                  <h1>MongoDB的启动和停止</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<h2 id="toc_0">1. 启动</h2>
+
+<ol>
+<li>用命令行，加各种的特殊参数</li>
+<li><p>用命令行，但是所有的参数都放在一个配置文件中。如</p>
+<pre><code class="language-text">mongod -f /etc/mongod.conf
+</code></pre></li>
+<li><p>用传统的service mongod start</p></li>
+</ol>
+
+<h3 id="toc_1">1.1. service mongod start</h3>
+
+<ul>
+<li>该命令本身没有任何问题。只需要注意配置启动的时候执行的语句就可以达到同样的效果。在实际使用的过程中，并不会频繁的变更需求和配置，因此用service来启动足以。</li>
+<li><p>另外如果用命令行启动，还存在权限问题。<br/>
+用mongod启动了以后，权限全部变为root。这时候再用service mongod start来启动就会有各种各样的权限问题。</p></li>
+<li><p>service start启动的脚本</p>
+<pre><code class="language-text">/usr/lib/systemd/system/mongod.service
+</code></pre></li>
+</ul>
+
+<pre><code class="language-text">[Unit]
+Description=MongoDB Database Server
+After=network.target
+Documentation=https://docs.mongodb.org/manual
+
+[Service]
+User=mongod
+Group=mongod
+Environment=&quot;OPTIONS=-f /etc/mongod.conf&quot;
+EnvironmentFile=-/etc/sysconfig/mongod
+ExecStart=/usr/bin/mongod $OPTIONS
+ExecStartPre=/usr/bin/mkdir -p /var/run/mongodb
+ExecStartPre=/usr/bin/chown mongod:mongod /var/run/mongodb
+ExecStartPre=/usr/bin/chmod 0755 /var/run/mongodb
+PermissionsStartOnly=true
+PIDFile=/var/run/mongodb/mongod.pid
+Type=forking
+# file size
+LimitFSIZE=infinity
+# cpu time
+LimitCPU=infinity
+# virtual memory size
+LimitAS=infinity
+# open files
+LimitNOFILE=64000
+# processes/threads
+LimitNPROC=64000
+# locked memory
+LimitMEMLOCK=infinity
+# total threads (user+kernel)
+TasksMax=infinity
+TasksAccounting=false
+# Recommended limits for for mongod as specified in
+# http://docs.mongodb.org/manual/reference/ulimit/#recommended-settings
+
+[Install]
+WantedBy=multi-user.target
+</code></pre>
+
+<h2 id="toc_2">2. 停止</h2>
+
+<p>强制关闭MongoDB（不建议使用）；<br/>
+service mongod stop<br/>
+或者，从MongoDB的admin中关闭（推荐用这种方法）：</p>
+
+<pre><code class="language-text">&gt;use admin
+switched to db admin
+&gt;db.shutdownServer()
+server should be down...
+</code></pre>
+
+<p>或者</p>
+
+<pre><code class="language-text">mongod --shutdown
+</code></pre>
+
+<p>使用shutdownServer关闭MongoDB，如有MongoDB主从服务器，则在服务关闭前同步主从服务器；强制关闭则不会；</p>
+
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                  
+                    <span class="date">2019/1/20</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='MongoDB.html'>MongoDB</a></span>
+          				   
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15480007861723.html">
+                
+                  <h1>RAC中的宏定义魔法</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<p><a href="https://onevcat.com/2014/01/black-magic-in-macro/">https://onevcat.com/2014/01/black-magic-in-macro/</a></p>
+
+<ol>
+<li><h1 id="toc_0">的作用</h1></li>
+<li><h2 id="toc_1">的作用</h2></li>
+<li><p><strong>VA_ARGS</strong>的作用</p></li>
+<li><p>RAC()</p></li>
+</ol>
+
+<p>4.1 函数功能</p>
+
+<p>RAC(),有两种调用方式，一个是两个参数，一个是三个参数的。函数的第一个参数代表着要绑定的对象，第二个参数要绑定的对象的属性，第三个参数代表当追踪的结果为nil时，应该赋予的值。</p>
+
+<p>这里就有一个很有趣的问题，ReactiveCocoa是如何做到用一个函数宏，自动识别参数个数，并调用正确的函数的呢？<br/>
+4.2 实现解析</p>
+
+<p>我们通过一个具体的例子来解析RAC()的宏定义魔法。我们在程序中如此调用：<br/>
+RAC(self.startButton, enabled) = RACObserve(self.viewModel, canStartTimer);</p>
+
+<p>我们来看下，RAC中的宏定义魔法，干了些什么。RAC(TARGET,...)第一步被解析为:<br/>
+RAC(TARGET,...) metamacro_if_eq(1, metamacro_argcount(__VA_ARGS__)) \<br/>
+        (RAC_(TARGET, <strong>VA_ARGS</strong>, nil)) \<br/>
+        (RAC_(TARGET, <strong>VA_ARGS</strong>))</p>
+
+<p>其中,TARGET为self.startButton,那么metamacro_argcount(__VA_ARGS__) 从函数的名字，我们知道其作用是获取参数的个数。我们来看下具体是怎样获得参数的个数的。</p>
+
+<p>本例中为<br/>
+metamacro_argcount(enabled)<br/>
+定义为</p>
+
+<h1 id="toc_2">define metamacro_argcount(...) \</h1>
+
+<pre><code class="language-text">    metamacro_at(20, __VA_ARGS__, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1)
+</code></pre>
+
+<p>本例中为<br/>
+metamacro_at(20,enabled,20,19,18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1)</p>
+
+<p>其中<br/>
+metamacro_at(20, <strong>VA_ARGS</strong>, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1)<br/>
+的定义为</p>
+
+<h1 id="toc_3">define metamacro_at(N, ...) \</h1>
+
+<pre><code class="language-text">    metamacro_concat(metamacro_at, N)(__VA_ARGS__)
+</code></pre>
+
+<p>其中<br/>
+metamacro_concat(metamacro_at, N)(__VA_ARGS__)<br/>
+其中<br/>
+metamacro_concat 的定义为</p>
+
+<h1 id="toc_4">define metamacro_concat(A, B) \</h1>
+
+<pre><code class="language-text">    metamacro_concat_(A, B)
+</code></pre>
+
+<p>--&gt;</p>
+
+<h1 id="toc_5">define metamacro_concat_(A, B) A ## B</h1>
+
+<p>因此，逆推回去<br/>
+metamacro_concat(metamacro_at, N)(__VA_ARGS__)<br/>
+--&gt;<br/>
+metamacro_atN(__VA_ARGS)<br/>
+--&gt;<br/>
+metamacro_at20(__VA_ARGS)<br/>
+本例中为 <br/>
+metamacro_at20(enabled，20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1)<br/>
+拼接处的函数metamacro_at20，其定义为</p>
+
+<h1 id="toc_6">define metamacro_at20(_0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16, _17, _18, _19, ...) metamacro_head(__VA_ARGS__)</h1>
+
+<p>本例中为</p>
+
+<p>metamacro_head(1)</p>
+
+<p>其中<br/>
+metamacro_head(__VA_ARGS__)<br/>
+其定义为<br/>
+metamacro_head_(__VA_ARGS__, 0)</p>
+
+<p>封装了一层，真实为</p>
+
+<h1 id="toc_7">define metamacro_head_(FIRST, ...) FIRST</h1>
+
+<p>本例中为 1</p>
+
+<p>也就是metamacro_argcount(enabled) 的结果为 1。</p>
+
+<p>回到RAC的第一层定义，现在的解析式为<br/>
+metamacro_if_eq(1, 1) \</p>
+
+<pre><code class="language-text">    (RAC_(TARGET, __VA_ARGS__, nil)) \
+
+    (RAC_(TARGET, __VA_ARGS__))
+</code></pre>
+
+<p>下面分析metamacro_if_eq<br/>
+,其定义为</p>
+
+<h1 id="toc_8">define metamacro_if_eq(A, B) \</h1>
+
+<pre><code class="language-text">    metamacro_concat(metamacro_if_eq, A)(B)
+</code></pre>
+
+<p>其中A写死为1，B本例中计算结果为1，本例中变为<br/>
+metamacro_if_eq(1,1) (RAC_(TARGET, <strong>VA_ARGS</strong>, nil)) (RAC_(TARGET, <strong>VA_ARGS</strong>))<br/>
+拼接结果为:<br/>
+metamacro_if_eq1(B)<br/>
+本例中为:<br/>
+metamacro_if_eq1(1)<br/>
+其定义为:</p>
+
+<h1 id="toc_9">define metamacro_if_eq1(VALUE) metamacro_if_eq0(metamacro_dec(VALUE))</h1>
+
+<p>其中</p>
+
+<h1 id="toc_10">define metamacro_dec(VAL) \</h1>
+
+<pre><code class="language-text">    metamacro_at(VAL, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19)
+</code></pre>
+
+<p>本例中为：<br/>
+metamacro_at(1,-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19)<br/>
+拼接后为（metamacro_at的作用上面已经讲过了）<br/>
+metamacro_at1(-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19)<br/>
+其定义为</p>
+
+<h1 id="toc_11">define metamacro_at1(_0, ...) metamacro_head(__VA_ARGS__)</h1>
+
+<p>--&gt; metamacro_head(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19)</p>
+
+<p>--&gt; metamacro_head_(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 0)</p>
+
+<p>--&gt; 0</p>
+
+<p>--&gt; 合并</p>
+
+<p>metamacro_if_eq0（0）</p>
+
+<p>其中</p>
+
+<h1 id="toc_12">define metamacro_if_eq0(VALUE) \</h1>
+
+<pre><code class="language-text">metamacro_concat(metamacro_if_eq0_, VALUE)
+</code></pre>
+
+<p>本例中为metamacro_if_eq0_0。<br/>
+回到原式，与后面的部分拼接结果为</p>
+
+<h1 id="toc_13">define RAC(TARGET, ...) \</h1>
+
+<pre><code class="language-text">metamacro_if_eq(1, metamacro_argcount(__VA_ARGS__)) \
+    (RAC_(TARGET, __VA_ARGS__, nil)) \
+    (RAC_(TARGET, __VA_ARGS__))
+</code></pre>
+
+<p>--&gt; metamacro_if_eq0_0 (RAC_(TARGET, <strong>VA_ARGS</strong>, nil)) (RAC_(TARGET, <strong>VA_ARGS</strong>))<br/>
+metamacro_if_eq0_0定义为</p>
+
+<h1 id="toc_14">define metamacro_if_eq0_0(...) <strong>VA_ARGS</strong> metamacro_consume_</h1>
+
+<p>在本例中化为<br/>
+(RAC_(TARGET, <strong>VA_ARGS</strong>, nil)) metamacro_consume_ (RAC_(TARGET, <strong>VA_ARGS</strong>))<br/>
+--&gt; (RAC_(TARGET, <strong>VA_ARGS</strong>, nil))<br/>
+--&gt; (RAC_(self.startButton, enabled, nil))</p>
+
+<p>ps:</p>
+
+<p>我们再看下，如果参数不为1的情况（这里的1的计数排除了第一项，在本例中排除的是self.startButton）。</p>
+
+<p>如果是不止两个参数的情况那么,设参数个数为x，x&lt;&gt;1,则原式化为<br/>
+metamacro_if_eq(1,x) (RAC_(TARGET, <strong>VA_ARGS</strong>, nil)) (RAC_(TARGET, <strong>VA_ARGS</strong>))</p>
+
+<p>--&gt; metamacro_if_eq1(x)</p>
+
+<p>--&gt; metamacro_at(x,-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19)</p>
+
+<p>这里假设x为2(注意这里x只要不是取1，宏定义展开都是一样的,而在RAC()这个宏，x只可能取1或2)，则</p>
+
+<p>--&gt; metamacro_at2(-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19)</p>
+
+<p>--&gt; metamacro_head(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19)</p>
+
+<p>--&gt; 3</p>
+
+<p>--&gt; metamacro_if_eq0_3(RAC_(TARGET, <strong>VA_ARGS</strong>, nil)) (RAC_(self.startButton, enabled, nil))</p>
+
+<p>由 metamacro_if_eq0_3()的定义，前面一项被吃掉了，所以原式只剩了后一项</p>
+
+<p>--&gt; (RAC_(self.startButton, enabled, nil))<br/>
+至此，由RAC(...)至RAC_(...)的解析完毕！这个宏的作用就是根据参数的个数选择调用函数式子的不同，如果只有1个参数的，就调用(RAC_(self.startButton, enabled, nil))，如果有多个参数的就调用(RAC_(TARGET, <strong>VA_ARGS</strong>))。</p>
+
+<ol>
+<li>RACObserve()</li>
+</ol>
+
+<p>5.1 函数的功能</p>
+
+<p>让我们再看下4.2中提到的例子<br/>
+RAC(self.startButton, enabled) = RACObserve(self.viewModel, canStartTimer);<br/>
+等式的左边的意思是我关注的是self.startButton的enabled属性，我需要将其与self.viewModel的canStartTimer属性绑定起来。那么右边实际上是个KVO。一旦self.viewModel的canStartTimer属性发生变化，self.startButton的enabled相应的发生变化。<br/>
+5.2 函数解析</p>
+
+<p>让我们看下ReactiveCocoa是怎么做到的。<br/>
+我们的例子是RACObserve(self.viewModel, canStartTimer);<br/>
+RACObserve()的定义是</p>
+
+<h1 id="toc_15">define RACObserve(TARGET, KEYPATH) \</h1>
+
+<pre><code class="language-text">[(id)(TARGET) rac_valuesForKeyPath:@keypath(TARGET, KEYPATH) observer:self]
+</code></pre>
+
+<p>因此，在本例中解析为<br/>
+[(id)(self.viewModel) rac_valuesForKeyPath:@keypath(self.viewModel, canStartTimer) observer:self]<br/>
+OK，原来是self.viewModel发送rac_valuesForKeyPath: observer:消息。等等,@keypath是什么鬼？别急，@keypath定义如下：</p>
+
+<h1 id="toc_16">define keypath(...) \</h1>
+
+<pre><code class="language-text">metamacro_if_eq(1, metamacro_argcount(__VA_ARGS__))(keypath1(__VA_ARGS__))(keypath2(__VA_ARGS__))
+</code></pre>
+
+<p>哈哈，原来是我们之前解析过的宏，那么很明显了，如果keypath中的参数个数等于1，那么调用keypath1,否则调用keypath2。在本例中，参数是2。因此应该调用keypath2。</p>
+
+<h1 id="toc_17">define keypath2(OBJ, PATH) \</h1>
+
+<pre><code class="language-text">(((void)(NO &amp;&amp; ((void)OBJ.PATH, NO)), # PATH))
+</code></pre>
+
+<p>带入例子，化为<br/>
+(((void)(NO &amp;&amp; ((void)self.viewModel.canStartTimer, NO)), # canStartTimer))<br/>
+处理一下#操作符，化为<br/>
+(((void)(NO &amp;&amp; ((void)self.viewModel.canStartTimer, NO)), &quot;canStartTimer&quot;))</p>
+
+<p>TODO: @keyPath宏未能解析其生效的原理。根据其注解，这个宏的作用是验证参数的合法性，最后返回的结果是一个NSString，即keypath<br/>
+因此，RACObserve()的作用就是发送rac_valuesForKeyPath: observer:消息。其中根据传入的keypath参数个数，做了一些处理。<br/>
+接下来，我们分析一下rac_valuesForKeyPath: observer:的作用<br/>
+其函数声明为：</p>
+
+<ul>
+<li>(RACSignal *)rac_valuesForKeyPath:(NSString *)keyPath observer:(NSObject *)observer;<br/>
+定义为</li>
+<li>(RACSignal *)rac_valuesForKeyPath:(NSString *)keyPath observer:(NSObject *)observer {<br/>
+return [[[self rac_valuesAndChangesForKeyPath:keyPath options:NSKeyValueObservingOptionInitial observer:observer] reduceEach:<sup>id value, NSDictionary *change</sup> {<br/>
+    return value;<br/>
+}] setNameWithFormat:@&quot;RACObserve(%@, %@)&quot;, self.rac_description, keyPath];<br/>
+}<br/>
+6.@strongify, @ weakify &amp; @unsafeify</li>
+</ul>
+
+<p>@strongify的使用，必须在@weakify使用之后，是成对的操作<br/>
+6.1 @weakify</p>
+
+<p>weakify 定义如下</p>
+
+<h1 id="toc_18">define weakify(...) \</h1>
+
+<pre><code class="language-text">autoreleasepool {} \
+metamacro_foreach_cxt(rac_weakify_,, __weak, __VA_ARGS__)
+</code></pre>
+
+<p>我们的例子是<br/>
+@weakify(self)<br/>
+--&gt; autoreleasepool {} \<br/>
+    metamacro_foreach_cxt(rac_weakify_,, __weak, self)<br/>
+注意这里有两个非法的地方，</p>
+
+<ol>
+<li>rac_weakify_没有参数，这本来是非法的，但是此处编译器还不会检查，因此其真正的展开在之后，我们先列出其定义。</li>
+<li>metamacro_foreach_cxt(rac_weakify_,, __weak, self)中有两个连续逗号，第二个参数失踪了。这是放空的意思。注意，放空是可以的，但是要注意用法，否则编译器会报错。<br/>
+#define rac_weakify_(INDEX, CONTEXT, VAR) \<br/>
+CONTEXT <strong>typeof</strong>(VAR) metamacro_concat(VAR, _weak_) = (VAR);<br/>
+回到metamacro_foreach_cxt的定义为<br/>
+#define metamacro_foreach_cxt(MACRO, SEP, CONTEXT, ...) \<br/>
+    metamacro_concat(metamacro_foreach_cxt, metamacro_argcount(__VA_ARGS__))(MACRO, SEP, CONTEXT, <strong>VA_ARGS</strong>)<br/>
+本例中为<br/>
+metamacro_concat(metamacro_foreach_cxt, metamacro_argcount(__VA_ARGS__))(MACRO, SEP, CONTEXT, <strong>VA_ARGS</strong>)</li>
+</ol>
+
+<p>--&gt; metamacro_argcount(__VA_ARGS__)的结果为1.<br/>
+--&gt; metamacro_foreach_cxt1(MACRO, SEP, CONTEXT, <strong>VA_ARGS</strong>)<br/>
+--&gt; metamacro_foreach_cxt1(rac_weakify_, SEP, __weak, self)<br/>
+metamacro_foreach_cxt1的定义为</p>
+
+<h1 id="toc_19">define metamacro_foreach_cxt1(MACRO, SEP, CONTEXT, _0) MACRO(0, CONTEXT, _0)</h1>
+
+<p>则<br/>
+metamacro_foreach_cxt1(rac_weakify_, SEP, <strong>weak, self)<br/>
+--&gt; rac_weakify_(0,</strong>weak,self)<br/>
+rac_weakify_定义为</p>
+
+<h1 id="toc_20">define rac_weakify_(INDEX, CONTEXT, VAR) \</h1>
+
+<pre><code class="language-text">CONTEXT __typeof__(VAR) metamacro_concat(VAR, _weak_) = (VAR);
+</code></pre>
+
+<p>--&gt; __weak <strong>typeof</strong>(self) self_weak_ = (self);</p>
+
+<p>至此，我们看到了@weakify的作用，其将传入的参数，自动创建一个__weak的对象。<br/>
+TODO：</p>
+
+<ol>
+<li> 多参数传入的解析过程</li>
+<li>@autorelasepool并没有纳入任何东西。</li>
+<li>莫名其妙的连续两个逗号。<br/>
+我们继续来看一下，当weakify传入多个参数，如两个参数的时候，RAC是怎么处理的。<br/>
+当weakify传入两个参数的时候，宏定义展开，某个阶段为<br/>
+metamacro_foreach_cxt2(rac_weakify_, SEP, __weak, <strong>VA_ARGS</strong>)<br/>
+其中__VA_ARGS__是两个参数，假设为self，和self.button<br/>
+metamacro_foreach_cxt2的定义为<br/>
+#define metamacro_foreach_cxt2(MACRO, SEP, CONTEXT, _0, _1) \<br/>
+metamacro_foreach_cxt1(MACRO, SEP, CONTEXT, _0) \<br/>
+SEP \<br/>
+MACRO(1, CONTEXT, _1)<br/>
+--&gt; metamacro_foreach_cxt2(rac_weakify_, SEP, __weak, self, self.button)<br/>
+--&gt; 展开得 metamacro_foreach_cxt1(rac_weakify_, SEP, __weak, self) \<br/>
+SEP \<br/>
+rac_weakify_(1, __weak, self.button)<br/>
+--&gt; __weak <strong>typeof</strong>(self) self_weak_ = (self); __weak <strong>typeof</strong>(self.button) self.button_weak_ = (self.button);<br/>
+6.2 @strongify</li>
+</ol>
+
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                  
+                    <span class="date">2019/1/21</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='iOS.html'>iOS</a></span>
+          				   
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15216334372729.html">
+                
+                  <h1>Realm学习笔记</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<ul>
+<li>Useful文章</li>
+</ul>
+
+<p><a href="https://www.jianshu.com/p/6704afc62d6c">https://www.jianshu.com/p/6704afc62d6c</a></p>
+
+<p><a href="https://academy.realm.io/cn/posts/jp-simard-realm-core-database-engine/">Realm 核心数据库引擎探秘</a></p>
+
+<h2 id="toc_0">1. 模型定义</h2>
+
+<p>参照官网的demo，建立如下两个类：</p>
+
+<pre><code class="language-text">@interface Dog : RLMObject
+@property NSString *name;
+@property NSData   *picture;
+@property NSInteger age;
+@end
+@implementation Dog
+@end
+RLM_ARRAY_TYPE(Dog)
+@interface Person : RLMObject
+@property NSString             *name;
+@property RLMArray&lt;Dog *&gt;&lt;Dog&gt; *dogs;
+@end
+@implementation Person
+@end
+</code></pre>
+
+<pre><code class="language-text">tips
+
+1. 需要继承RLMObject
+2. 所有的属性都不需要写任何的描述符，原子性，strong, assign等
+3. Array类型需要用RLMArray
+4. 使用Array 需要定义 RLM_ARRAY_TYPE , 这个定义放在类前类后都可以。
+</code></pre>
+
+<h2 id="toc_1">2.CRUD</h2>
+
+<p>Realm采用了MVCC设计架构，因此读写操作是不互斥的。但是写操作最好在一个Seperate thread中执行，否则会降低效率。</p>
+
+<h2 id="toc_2">2.1 创建（Create）</h2>
+
+<pre><code class="language-text">// (1) Create a Dog object and then set its properties
+    Dog *myDog = [[Dog alloc] init];myDog.name = @&quot;Rex&quot;;myDog.age = 10;
+// (2) Create a Dog object from a dictionary
+    Dog *myOtherDog = [[Dog alloc] initWithValue:@{@&quot;name&quot; : @&quot;Pluto&quot;, @&quot;age&quot; : @3}];
+// (3) Create a Dog object from an array
+    Dog *myThirdDog = [[Dog alloc] initWithValue:@[@&quot;Pluto&quot;, @3]];
+</code></pre>
+
+<p>写入数据库</p>
+
+<pre><code class="language-text">    // Get the default Realm
+    RLMRealm *realm = [RLMRealm defaultRealm];
+    // You only need to do this once (per thread)
+    
+    // Add to Realm with transaction
+    [realm beginWriteTransaction];
+    [realm addObject:province];
+    [realm commitWriteTransaction];
+
+</code></pre>
+
+<h2 id="toc_3">2.2 查询（Retrieve）</h2>
+
+<pre><code class="language-text">// 使用断言字符串查询
+    RLMResults&lt;ProvinceEntity *&gt; *provinceArray = [ProvinceEntity objectsWhere:@&quot;shortName = &#39;江苏&#39;&quot;];
+    // 使用 NSPredicate 查询
+    NSPredicate *pred = [NSPredicate predicateWithFormat:@&quot;shortName = &#39;江苏&#39;&quot;];
+    provinceArray = [ProvinceEntity objectsWithPredicate:pred];
+
+</code></pre>
+
+<p>如果有多条件的话，可以用and，也可以分布查询，从查询结果中再做查询，支持链式查询：</p>
+
+<pre><code class="language-text">RLMResults&lt;Dog *&gt; *tanDogs = [Dog objectsWhere:@&quot;color = &#39;棕黄色&#39;&quot;];
+RLMResults&lt;Dog *&gt; *tanDogsWithBNames = [tanDogs objectsWhere:@&quot;name BEGINSWITH &#39;大&#39;&quot;];
+</code></pre>
+
+<p>RLMResults允许您指定一个排序标准，从而可以根据一个或多个属性进行排序。比如说，下列代码将上面例子中返回的狗狗根据名字升序进行排序：</p>
+
+<pre><code class="language-text">// 排序名字以“大”开头的棕黄色狗狗
+RLMResults&lt;Dog *&gt; *sortedDogs = [[Dog objectsWhere:@&quot;color = &#39;棕黄色&#39; AND name BEGINSWITH &#39;大&#39;&quot;] sortedResultsUsingProperty:@&quot;name&quot; ascending:YES];
+</code></pre>
+
+<h2 id="toc_4">2.3 更新（Update）</h2>
+
+<ul>
+<li>你可以找到具体的一条数据然后去更新：</li>
+</ul>
+
+<pre><code class="language-text">    RLMResults&lt;ProvinceEntity *&gt;* provinceArray=[ProvinceEntity allObjects];
+    [[RLMRealm defaultRealm] transactionWithBlock:^{
+        ProvinceEntity *province=[provinceArray firstObject];
+        province.shortName=@&quot;浙江&quot;;
+    }];
+</code></pre>
+
+<ul>
+<li>你也可以设置一个主键，根据主键去更新，更新需要拥有一个主键---Primary Keys：</li>
+</ul>
+
+<pre><code class="language-text">// Creating a book with the same primary key as a previously saved 
+bookBook *cheeseBook = [[Book alloc] init];
+cheeseBook.title = @&quot;Cheese recipes&quot;;
+cheeseBook.price = @9000;
+cheeseBook.id = @1;
+// Updating book with id = 1
+[realm beginWriteTransaction];
+[realm addOrUpdateObject:cheeseBook];
+[realm commitWriteTransaction];
+</code></pre>
+
+<h2 id="toc_5">2.4 删除(Delete)</h2>
+
+<ul>
+<li>单条记录删除</li>
+</ul>
+
+<pre><code class="language-text">// Delete an object with a transaction
+[realm beginWriteTransaction];
+[realm deleteObject:cheeseBook];
+[realm commitWriteTransaction];
+</code></pre>
+
+<ul>
+<li>多条记录删除</li>
+</ul>
+
+<pre><code class="language-text">    [[RLMRealm defaultRealm] transactionWithBlock:^{
+        [[RLMRealm defaultRealm] deleteObjects:result];
+    }];
+</code></pre>
+
+<ul>
+<li>全部删除：</li>
+</ul>
+
+<pre><code class="language-text">// Delete an object with a transaction
+    [[RLMRealm defaultRealm] transactionWithBlock:^{
+        [[RLMRealm defaultRealm] deleteAllObjects];
+    }];
+</code></pre>
+
+<h2 id="toc_6">3.进阶使用</h2>
+
+<ul>
+<li>非空字段(Required properties)</li>
+</ul>
+
+<p>By default, NSString *, NSData *, and NSDate * properties allow you to set them to nil. If you want to require that a value be present, override the +requiredProperties method on your RLMObject subclass.</p>
+
+<p>For example, with the following model definition, trying to set the person’s name to nil will throw an exception, but setting their birthday to nil is allowed:</p>
+
+<pre><code class="language-text">@interface Person : RLMObject
+@property NSString *name;
+@property NSDate *birthday;
+@end
+
+@implementation Person
++ (NSArray *)requiredProperties {
+    return @[@&quot;name&quot;];
+}
+@end
+</code></pre>
+
+<p>例外：RLMObject subclass properties always can be nil, and thus cannot be included in requiredProperties. and RLMArray does not support storing nil.</p>
+
+<ul>
+<li>主键</li>
+</ul>
+
+<p>Override +primaryKey to set the model’s primary key. Declaring a primary key allows objects to be looked up and updated efficiently and enforces uniqueness for each value. Once an object with a primary key is added to a Realm, the primary key cannot be changed.</p>
+
+<pre><code class="language-text">@interface Person : RLMObject
+@property NSInteger id;
+@property NSString *name;
+@end
+
+@implementation Person
++ (NSString *)primaryKey {
+    return @&quot;id&quot;;
+}
+@end
+</code></pre>
+
+<ul>
+<li>索引字段</li>
+</ul>
+
+<p>To index a property, override +indexedProperties. Like primary keys, indexes make writes slightly slower, but makes queries using comparison operators faster. (It also makes your Realm file slightly larger, to store the index.) It’s best to only add indexes when you’re optimizing the read performance for specific situations.</p>
+
+<pre><code class="language-text">@interface Book : RLMObject
+@property float price;
+@property NSString *title;
+@end
+
+@implementation Book
++ (NSArray *)indexedProperties {
+    return @[@&quot;title&quot;];
+}
+@end
+</code></pre>
+
+<ul>
+<li>忽略字段</li>
+</ul>
+
+<p>If you don’t want to save a field in your model to its Realm, override +ignoredProperties. Realm won’t interfere with the regular operation of these properties; they’ll be backed by ivars, and you can freely override their setters and getters.</p>
+
+<pre><code class="language-text">@interface Person : RLMObject
+@property NSInteger tmpID;
+@property (readonly) NSString *name; // read-only properties are automatically ignored
+@property NSString *firstName;
+@property NSString *lastName;
+@end
+
+@implementation Person
++ (NSArray *)ignoredProperties {
+    return @[@&quot;tmpID&quot;];
+}
+- (NSString *)name {
+    return [NSString stringWithFormat:@&quot;%@ %@&quot;, self.firstName, self.lastName];
+}
+@end
+</code></pre>
+
+<ul>
+<li>默认值</li>
+</ul>
+
+<p>Override +defaultPropertyValues to provide default values every time an object is created.</p>
+
+<pre><code class="language-text">@interface Book : RLMObject
+@property float price;
+@property NSString *title;
+@end
+
+@implementation Book
++ (NSDictionary *)defaultPropertyValues {
+    return @{@&quot;price&quot; : @0, @&quot;title&quot;: @&quot;&quot;};
+}
+@end
+</code></pre>
+
+<h2 id="toc_7">4. 特性</h2>
+
+<h2 id="toc_8">5. 疑问</h2>
+
+<p>为什么要这样直接继承不可以吗？是不支持吗？</p>
+
+<pre><code class="language-text">// Base Model
+@interface Animal : RLMObject
+@property NSInteger age;
+@end
+@implementation Animal
+@end
+
+// Models composed with Animal
+@interface Duck : RLMObject
+@property Animal *animal;
+@property NSString *name;
+@end
+@implementation Duck
+@end
+
+@interface Frog : RLMObject
+@property Animal *animal;
+@property NSDate *dateProp;
+@end
+@implementation Frog
+@end
+
+// Usage
+Duck *duck =  [[Duck alloc] initWithValue:@{@&quot;animal&quot; : @{@&quot;age&quot; : @(3)}, @&quot;name&quot; : @&quot;Gustav&quot; }];
+</code></pre>
+
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                  
+                    <span class="date">2018/3/21</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='iOS.html'>iOS</a></span>
+          				   
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
               
 
 
@@ -401,8 +1377,8 @@ condition 是和lock相配合的<br/>
             
                 <div class="site-a-logo"><img src="asset/img/icon.jpg" /></div>
             
-                <h1>Orz~Orz</h1>
-                <div class="site-des"></div>
+                <h1>沧海一粟No.1</h1>
+                <div class="site-des">沧海一粟No.1的个人小站</div>
                 <div class="social">
 
 
@@ -431,6 +1407,12 @@ condition 是和lock相配合的<br/>
       	<p class="cat-list">
         
             <a href="Java.html"><strong>Java</strong></a>
+        
+            <a href="MongoDB.html"><strong>MongoDB</strong></a>
+        
+            <a href="iOS.html"><strong>iOS</strong></a>
+        
+            <a href="LeetCode.html"><strong>LeetCode</strong></a>
          
         </p>
 
@@ -447,9 +1429,35 @@ condition 是和lock相配合的<br/>
 	      
 		      
 			      <li class="post">
+			        <a href="15480002725541.html">32. 最长有效括号</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="15480003648444.html">39. 组合总和</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="15479962056718.html">Java并发编程</a>
 			      </li>
 		     
+		  
+		      
+			      <li class="post">
+			        <a href="15479997745467.html">MongoDB的启动和停止</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="15480007861723.html">RAC中的宏定义魔法</a>
+			      </li>
+		     
+		  
+		      
 		   
 		  		</ul>
                 </div>

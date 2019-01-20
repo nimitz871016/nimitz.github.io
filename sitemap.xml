@@ -2,7 +2,27 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
   <loc>webtest/</loc>
-  <lastmod>2019-01-20T22:58:02+08:00</lastmod>
+  <lastmod>2019-01-21T00:16:14+08:00</lastmod>
+</url>
+
+<url>
+  <loc>webtest/15480007861723.html</loc>
+  <lastmod>2019-01-21T00:13:06+08:00</lastmod>
+</url>
+
+<url>
+  <loc>webtest/15480003648444.html</loc>
+  <lastmod>2019-01-21T00:06:04+08:00</lastmod>
+</url>
+
+<url>
+  <loc>webtest/15480002725541.html</loc>
+  <lastmod>2019-01-21T00:04:32+08:00</lastmod>
+</url>
+
+<url>
+  <loc>webtest/15479997745467.html</loc>
+  <lastmod>2019-01-20T23:56:14+08:00</lastmod>
 </url>
 
 <url>
@@ -10,10 +30,27 @@
   <lastmod>2019-01-20T22:56:45+08:00</lastmod>
 </url>
 
+<url>
+  <loc>webtest/15216334372729.html</loc>
+  <lastmod>2018-03-21T19:57:17+08:00</lastmod>
+</url>
+
 
 
 <url>
   <loc>webtest/Java.html</loc>
+</url>
+
+<url>
+  <loc>webtest/MongoDB.html</loc>
+</url>
+
+<url>
+  <loc>webtest/iOS.html</loc>
+</url>
+
+<url>
+  <loc>webtest/LeetCode.html</loc>
 </url>
 
 
