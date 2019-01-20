@@ -76,8 +76,6 @@
 
     <li><label>Categories</label></li>
 
-        
-            <li><a href="%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0.html">读书笔记</a></li>
          
 
       </ul>
@@ -100,126 +98,259 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="15463503830144.html">
+                <a class="clearlink" href="15479962056718.html">
                 
-                  <h1>可伸缩服务架构：框架与中间件 —— 读书笔记</h1>
+                  <h1>Java并发编程</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
-                        	<h2 id="toc_0">第一章 如何设计一款永不重复的高性能分布式发号器</h2>
+                        	<p>&emsp;&emsp;本文对Java中的并发变成进行了简单的描述。是本人阅读《Java并发编程的艺术》一书的读书笔记。本文对重要的概念进行了记录。</p>
 
-<ul>
-<li><p>进度: 100%</p></li>
-<li><p>遗留问题：</p>
+<p>&emsp;&emsp;本文首先介绍了各种各样的和锁相关的概念。然后介绍了Java多线程的技术要点，介绍了一些Java中的对象的经典使用场景。</p>
+
+<h2 id="toc_0">0. 重要技术要点目录</h2>
+
+<h3 id="toc_1">0.1 和锁有关的概念</h3>
+
+<p>&emsp;&emsp;关于锁的概念有很多，这里一一列举。</p>
+
+<blockquote>
+<p>按照锁的的状态分</p>
+</blockquote>
+
+<p>&emsp;&emsp;在Java中，按照锁的状态分，有四种状态。分别是：</p>
+
 <ol>
-<li>java中各种锁的深入学习</li>
-<li>Spring boot 怎么还加tomcat</li>
-<li>微服务的概念</li>
-<li>CAS概念</li>
-</ol></li>
-<li><p>学习心得：</p>
-<ol>
-<li>学习了发号器的原理和在分布式条件下，从各个方面考虑各种方案的优势和劣势。对横向扩展需要考虑的要素有了初步的认识</li>
-</ol></li>
-</ul>
-
-<h2 id="toc_1">第二章 可灵活扩展的消息队列框架的设计与实现</h2>
-
-<ul>
-<li><p>进度：50%</p></li>
-<li><p>遗留问题</p>
-<ol>
-<li>对kafka的基本使用还不熟练，需要熟练使用，并明白最基本的概念。</li>
-<li>使用python API，调用kafka，进行练习，加深理解。</li>
-<li>重新看本章。</li>
-</ol></li>
-</ul>
-
-<h2 id="toc_2">第三章 轻量级的数据库分库分表架构与框架</h2>
-
-<ul>
-<li><p>进度： 30%</p></li>
-<li><p>遗留问题</p>
-<ul>
-<li>对数据库的分表分库的概念还不是很熟练，看起代码来很吃力</li>
-<li>对文中提到的Spring配置有些陌生，无法建立一个比较好的理解方式。</li>
-</ul></li>
-</ul>
-
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                  
-                    <span class="date">2019/1/1</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='%E5%8F%AF%E4%BC%B8%E7%BC%A9%E6%9C%8D%E5%8A%A1%E6%9E%B6%E6%9E%84%EF%BC%9A%E6%A1%86%E6%9E%B6%E4%B8%8E%E4%B8%AD%E9%97%B4%E4%BB%B6.html'>可伸缩服务架构：框架与中间件</a></span>
-          				   
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
-
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-			<div class="article">
-                <a class="clearlink" href="15232874346595.html">
-                
-                  <h1>为什么需要内部类-P204</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<ol>
-<li>比如A类已经实现了一个接口，但是还想实现一个。怎么办？用内部类。</li>
-<li>闭包</li>
+<li>无锁</li>
+<li>偏向锁</li>
+<li>轻量级锁</li>
+<li>重量级锁</li>
 </ol>
 
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                  
-                    <span class="date">2018/4/9</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='Java%E7%BC%96%E7%A8%8B%E6%80%9D%E6%83%B3.html'>Java编程思想</a></span>
-          				   
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
+<p>偏向锁是可以取消的，根据系统的实际使用情况。因为可能有的场景，系统中资源冲突严重，那么偏向锁就没有什么必要存在了，反而增加处理逻辑，更慢。</p>
 
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-			<div class="article">
-                <a class="clearlink" href="15232855256347.html">
-                
-                  <h1>Java垃圾回收机制</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<ol>
-<li>了解Java垃圾回收机制的基本概念</li>
-<li>了解Java垃圾回收机制的坑点。</li>
-<li>进一步了解一些深入的原理等等</li>
+<blockquote>
+<p>按照锁的实现方式分</p>
+</blockquote>
+
+<ol>
+<li>乐观锁</li>
+<li>悲观锁</li>
 </ol>
 
+<p>&emsp;&emsp;在Java中没有特地讲乐观锁，悲观锁。但实际上这两种锁是可以和Java中提到的概念一一对应。</p>
+
+<blockquote>
+<p>按照试用场景分</p>
+</blockquote>
+
+<ol>
+<li>可重入锁--ReentranLock</li>
+<li>读写锁--ReentranReadWriteLock</li>
+</ol>
+
+<p>&emsp;&emsp;这两种锁是可以直接和Java中的实现对应的。</p>
+
+<blockquote>
+<p>其他</p>
+</blockquote>
+
+<ul>
+<li>volatile和synchronized</li>
+</ul>
+
+<p>&emsp;&emsp;这两个关键字是Java锁的基础（很多其他语言也有相同的使用）。例如可重入锁和读写锁其实都是对这两个关键词的应用，并不是另起炉灶。</p>
+
+<ul>
+<li>CAS操作</li>
+</ul>
+
+<p>&emsp;&emsp;CAS（Compare and swap）是一种乐观锁的操作方式。CAS操作保证了线程安全，同时没有对线程加锁。是一种常见的优化锁使用的选择。</p>
+
+<ul>
+<li>happens-before原则</li>
+</ul>
+
+<p>指令重排的相关概念。指的是按照编码逻辑的指令的执行顺序。A指令happens-beforeB指令。那么一个重要的原则是，判断是否可以重排的依据，并不是要求指令一定要按照物理顺序。只要重排后的指令执行结果和重排前一致就可以。</p>
+
+<h2 id="toc_2">1. Java中的几种锁</h2>
+
+<p>读写锁<br/>
+重入锁</p>
+
+<h2 id="toc_3">2. Java中的锁的状态</h2>
+
+<p><img src="media/15474517017096/15474518978931.jpg" alt="" style="width:608px;"/></p>
+
+<p><img src="media/15474517017096/15476277957012.jpg" alt="" style="width:595px;"/></p>
+
+<p>锁会升级不会降级。越“轻”的锁，效率越高。但是越不好解决同步的问题（不能解决的时候就要升级）。<br/>
+偏向锁就是偏向于拿锁的线程通常是同一个，这样就可以提高效率。</p>
+
+<p><img src="media/15474517017096/15476312618712.jpg" alt="" style="width:595px;"/></p>
+
+<p>Q:红框处为什么要检查线程是否活着？<br/>
+A:线程1执行完毕后,不会主动去释放偏向锁。</p>
+
+<p>Q:偏向锁是如何升级成轻量级锁的？<br/>
+A:当另一个线程获取偏向锁失败，就升级成轻量级锁。轻量级锁的特点是自旋。</p>
+
+<p>Q:轻量级锁是如何升级成重量级锁的？<br/>
+A:轻量级锁自旋到达一定条件就会升级成重量级锁。但是具体条件是啥，没有找到相关资料。</p>
+
+<p>总结，获取不到锁就会往上膨胀。直到重量级锁。</p>
+
+<p>通俗来讲就是：</p>
+
+<p>偏向锁：仅有一个线程进入临界区<br/>
+轻量级锁：多个线程交替进入临界区<br/>
+重量级锁：多个线程同时进入临界区</p>
+
+<p><strong>问题</strong><br/>
+轻量级锁是自旋的，那么根据什么条件判断会膨胀成重量级锁</p>
+
+<h2 id="toc_4">3. volatile</h2>
+
+<p>使用volatile修饰变量，可以让这个变量在各个线程之间永远显示的是最新的值。为什么会有这么一个说法？每一个线程有自己的独立缓存。对于一个共享变量，在多线程并发的情况下，可能导致自己的缓存和实际的值不等。而volaile的出现，使得线程自己的缓存无效，每一次都需要去内存中读取最新的值。<br/>
+volatile可以看做轻量的synchronized。可以减少锁的程度。提高性能。</p>
+
+<h3 id="toc_5">3. volatile实现原理的相关知识</h3>
+
+<ol>
+<li>happens-before原则，涉及到volatile的底层实现原理。</li>
+</ol>
+
+<h3 id="toc_6">4. happens-before原则</h3>
+
+<p><img src="media/15474517017096/15476423173260.jpg" alt="" style="width:598px;"/></p>
+
+<p>所以本质的意思就是指令重排不能影响计算结果。只要计算结果一样，虽然有happens-before关系，也不要求一定要按照happens-before的顺序执行<br/>
+<img src="media/15474517017096/15476476024054.jpg" alt="" style="width:592px;"/></p>
+
+<p><img src="media/15474517017096/15476561471183.jpg" alt="" style="width:593px;"/></p>
+
+<h3 id="toc_7">volatile的经典应用-单例模式</h3>
+
+<p><img src="media/15474517017096/15476573891697.jpg" alt="" style="width:601px;"/></p>
+
+<h3 id="toc_8">wait()和notify()</h3>
+
+<ol>
+<li><p>作用</p></li>
+<li><p>好处。<br/>
+wait() 等待。相比一个死循环，定期休眠来判断是否结束要好的多，因为定期休眠可能会导致响应不及时。</p></li>
+<li><p>notify() 之后，并不是对应的wait会立刻结束</p></li>
+</ol>
+
+<p><img src="media/15474517017096/15476614597968.jpg" alt="" style="width:597px;"/></p>
+
+<h3 id="toc_9">ThreadLocal</h3>
+
+<h3 id="toc_10">线程池技术</h3>
+
+<p>几种线程池的创建方式，以及适应的场景。</p>
+
+<h3 id="toc_11">锁和synchronized的关系</h3>
+
+<p><img src="media/15474517017096/15476947781313.jpg" alt="" style="width:599px;"/></p>
+
+<p><img src="media/15474517017096/15476953591669.jpg" alt="" style="width:604px;"/></p>
+
+<h3 id="toc_12">ReentrantLock 和 ReetranReadWriteLock 可重入锁和可重入读写锁</h3>
+
+<p>可重入的意思是可以被同一个线程重复加锁。<br/>
+读写锁适用于生产者消费者场景。分为读锁和写锁。</p>
+
+<h3 id="toc_13">Object的wait，notify和condition的await，signal</h3>
+
+<p><img src="media/15474517017096/15477091389472.jpg" alt="" style="width:958px;"/></p>
+
+<h3 id="toc_14">ConcurrentHashMap分析</h3>
+
+<p>使用了锁来保证线程安全。使用了锁分段技术。减少了锁的冲突，从而提高了效率。</p>
+
+<h3 id="toc_15">ConcurrentLinkedQueue分析</h3>
+
+<p><del>学习其特别的尾节点定义方式。可以很大程度减少冲突。其使用CAS操作来避免冲突。但是其特别的尾节点定义方式，使得CAS操作不那么容易失败。</del></p>
+
+<p><img src="media/15474517017096/15477115519893.jpg" alt="" style="width:603px;"/></p>
+
+<p>出队也有相似的逻辑</p>
+
+<h3 id="toc_16">Java中的阻塞队列</h3>
+
+<p><img src="media/15474517017096/15477148083195.jpg" alt="" style="width:418px;"/></p>
+
+<h4 id="toc_17">DelayQueue</h4>
+
+<p>可以支持延时获取元素的队列，要求队列中的元素必须实现Delayed接口</p>
+
+<ul>
+<li>经典场景</li>
+</ul>
+
+<p>缓存系统</p>
+
+<p>定时任务调度</p>
+
+<h4 id="toc_18">SynchronousQueue</h4>
+
+<p><img src="media/15474517017096/15477162270641.jpg" alt="" style="width:600px;"/></p>
+
+<h4 id="toc_19">LinkedBlockingQueue</h4>
+
+<p>用在工作窃取模式</p>
+
+<h4 id="toc_20">CountDownLatch join的升级版</h4>
+
+<h3 id="toc_21">Semaphore</h3>
+
+<p><img src="media/15474517017096/15477221892006.jpg" alt="" style="width:601px;"/></p>
+
+<h3 id="toc_22">线程池</h3>
+
+<ol>
+<li>队列模型的选取
+<ol>
+<li>建议使用有界队列</li>
+<li>建议和系统的核心数挂钩？？</li>
+</ol></li>
+<li>饱和策略的选取和试用场景</li>
+</ol>
+
+<h3 id="toc_23">乐观锁，悲观锁</h3>
+
+<p>乐观锁就是CAS操作</p>
+
+<p>悲观锁就是synchronized</p>
+
+<p>乐观锁认为读大于写，不用一下子就把线程锁了。而是尝试一下。</p>
+
+<p>悲观锁认为系统冲突严重，必须锁。</p>
+
+<p>CAS竞争锁<br/>
+CAS操作<br/>
+偏向锁<br/>
+轻量级锁<br/>
+乐观锁<br/>
+悲观锁<br/>
+volatile 和 ++<br/>
+threadLocal<br/>
+threadpool<br/>
+condition 是和lock相配合的<br/>
+相比wait，notify是和synchronized配合的</p>
+
+<p>锁分段技术，代表concurrentHashMap</p>
+
+<p>各种queue的特点，区别，和使用场景。最好有范例。各种queue的试用场景</p>
+
+<p>线程池</p>
+
+<p>结合阿里的java开发手册中关于线程池的部分结合理解</p>
+
+<p>工作线程worker</p>
+
                         
                       </div>
                   </div>
@@ -227,10 +358,8 @@
                 <div class="read-more clearfix">
                   <div class="more-left left">
                   
-                    <span class="date">2018/4/9</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='Java%E7%BC%96%E7%A8%8B%E6%80%9D%E6%83%B3.html'>Java编程思想</a></span>
+                    <span class="date">2019/1/20</span>
+                    
           				   
                   </div>
                   <div class="more-right right">
@@ -296,8 +425,6 @@
                 <div class="side-content">
 
       	<p class="cat-list">
-        
-            <a href="%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0.html"><strong>读书笔记</strong></a>
          
         </p>
 
@@ -314,19 +441,7 @@
 	      
 		      
 			      <li class="post">
-			        <a href="15463503830144.html">可伸缩服务架构：框架与中间件 —— 读书笔记</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="15232874346595.html">为什么需要内部类-P204</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="15232855256347.html">Java垃圾回收机制</a>
+			        <a href="15479962056718.html">Java并发编程</a>
 			      </li>
 		     
 		   
