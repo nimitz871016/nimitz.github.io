@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[网站测试]]></title>
+  <link href="webtest/atom.xml" rel="self"/>
+  <link href="webtest/"/>
+  <updated>2019-01-20T21:50:06+08:00</updated>
+  <id>webtest/</id>
+  <author>
+    <name><![CDATA[]]></name>
+    
+  </author>
+  <generator uri="http://www.mweb.im">MWeb</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[可伸缩服务架构：框架与中间件 —— 读书笔记]]></title>
+    <link href="webtest/15463503830144.html"/>
+    <updated>2019-01-01T21:46:23+08:00</updated>
+    <id>webtest/15463503830144.html</id>
+    <content type="html"><![CDATA[
+<h2 id="toc_0">第一章 如何设计一款永不重复的高性能分布式发号器</h2>
+
+<ul>
+<li><p>进度: 100%</p></li>
+<li><p>遗留问题：</p>
+<ol>
+<li>java中各种锁的深入学习</li>
+<li>Spring boot 怎么还加tomcat</li>
+<li>微服务的概念</li>
+<li>CAS概念</li>
+</ol></li>
+<li><p>学习心得：</p>
+<ol>
+<li>学习了发号器的原理和在分布式条件下，从各个方面考虑各种方案的优势和劣势。对横向扩展需要考虑的要素有了初步的认识</li>
+</ol></li>
+</ul>
+
+<h2 id="toc_1">第二章 可灵活扩展的消息队列框架的设计与实现</h2>
+
+<ul>
+<li><p>进度：50%</p></li>
+<li><p>遗留问题</p>
+<ol>
+<li>对kafka的基本使用还不熟练，需要熟练使用，并明白最基本的概念。</li>
+<li>使用python API，调用kafka，进行练习，加深理解。</li>
+<li>重新看本章。</li>
+</ol></li>
+</ul>
+
+<h2 id="toc_2">第三章 轻量级的数据库分库分表架构与框架</h2>
+
+<ul>
+<li><p>进度： 30%</p></li>
+<li><p>遗留问题</p>
+<ul>
+<li>对数据库的分表分库的概念还不是很熟练，看起代码来很吃力</li>
+<li>对文中提到的Spring配置有些陌生，无法建立一个比较好的理解方式。</li>
+</ul></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>
