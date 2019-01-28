@@ -4,7 +4,7 @@
   <title><![CDATA[沧海一粟No.1]]></title>
   <link href="webtest/atom.xml" rel="self"/>
   <link href="webtest/"/>
-  <updated>2019-01-21T00:16:11+08:00</updated>
+  <updated>2019-01-28T16:08:55+08:00</updated>
   <id>webtest/</id>
   <author>
     <name><![CDATA[]]></name>
@@ -161,6 +161,62 @@ public List&lt;List&lt;Integer&gt;&gt; combinationSum(int[] candidates, int targ
 
 
 
+</code></pre>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[55. 跳跃游戏]]></title>
+    <link href="webtest/15486626415496.html"/>
+    <updated>2019-01-28T16:04:01+08:00</updated>
+    <id>webtest/15486626415496.html</id>
+    <content type="html"><![CDATA[
+<p>给定一个非负整数数组，你最初位于数组的第一个位置。</p>
+
+<p>数组中的每个元素代表你在该位置可以跳跃的最大长度。</p>
+
+<p>判断你是否能够到达最后一个位置。</p>
+
+<pre><code class="language-text">示例 1:
+
+输入: [2,3,1,1,4]
+输出: true
+解释: 从位置 0 到 1 跳 1 步, 然后跳 3 步到达最后一个位置。
+示例 2:
+
+输入: [3,2,1,0,4]
+输出: false
+解释: 无论怎样，你总会到达索引为 3 的位置。但该位置的最大跳跃长度是 0 ， 所以你永远不可能到达最后一个位置。
+</code></pre>
+
+<p>解题思路：</p>
+
+<p>本道题用贪心。贪心的策略很巧妙。第一次独立没有想出来。<br/>
+贪心的策略：</p>
+
+<ol>
+<li>每一步都选择最大的可能去接近结果。</li>
+<li>那么遍历一遍，如果最大的结果超过了最后一个位置。则说明最后一个位置是可达的，也就是返回true。</li>
+</ol>
+
+<p>贪心的巧妙在于，我们不在意到底是如何选择的，只在乎是否可达。</p>
+
+<p>代码：</p>
+
+<pre><code class="language-text"> public boolean canJump(int[] nums) {
+    int result = 0;
+    if (nums.length == 1){ //注意边界，最后一个台阶的值是没有意义的。因此只有一个台阶的时候，永远是true
+        return true;
+    }
+    for (int i = 0; i &lt; nums.length; i++){
+        if (i &gt; result || (nums[i] == 0 &amp;&amp; i == result)){
+            break;
+        }
+        result = Math.max(result, nums[i] + i);
+    }
+    return result &gt;= nums.length - 1;
+}
 </code></pre>
 
 ]]></content>
@@ -417,6 +473,8 @@ condition 是和lock相配合的<br/>
 <p>结合阿里的java开发手册中关于线程池的部分结合理解</p>
 
 <p>工作线程worker</p>
+
+<p>threadLocal 和 volatile变量</p>
 
 ]]></content>
   </entry>

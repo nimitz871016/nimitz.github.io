@@ -303,6 +303,84 @@ public List&lt;List&lt;Integer&gt;&gt; combinationSum(int[] candidates, int targ
                 </div>
               </div><!-- article -->
         
+			<div class="article">
+                <a class="clearlink" href="15486626415496.html">
+                
+                  <h1>55. 跳跃游戏</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<p>给定一个非负整数数组，你最初位于数组的第一个位置。</p>
+
+<p>数组中的每个元素代表你在该位置可以跳跃的最大长度。</p>
+
+<p>判断你是否能够到达最后一个位置。</p>
+
+<pre><code class="language-text">示例 1:
+
+输入: [2,3,1,1,4]
+输出: true
+解释: 从位置 0 到 1 跳 1 步, 然后跳 3 步到达最后一个位置。
+示例 2:
+
+输入: [3,2,1,0,4]
+输出: false
+解释: 无论怎样，你总会到达索引为 3 的位置。但该位置的最大跳跃长度是 0 ， 所以你永远不可能到达最后一个位置。
+</code></pre>
+
+<p>解题思路：</p>
+
+<p>本道题用贪心。贪心的策略很巧妙。第一次独立没有想出来。<br/>
+贪心的策略：</p>
+
+<ol>
+<li>每一步都选择最大的可能去接近结果。</li>
+<li>那么遍历一遍，如果最大的结果超过了最后一个位置。则说明最后一个位置是可达的，也就是返回true。</li>
+</ol>
+
+<p>贪心的巧妙在于，我们不在意到底是如何选择的，只在乎是否可达。</p>
+
+<p>代码：</p>
+
+<pre><code class="language-text"> public boolean canJump(int[] nums) {
+    int result = 0;
+    if (nums.length == 1){ //注意边界，最后一个台阶的值是没有意义的。因此只有一个台阶的时候，永远是true
+        return true;
+    }
+    for (int i = 0; i &lt; nums.length; i++){
+        if (i &gt; result || (nums[i] == 0 &amp;&amp; i == result)){
+            break;
+        }
+        result = Math.max(result, nums[i] + i);
+    }
+    return result &gt;= nums.length - 1;
+}
+</code></pre>
+
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                  
+                    <span class="date">2019/1/28</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='LeetCode.html'>LeetCode</a></span>
+          				   
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
               
 
 
@@ -329,7 +407,7 @@ public List&lt;List&lt;Integer&gt;&gt; combinationSum(int[] candidates, int targ
                 <div class="site-a-logo"><img src="asset/img/icon.jpg" /></div>
             
                 <h1>沧海一粟No.1</h1>
-                <div class="site-des">沧海一粟No.1的个人小站</div>
+                <div class="site-des">如果选择了远方，便只顾风雨兼程</div>
                 <div class="social">
 
 
@@ -392,6 +470,12 @@ public List&lt;List&lt;Integer&gt;&gt; combinationSum(int[] candidates, int targ
 		  
 		      
 			      <li class="post">
+			        <a href="15486626415496.html">55. 跳跃游戏</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="15479962056718.html">Java并发编程</a>
 			      </li>
 		     
@@ -403,10 +487,6 @@ public List&lt;List&lt;Integer&gt;&gt; combinationSum(int[] candidates, int targ
 		     
 		  
 		      
-			      <li class="post">
-			        <a href="15480007861723.html">RAC中的宏定义魔法</a>
-			      </li>
-		     
 		  
 		      
 		   
