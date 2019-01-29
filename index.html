@@ -264,20 +264,6 @@ public List&lt;List&lt;Integer&gt;&gt; combinationSum(int[] candidates, int targ
     findOne(candidates, target, 0, new ArrayList&lt;&gt;(), ans);
     return ans;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 </code></pre>
 
                         
@@ -780,302 +766,373 @@ server should be down...
                         
                         	<p><a href="https://onevcat.com/2014/01/black-magic-in-macro/">https://onevcat.com/2014/01/black-magic-in-macro/</a></p>
 
-<ol>
-<li><h1 id="toc_0">的作用</h1></li>
-<li><h2 id="toc_1">的作用</h2></li>
-<li><p><strong>VA_ARGS</strong>的作用</p></li>
-<li><p>RAC()</p></li>
-</ol>
+<h2 id="toc_0">1. #的作用</h2>
 
-<p>4.1 函数功能</p>
+<h2 id="toc_1">2. ##的作用</h2>
+
+<h2 id="toc_2">3. <strong>VA_ARGS</strong>的作用</h2>
+
+<h2 id="toc_3">4. RAC()</h2>
+
+<h3 id="toc_4">4.1 函数功能</h3>
 
 <p>RAC(),有两种调用方式，一个是两个参数，一个是三个参数的。函数的第一个参数代表着要绑定的对象，第二个参数要绑定的对象的属性，第三个参数代表当追踪的结果为nil时，应该赋予的值。</p>
 
-<p>这里就有一个很有趣的问题，ReactiveCocoa是如何做到用一个函数宏，自动识别参数个数，并调用正确的函数的呢？<br/>
-4.2 实现解析</p>
+<p>这里就有一个很有趣的问题，ReactiveCocoa是如何做到用一个函数宏，自动识别参数个数，并调用正确的函数的呢？</p>
+
+<h3 id="toc_5">4.2 实现解析</h3>
 
 <p>我们通过一个具体的例子来解析RAC()的宏定义魔法。我们在程序中如此调用：<br/>
 RAC(self.startButton, enabled) = RACObserve(self.viewModel, canStartTimer);</p>
 
-<p>我们来看下，RAC中的宏定义魔法，干了些什么。RAC(TARGET,...)第一步被解析为:<br/>
-RAC(TARGET,...) metamacro_if_eq(1, metamacro_argcount(__VA_ARGS__)) \<br/>
-        (RAC_(TARGET, <strong>VA_ARGS</strong>, nil)) \<br/>
-        (RAC_(TARGET, <strong>VA_ARGS</strong>))</p>
+<p>我们来看下，RAC中的宏定义魔法，干了些什么。RAC(TARGET,...)第一步被解析为:</p>
 
-<p>其中,TARGET为self.startButton,那么metamacro_argcount(__VA_ARGS__) 从函数的名字，我们知道其作用是获取参数的个数。我们来看下具体是怎样获得参数的个数的。</p>
-
-<p>本例中为<br/>
-metamacro_argcount(enabled)<br/>
-定义为</p>
-
-<h1 id="toc_2">define metamacro_argcount(...) \</h1>
-
-<pre><code class="language-text">    metamacro_at(20, __VA_ARGS__, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1)
+<pre><code class="language-text">RAC(TARGET,...) metamacro_if_eq(1, metamacro_argcount(__VA_ARGS__)) \
+        (RAC_(TARGET, __VA_ARGS__, nil)) \
+        (RAC_(TARGET, __VA_ARGS__))
 </code></pre>
 
-<p>本例中为<br/>
-metamacro_at(20,enabled,20,19,18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1)</p>
-
-<p>其中<br/>
-metamacro_at(20, <strong>VA_ARGS</strong>, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1)<br/>
-的定义为</p>
-
-<h1 id="toc_3">define metamacro_at(N, ...) \</h1>
-
-<pre><code class="language-text">    metamacro_concat(metamacro_at, N)(__VA_ARGS__)
-</code></pre>
-
-<p>其中<br/>
-metamacro_concat(metamacro_at, N)(__VA_ARGS__)<br/>
-其中<br/>
-metamacro_concat 的定义为</p>
-
-<h1 id="toc_4">define metamacro_concat(A, B) \</h1>
-
-<pre><code class="language-text">    metamacro_concat_(A, B)
-</code></pre>
-
-<p>--&gt;</p>
-
-<h1 id="toc_5">define metamacro_concat_(A, B) A ## B</h1>
-
-<p>因此，逆推回去<br/>
-metamacro_concat(metamacro_at, N)(__VA_ARGS__)<br/>
---&gt;<br/>
-metamacro_atN(__VA_ARGS)<br/>
---&gt;<br/>
-metamacro_at20(__VA_ARGS)<br/>
-本例中为 <br/>
-metamacro_at20(enabled，20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1)<br/>
-拼接处的函数metamacro_at20，其定义为</p>
-
-<h1 id="toc_6">define metamacro_at20(_0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16, _17, _18, _19, ...) metamacro_head(__VA_ARGS__)</h1>
+<p>其中,TARGET为<code>self.startButton</code>,那么<code>metamacro_argcount(__VA_ARGS__)</code> 从函数的名字，我们知道其作用是获取参数的个数。我们来看下具体是怎样获得参数的个数的。</p>
 
 <p>本例中为</p>
 
-<p>metamacro_head(1)</p>
+<pre><code class="language-text">metamacro_argcount(enabled)
+</code></pre>
 
-<p>其中<br/>
-metamacro_head(__VA_ARGS__)<br/>
-其定义为<br/>
-metamacro_head_(__VA_ARGS__, 0)</p>
+<p>定义为</p>
+
+<pre><code class="language-text">#define metamacro_argcount(...) \
+        metamacro_at(20, __VA_ARGS__, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1)
+</code></pre>
+
+<p>本例中为</p>
+
+<pre><code class="language-text">metamacro_at(20,enabled,20,19,18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1)
+</code></pre>
+
+<p>其中</p>
+
+<pre><code class="language-text">metamacro_at(20, __VA_ARGS__, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1)
+</code></pre>
+
+<p>的定义为</p>
+
+<pre><code class="language-text">#define metamacro_at(N, ...) \
+        metamacro_concat(metamacro_at, N)(__VA_ARGS__)
+</code></pre>
+
+<p>其中</p>
+
+<pre><code class="language-text">metamacro_concat(metamacro_at, N)(__VA_ARGS__)
+</code></pre>
+
+<p>其中</p>
+
+<pre><code class="language-text">metamacro_concat
+</code></pre>
+
+<p>的定义为</p>
+
+<pre><code class="language-text">#define metamacro_concat(A, B) \
+        metamacro_concat_(A, B)
+--&gt;
+#define metamacro_concat_(A, B) A ## B
+</code></pre>
+
+<p>因此，逆推回去</p>
+
+<pre><code class="language-text">metamacro_concat(metamacro_at, N)(__VA_ARGS__)
+--&gt;
+metamacro_atN(__VA_ARGS)
+--&gt;
+metamacro_at20(__VA_ARGS)
+</code></pre>
+
+<p>本例中为 </p>
+
+<pre><code class="language-text">metamacro_at20(enabled，20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1)
+拼接处的函数metamacro_at20
+</code></pre>
+
+<p>，其定义为</p>
+
+<pre><code class="language-text">#define metamacro_at20(_0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16, _17, _18, _19, ...) metamacro_head(__VA_ARGS__)
+</code></pre>
+
+<p>本例中为</p>
+
+<pre><code class="language-text">metamacro_head(1)
+</code></pre>
+
+<p>其中</p>
+
+<pre><code class="language-text">metamacro_head(__VA_ARGS__)
+</code></pre>
+
+<p>其定义为</p>
+
+<pre><code class="language-text">metamacro_head_(__VA_ARGS__, 0)
+</code></pre>
 
 <p>封装了一层，真实为</p>
 
-<h1 id="toc_7">define metamacro_head_(FIRST, ...) FIRST</h1>
-
-<p>本例中为 1</p>
-
-<p>也就是metamacro_argcount(enabled) 的结果为 1。</p>
-
-<p>回到RAC的第一层定义，现在的解析式为<br/>
-metamacro_if_eq(1, 1) \</p>
-
-<pre><code class="language-text">    (RAC_(TARGET, __VA_ARGS__, nil)) \
-
-    (RAC_(TARGET, __VA_ARGS__))
+<pre><code class="language-text">#define metamacro_head_(FIRST, ...) FIRST
 </code></pre>
 
-<p>下面分析metamacro_if_eq<br/>
-,其定义为</p>
+<p>本例中为 <code>1</code></p>
 
-<h1 id="toc_8">define metamacro_if_eq(A, B) \</h1>
+<p>也就是<code>metamacro_argcount(enabled)</code> 的结果为 1。</p>
 
-<pre><code class="language-text">    metamacro_concat(metamacro_if_eq, A)(B)
+<p>回到RAC的第一层定义，现在的解析式为</p>
+
+<pre><code class="language-text">metamacro_if_eq(1, 1) \
+
+        (RAC_(TARGET, __VA_ARGS__, nil)) \
+
+        (RAC_(TARGET, __VA_ARGS__))
 </code></pre>
 
-<p>其中A写死为1，B本例中计算结果为1，本例中变为<br/>
-metamacro_if_eq(1,1) (RAC_(TARGET, <strong>VA_ARGS</strong>, nil)) (RAC_(TARGET, <strong>VA_ARGS</strong>))<br/>
-拼接结果为:<br/>
-metamacro_if_eq1(B)<br/>
-本例中为:<br/>
-metamacro_if_eq1(1)<br/>
-其定义为:</p>
+<p>下面分析<code>metamacro_if_eq</code>,其定义为</p>
 
-<h1 id="toc_9">define metamacro_if_eq1(VALUE) metamacro_if_eq0(metamacro_dec(VALUE))</h1>
+<pre><code class="language-text">#define metamacro_if_eq(A, B) \
+        metamacro_concat(metamacro_if_eq, A)(B)
+</code></pre>
+
+<p>其中A写死为1，B本例中计算结果为1，本例中变为</p>
+
+<pre><code class="language-text">metamacro_if_eq(1,1) (RAC_(TARGET, __VA_ARGS__, nil)) (RAC_(TARGET, __VA_ARGS__))
+</code></pre>
+
+<p>拼接结果为:</p>
+
+<pre><code class="language-text">metamacro_if_eq1(B)
+</code></pre>
+
+<p>本例中为:</p>
+
+<pre><code class="language-text">metamacro_if_eq1(1)
+</code></pre>
+
+<p>其定义为:</p>
+
+<pre><code class="language-text">#define metamacro_if_eq1(VALUE) metamacro_if_eq0(metamacro_dec(VALUE))
+</code></pre>
 
 <p>其中</p>
 
-<h1 id="toc_10">define metamacro_dec(VAL) \</h1>
-
-<pre><code class="language-text">    metamacro_at(VAL, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19)
+<pre><code class="language-text">#define metamacro_dec(VAL) \
+        metamacro_at(VAL, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19)
 </code></pre>
 
-<p>本例中为：<br/>
-metamacro_at(1,-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19)<br/>
-拼接后为（metamacro_at的作用上面已经讲过了）<br/>
-metamacro_at1(-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19)<br/>
-其定义为</p>
+<p>本例中为：</p>
 
-<h1 id="toc_11">define metamacro_at1(_0, ...) metamacro_head(__VA_ARGS__)</h1>
+<pre><code class="language-text">metamacro_at(1,-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19)
+</code></pre>
 
-<p>--&gt; metamacro_head(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19)</p>
+<p>拼接后为（metamacro_at的作用上面已经讲过了）</p>
 
-<p>--&gt; metamacro_head_(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 0)</p>
+<pre><code class="language-text">metamacro_at1(-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19)
+</code></pre>
 
-<p>--&gt; 0</p>
+<p>其定义为</p>
 
-<p>--&gt; 合并</p>
+<pre><code class="language-text">#define metamacro_at1(_0, ...) metamacro_head(__VA_ARGS__)
 
-<p>metamacro_if_eq0（0）</p>
+--&gt; metamacro_head(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19)
+
+--&gt; metamacro_head_(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 0)
+
+--&gt; 0
+
+--&gt; 合并
+
+metamacro_if_eq0（0）
+</code></pre>
 
 <p>其中</p>
 
-<h1 id="toc_12">define metamacro_if_eq0(VALUE) \</h1>
+<pre><code class="language-text">#define metamacro_if_eq0(VALUE) \
 
-<pre><code class="language-text">metamacro_concat(metamacro_if_eq0_, VALUE)
+    metamacro_concat(metamacro_if_eq0_, VALUE)
 </code></pre>
 
-<p>本例中为metamacro_if_eq0_0。<br/>
+<p>本例中为<code>metamacro_if_eq0_0</code>。<br/>
 回到原式，与后面的部分拼接结果为</p>
 
-<h1 id="toc_13">define RAC(TARGET, ...) \</h1>
-
-<pre><code class="language-text">metamacro_if_eq(1, metamacro_argcount(__VA_ARGS__)) \
-    (RAC_(TARGET, __VA_ARGS__, nil)) \
-    (RAC_(TARGET, __VA_ARGS__))
+<pre><code class="language-text">#define RAC(TARGET, ...) \
+    metamacro_if_eq(1, metamacro_argcount(__VA_ARGS__)) \
+        (RAC_(TARGET, __VA_ARGS__, nil)) \
+        (RAC_(TARGET, __VA_ARGS__))
+        
+--&gt; metamacro_if_eq0_0 (RAC_(TARGET, __VA_ARGS__, nil)) (RAC_(TARGET, __VA_ARGS__))
 </code></pre>
 
-<p>--&gt; metamacro_if_eq0_0 (RAC_(TARGET, <strong>VA_ARGS</strong>, nil)) (RAC_(TARGET, <strong>VA_ARGS</strong>))<br/>
-metamacro_if_eq0_0定义为</p>
+<p><code>metamacro_if_eq0_0</code>定义为</p>
 
-<h1 id="toc_14">define metamacro_if_eq0_0(...) <strong>VA_ARGS</strong> metamacro_consume_</h1>
+<pre><code class="language-text">#define metamacro_if_eq0_0(...) __VA_ARGS__ metamacro_consume_
+</code></pre>
 
-<p>在本例中化为<br/>
-(RAC_(TARGET, <strong>VA_ARGS</strong>, nil)) metamacro_consume_ (RAC_(TARGET, <strong>VA_ARGS</strong>))<br/>
---&gt; (RAC_(TARGET, <strong>VA_ARGS</strong>, nil))<br/>
---&gt; (RAC_(self.startButton, enabled, nil))</p>
+<p>在本例中化为</p>
+
+<pre><code class="language-text">(RAC_(TARGET, __VA_ARGS__, nil)) metamacro_consume_ (RAC_(TARGET, __VA_ARGS__))
+--&gt; (RAC_(TARGET, __VA_ARGS__, nil))
+--&gt; (RAC_(self.startButton, enabled, nil))
+</code></pre>
 
 <p>ps:</p>
 
-<p>我们再看下，如果参数不为1的情况（这里的1的计数排除了第一项，在本例中排除的是self.startButton）。</p>
+<p>我们再看下，如果参数不为1的情况（这里的1的计数排除了第一项，在本例中排除的是<code>self.startButton</code>）。</p>
 
-<p>如果是不止两个参数的情况那么,设参数个数为x，x&lt;&gt;1,则原式化为<br/>
-metamacro_if_eq(1,x) (RAC_(TARGET, <strong>VA_ARGS</strong>, nil)) (RAC_(TARGET, <strong>VA_ARGS</strong>))</p>
+<p>如果是不止两个参数的情况那么,设参数个数为x，x&lt;&gt;1,则原式化为</p>
 
-<p>--&gt; metamacro_if_eq1(x)</p>
+<pre><code class="language-text">metamacro_if_eq(1,x) (RAC_(TARGET, __VA_ARGS__, nil)) (RAC_(TARGET, __VA_ARGS__))
 
-<p>--&gt; metamacro_at(x,-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19)</p>
+--&gt; metamacro_if_eq1(x)
+
+--&gt; metamacro_at(x,-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19)
+
+</code></pre>
 
 <p>这里假设x为2(注意这里x只要不是取1，宏定义展开都是一样的,而在RAC()这个宏，x只可能取1或2)，则</p>
 
-<p>--&gt; metamacro_at2(-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19)</p>
+<pre><code class="language-text">--&gt; metamacro_at2(-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19)
 
-<p>--&gt; metamacro_head(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19)</p>
+--&gt; metamacro_head(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19)
 
-<p>--&gt; 3</p>
+--&gt; 3
 
-<p>--&gt; metamacro_if_eq0_3(RAC_(TARGET, <strong>VA_ARGS</strong>, nil)) (RAC_(self.startButton, enabled, nil))</p>
-
-<p>由 metamacro_if_eq0_3()的定义，前面一项被吃掉了，所以原式只剩了后一项</p>
-
-<p>--&gt; (RAC_(self.startButton, enabled, nil))<br/>
-至此，由RAC(...)至RAC_(...)的解析完毕！这个宏的作用就是根据参数的个数选择调用函数式子的不同，如果只有1个参数的，就调用(RAC_(self.startButton, enabled, nil))，如果有多个参数的就调用(RAC_(TARGET, <strong>VA_ARGS</strong>))。</p>
-
-<ol>
-<li>RACObserve()</li>
-</ol>
-
-<p>5.1 函数的功能</p>
-
-<p>让我们再看下4.2中提到的例子<br/>
-RAC(self.startButton, enabled) = RACObserve(self.viewModel, canStartTimer);<br/>
-等式的左边的意思是我关注的是self.startButton的enabled属性，我需要将其与self.viewModel的canStartTimer属性绑定起来。那么右边实际上是个KVO。一旦self.viewModel的canStartTimer属性发生变化，self.startButton的enabled相应的发生变化。<br/>
-5.2 函数解析</p>
-
-<p>让我们看下ReactiveCocoa是怎么做到的。<br/>
-我们的例子是RACObserve(self.viewModel, canStartTimer);<br/>
-RACObserve()的定义是</p>
-
-<h1 id="toc_15">define RACObserve(TARGET, KEYPATH) \</h1>
-
-<pre><code class="language-text">[(id)(TARGET) rac_valuesForKeyPath:@keypath(TARGET, KEYPATH) observer:self]
+--&gt; metamacro_if_eq0_3(RAC_(TARGET, __VA_ARGS__, nil)) (RAC_(self.startButton, enabled, nil))
 </code></pre>
 
-<p>因此，在本例中解析为<br/>
-[(id)(self.viewModel) rac_valuesForKeyPath:@keypath(self.viewModel, canStartTimer) observer:self]<br/>
-OK，原来是self.viewModel发送rac_valuesForKeyPath: observer:消息。等等,@keypath是什么鬼？别急，@keypath定义如下：</p>
+<p>由 <code>metamacro_if_eq0_3()</code>的定义，前面一项被吃掉了，所以原式只剩了后一项</p>
 
-<h1 id="toc_16">define keypath(...) \</h1>
+<pre><code class="language-text">--&gt; (RAC_(self.startButton, enabled, nil))
+</code></pre>
 
-<pre><code class="language-text">metamacro_if_eq(1, metamacro_argcount(__VA_ARGS__))(keypath1(__VA_ARGS__))(keypath2(__VA_ARGS__))
+<p>至此，由RAC(...)至RAC_(...)的解析完毕！这个宏的作用就是根据参数的个数选择调用函数式子的不同，如果只有1个参数的，就调用<code>(RAC_(self.startButton, enabled, nil))</code>，如果有多个参数的就调用<code>(RAC_(TARGET, __VA_ARGS__))</code>。</p>
+
+<h2 id="toc_6">5. RACObserve()</h2>
+
+<h3 id="toc_7">5.1. 函数的功能</h3>
+
+<p>让我们再看下4.2中提到的例子</p>
+
+<pre><code class="language-text">RAC(self.startButton, enabled) = RACObserve(self.viewModel, canStartTimer);
+</code></pre>
+
+<p>等式的左边的意思是我关注的是<code>self.startButton</code>的enabled属性，我需要将其与<code>self.viewModel</code>的canStartTimer属性绑定起来。那么右边实际上是个KVO。一旦<code>self.viewModel的canStartTimer</code>属性发生变化，<code>self.startButton</code>的enabled相应的发生变化。</p>
+
+<h3 id="toc_8">5.2 函数解析</h3>
+
+<p>让我们看下ReactiveCocoa是怎么做到的。<br/>
+我们的例子是<code>RACObserve(self.viewModel, canStartTimer)</code>;<br/>
+RACObserve()的定义是</p>
+
+<pre><code class="language-text">#define RACObserve(TARGET, KEYPATH) \
+    [(id)(TARGET) rac_valuesForKeyPath:@keypath(TARGET, KEYPATH) observer:self]
+</code></pre>
+
+<p>因此，在本例中解析为</p>
+
+<pre><code class="language-text">[(id)(self.viewModel) rac_valuesForKeyPath:@keypath(self.viewModel, canStartTimer) observer:self]
+</code></pre>
+
+<p>OK，原来是<code>self.viewModel</code>发送<code>rac_valuesForKeyPath: observer:</code>消息。等等,@keypath是什么鬼？别急，@keypath定义如下：</p>
+
+<pre><code class="language-text">#define keypath(...) \
+    metamacro_if_eq(1, metamacro_argcount(__VA_ARGS__))(keypath1(__VA_ARGS__))(keypath2(__VA_ARGS__))
 </code></pre>
 
 <p>哈哈，原来是我们之前解析过的宏，那么很明显了，如果keypath中的参数个数等于1，那么调用keypath1,否则调用keypath2。在本例中，参数是2。因此应该调用keypath2。</p>
 
-<h1 id="toc_17">define keypath2(OBJ, PATH) \</h1>
-
-<pre><code class="language-text">(((void)(NO &amp;&amp; ((void)OBJ.PATH, NO)), # PATH))
+<pre><code class="language-text">#define keypath2(OBJ, PATH) \
+    (((void)(NO &amp;&amp; ((void)OBJ.PATH, NO)), # PATH))
 </code></pre>
 
-<p>带入例子，化为<br/>
-(((void)(NO &amp;&amp; ((void)self.viewModel.canStartTimer, NO)), # canStartTimer))<br/>
-处理一下#操作符，化为<br/>
-(((void)(NO &amp;&amp; ((void)self.viewModel.canStartTimer, NO)), &quot;canStartTimer&quot;))</p>
+<p>带入例子，化为</p>
+
+<pre><code class="language-text">(((void)(NO &amp;&amp; ((void)self.viewModel.canStartTimer, NO)), # canStartTimer))
+</code></pre>
+
+<p>处理一下#操作符，化为</p>
+
+<pre><code class="language-text">(((void)(NO &amp;&amp; ((void)self.viewModel.canStartTimer, NO)), &quot;canStartTimer&quot;))
+</code></pre>
 
 <p>TODO: @keyPath宏未能解析其生效的原理。根据其注解，这个宏的作用是验证参数的合法性，最后返回的结果是一个NSString，即keypath<br/>
-因此，RACObserve()的作用就是发送rac_valuesForKeyPath: observer:消息。其中根据传入的keypath参数个数，做了一些处理。<br/>
-接下来，我们分析一下rac_valuesForKeyPath: observer:的作用<br/>
-其函数声明为：</p>
+因此，RACObserve()的作用就是发送<code>rac_valuesForKeyPath: observer:</code>消息。其中根据传入的keypath参数个数，做了一些处理。<br/>
+接下来，我们分析一下<code>rac_valuesForKeyPath: observer:</code>的作用</p>
 
-<ul>
-<li>(RACSignal *)rac_valuesForKeyPath:(NSString *)keyPath observer:(NSObject *)observer;<br/>
-定义为</li>
-<li>(RACSignal *)rac_valuesForKeyPath:(NSString *)keyPath observer:(NSObject *)observer {<br/>
-return [[[self rac_valuesAndChangesForKeyPath:keyPath options:NSKeyValueObservingOptionInitial observer:observer] reduceEach:<sup>id value, NSDictionary *change</sup> {<br/>
-    return value;<br/>
-}] setNameWithFormat:@&quot;RACObserve(%@, %@)&quot;, self.rac_description, keyPath];<br/>
-}<br/>
-6.@strongify, @ weakify &amp; @unsafeify</li>
-</ul>
+<p>其函数声明为：</p>
+
+<pre><code class="language-text">- (RACSignal *)rac_valuesForKeyPath:(NSString *)keyPath observer:(NSObject *)observer;
+定义为
+- (RACSignal *)rac_valuesForKeyPath:(NSString *)keyPath observer:(NSObject *)observer {
+    return [[[self rac_valuesAndChangesForKeyPath:keyPath options:NSKeyValueObservingOptionInitial observer:observer] reduceEach:^(id value, NSDictionary *change) {
+        return value;
+    }] setNameWithFormat:@&quot;RACObserve(%@, %@)&quot;, self.rac_description, keyPath];
+}
+</code></pre>
+
+<h2 id="toc_9">6.@strongify, @ weakify &amp; @unsafeify</h2>
 
 <p>@strongify的使用，必须在@weakify使用之后，是成对的操作<br/>
 6.1 @weakify</p>
 
 <p>weakify 定义如下</p>
 
-<h1 id="toc_18">define weakify(...) \</h1>
-
-<pre><code class="language-text">autoreleasepool {} \
-metamacro_foreach_cxt(rac_weakify_,, __weak, __VA_ARGS__)
+<pre><code class="language-text">#define weakify(...) \
+    autoreleasepool {} \
+    metamacro_foreach_cxt(rac_weakify_,, __weak, __VA_ARGS__)
 </code></pre>
 
-<p>我们的例子是<br/>
-@weakify(self)<br/>
---&gt; autoreleasepool {} \<br/>
-    metamacro_foreach_cxt(rac_weakify_,, __weak, self)<br/>
-注意这里有两个非法的地方，</p>
+<p>我们的例子是</p>
+
+<pre><code class="language-text">@weakify(self)
+--&gt; autoreleasepool {} \
+    metamacro_foreach_cxt(rac_weakify_,, __weak, self)
+</code></pre>
+
+<p>注意这里有两个非法的地方，</p>
 
 <ol>
 <li>rac_weakify_没有参数，这本来是非法的，但是此处编译器还不会检查，因此其真正的展开在之后，我们先列出其定义。</li>
-<li>metamacro_foreach_cxt(rac_weakify_,, __weak, self)中有两个连续逗号，第二个参数失踪了。这是放空的意思。注意，放空是可以的，但是要注意用法，否则编译器会报错。<br/>
-#define rac_weakify_(INDEX, CONTEXT, VAR) \<br/>
-CONTEXT <strong>typeof</strong>(VAR) metamacro_concat(VAR, _weak_) = (VAR);<br/>
-回到metamacro_foreach_cxt的定义为<br/>
-#define metamacro_foreach_cxt(MACRO, SEP, CONTEXT, ...) \<br/>
-    metamacro_concat(metamacro_foreach_cxt, metamacro_argcount(__VA_ARGS__))(MACRO, SEP, CONTEXT, <strong>VA_ARGS</strong>)<br/>
-本例中为<br/>
-metamacro_concat(metamacro_foreach_cxt, metamacro_argcount(__VA_ARGS__))(MACRO, SEP, CONTEXT, <strong>VA_ARGS</strong>)</li>
+<li>metamacro_foreach_cxt(rac_weakify_,, __weak, self)中有两个连续逗号，第二个参数失踪了。这是放空的意思。注意，放空是可以的，但是要注意用法，否则编译器会报错。</li>
 </ol>
 
-<p>--&gt; metamacro_argcount(__VA_ARGS__)的结果为1.<br/>
---&gt; metamacro_foreach_cxt1(MACRO, SEP, CONTEXT, <strong>VA_ARGS</strong>)<br/>
---&gt; metamacro_foreach_cxt1(rac_weakify_, SEP, __weak, self)<br/>
-metamacro_foreach_cxt1的定义为</p>
-
-<h1 id="toc_19">define metamacro_foreach_cxt1(MACRO, SEP, CONTEXT, _0) MACRO(0, CONTEXT, _0)</h1>
-
-<p>则<br/>
-metamacro_foreach_cxt1(rac_weakify_, SEP, <strong>weak, self)<br/>
---&gt; rac_weakify_(0,</strong>weak,self)<br/>
-rac_weakify_定义为</p>
-
-<h1 id="toc_20">define rac_weakify_(INDEX, CONTEXT, VAR) \</h1>
-
-<pre><code class="language-text">CONTEXT __typeof__(VAR) metamacro_concat(VAR, _weak_) = (VAR);
+<pre><code class="language-text">#define rac_weakify_(INDEX, CONTEXT, VAR) \
+    CONTEXT __typeof__(VAR) metamacro_concat(VAR, _weak_) = (VAR);
 </code></pre>
 
-<p>--&gt; __weak <strong>typeof</strong>(self) self_weak_ = (self);</p>
+<p>回到metamacro_foreach_cxt的定义为</p>
+
+<pre><code class="language-text">#define metamacro_foreach_cxt(MACRO, SEP, CONTEXT, ...) \
+        metamacro_concat(metamacro_foreach_cxt, metamacro_argcount(__VA_ARGS__))(MACRO, SEP, CONTEXT, __VA_ARGS__)
+</code></pre>
+
+<p>本例中为</p>
+
+<pre><code class="language-text">metamacro_concat(metamacro_foreach_cxt, metamacro_argcount(__VA_ARGS__))(MACRO, SEP, CONTEXT, __VA_ARGS__)
+
+--&gt; metamacro_argcount(__VA_ARGS__)的结果为1.
+--&gt; metamacro_foreach_cxt1(MACRO, SEP, CONTEXT, __VA_ARGS__)
+--&gt; metamacro_foreach_cxt1(rac_weakify_, SEP, __weak, self)
+</code></pre>
+
+<p>metamacro_foreach_cxt1的定义为</p>
+
+<pre><code class="language-text">#define metamacro_foreach_cxt1(MACRO, SEP, CONTEXT, _0) MACRO(0, CONTEXT, _0)
+则
+metamacro_foreach_cxt1(rac_weakify_, SEP, __weak, self)
+--&gt; rac_weakify_(0,__weak,self)
+</code></pre>
+
+<p>rac_weakify_定义为</p>
+
+<pre><code class="language-text">#define rac_weakify_(INDEX, CONTEXT, VAR) \
+    CONTEXT __typeof__(VAR) metamacro_concat(VAR, _weak_) = (VAR);
+--&gt; __weak __typeof__(self) self_weak_ = (self);
+</code></pre>
 
 <p>至此，我们看到了@weakify的作用，其将传入的参数，自动创建一个__weak的对象。<br/>
 TODO：</p>
@@ -1085,21 +1142,24 @@ TODO：</p>
 <li>@autorelasepool并没有纳入任何东西。</li>
 <li>莫名其妙的连续两个逗号。<br/>
 我们继续来看一下，当weakify传入多个参数，如两个参数的时候，RAC是怎么处理的。<br/>
-当weakify传入两个参数的时候，宏定义展开，某个阶段为<br/>
-metamacro_foreach_cxt2(rac_weakify_, SEP, __weak, <strong>VA_ARGS</strong>)<br/>
-其中__VA_ARGS__是两个参数，假设为self，和self.button<br/>
-metamacro_foreach_cxt2的定义为<br/>
-#define metamacro_foreach_cxt2(MACRO, SEP, CONTEXT, _0, _1) \<br/>
-metamacro_foreach_cxt1(MACRO, SEP, CONTEXT, _0) \<br/>
-SEP \<br/>
-MACRO(1, CONTEXT, _1)<br/>
---&gt; metamacro_foreach_cxt2(rac_weakify_, SEP, __weak, self, self.button)<br/>
---&gt; 展开得 metamacro_foreach_cxt1(rac_weakify_, SEP, __weak, self) \<br/>
-SEP \<br/>
-rac_weakify_(1, __weak, self.button)<br/>
---&gt; __weak <strong>typeof</strong>(self) self_weak_ = (self); __weak <strong>typeof</strong>(self.button) self.button_weak_ = (self.button);<br/>
-6.2 @strongify</li>
+当weakify传入两个参数的时候，宏定义展开，某个阶段为
+<code>metamacro_foreach_cxt2(rac_weakify_, SEP, __weak, __VA_ARGS__)</code>
+其中__VA_ARGS__是两个参数，假设为self，和self.button
+<code>metamacro_foreach_cxt2</code>的定义为</li>
 </ol>
+
+<pre><code class="language-text">#define metamacro_foreach_cxt2(MACRO, SEP, CONTEXT, _0, _1) \
+    metamacro_foreach_cxt1(MACRO, SEP, CONTEXT, _0) \
+    SEP \
+    MACRO(1, CONTEXT, _1)
+--&gt; metamacro_foreach_cxt2(rac_weakify_, SEP, __weak, self, self.button)
+--&gt; 展开得 metamacro_foreach_cxt1(rac_weakify_, SEP, __weak, self) \
+    SEP \
+    rac_weakify_(1, __weak, self.button)
+--&gt; __weak __typeof__(self) self_weak_ = (self); __weak __typeof__(self.button) self.button_weak_ = (self.button);
+</code></pre>
+
+<p>6.2 @strongify</p>
 
                         
                       </div>
