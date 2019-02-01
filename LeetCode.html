@@ -357,6 +357,102 @@ public List&lt;List&lt;Integer&gt;&gt; combinationSum(int[] candidates, int targ
 		</div>
 
 	</article>
+ 
+	<article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+		<div class="meta">
+			<div class="date">
+				<time datetime="2019-02-01T11:46:32+08:00" itemprop="datePublished">2019/2/1</time>
+			</div>
+			<div class="tags">posted in 
+			
+			    <a class='category' href='LeetCode.html'>LeetCode</a>&nbsp;
+			 
+			</div>
+		</div>
+		<h1 class="title" itemprop="name"><a href="15489927924408.html" itemprop="url">
+		72. 编辑距离</a></h1>
+		<div class="entry-content" itemprop="articleBody">
+			
+			<h2 id="toc_0">题目</h2>
+
+<p>给定两个单词 word1 和 word2，计算出将 word1 转换成 word2 所使用的最少操作数 。</p>
+
+<p>你可以对一个单词进行如下三种操作：</p>
+
+<p>插入一个字符<br/>
+删除一个字符<br/>
+替换一个字符<br/>
+示例 1:</p>
+
+<p>输入: word1 = &quot;horse&quot;, word2 = &quot;ros&quot;<br/>
+输出: 3<br/>
+解释: <br/>
+horse -&gt; rorse (将 &#39;h&#39; 替换为 &#39;r&#39;)<br/>
+rorse -&gt; rose (删除 &#39;r&#39;)<br/>
+rose -&gt; ros (删除 &#39;e&#39;)<br/>
+示例 2:</p>
+
+<p>输入: word1 = &quot;intention&quot;, word2 = &quot;execution&quot;<br/>
+输出: 5<br/>
+解释: <br/>
+intention -&gt; inention (删除 &#39;t&#39;)<br/>
+inention -&gt; enention (将 &#39;i&#39; 替换为 &#39;e&#39;)<br/>
+enention -&gt; exention (将 &#39;n&#39; 替换为 &#39;x&#39;)<br/>
+exention -&gt; exection (将 &#39;n&#39; 替换为 &#39;c&#39;)<br/>
+exection -&gt; execution (插入 &#39;u&#39;)</p>
+
+<h2 id="toc_1">解题思路</h2>
+
+<ol>
+<li><p>先作弊了，看到要用dp。思考许久还是没有想法。<br/>
+解析一下自己的错误思路。<br/>
+看到有三种变换方式，有一点不知道该怎么处理。</p></li>
+<li><p>看了网上的解题报告，写下自己理解后的东西。</p>
+<p>首先，确认dp的含义<br/>
+word1记为s1， word2记为s2<br/>
+dp[i][j] = s1 从0...i， s2从0...j 两个字符串的编辑距离。所以dp的大小应该是dp[s1.length + 1][s2.length + 1].</p></li>
+</ol>
+
+<ul>
+<li><p>转换公式<br/>
+计算dp[i][j]有三种变化方式</p>
+<ol>
+<li>dp[i - 1][j], 由于对比dp[i][j]，s1少了一个，所以要insert一个，编辑距离 + 1</li>
+<li>dp[i][j - 1] 由于对比dp[i][j]，s1少了一个，所以要delete一个，编辑距离 + 1</li>
+<li>dp[i - 1][j - 1]，对比s1[i - 1] 和 s2[j - 1]的情况，如果相等，编辑距离不变，否则需要+1（替换）</li>
+</ol>
+<p>从上文可以看出，三种变换方式都有了。</p>
+<p>接下来处理边界条件</p>
+<p>dp[0][i] = i和dp[i][0] = i，分别代表增加i个，和删除i个。</p></li>
+</ul>
+
+<h2 id="toc_2">代码</h2>
+
+<pre><code class="language-text"> public int minDistance(String word1, String word2) {
+    int[][] dp = new int[word1.length() + 1][word2.length() + 1];
+    for (int i = 0; i &lt;= word1.length(); i++) {
+        dp[i][0] = i;
+    }
+    for (int j = 0; j &lt;= word2.length(); j++) {
+        dp[0][j] = j;
+    }
+    for (int i = 1; i &lt;= word1.length(); i++) {
+        for (int j = 1; j &lt;= word2.length(); j++) {
+            int a = Math.min(dp[i - 1][j] + 1, dp[i][j - 1] + 1);
+            int cost = word1.charAt(i - 1) == word2.charAt(j - 1) ? 0 : 1;
+            dp[i][j] = Math.min(a, dp[i - 1][j - 1] + cost);
+        }
+    }
+    return dp[word1.length()][word2.length()];
+}
+</code></pre>
+
+
+			
+			
+		</div>
+
+	</article>
   
 
 </div>

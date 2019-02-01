@@ -1,0 +1,225 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>  
+	  
+  	72. 编辑距离 - 沧海一粟No.1
+  	
+	</title>
+
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="atom.xml" rel="alternate" title="沧海一粟No.1" type="application/atom+xml">
+
+	<link href="asset/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="asset/stylesheets/font-awesome.min.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<script src="asset/javascripts/jquery.min.js"></script>
+	<script src="asset/highlightjs/highlight.pack.js"></script>
+	<link href="asset/highlightjs/styles/solarized_dark.css" media="screen, projection" rel="stylesheet" type="text/css">
+<script>hljs.initHighlightingOnLoad();</script>
+
+	<!--[if lt IE 9]><script src="asset/javascripts/html5.js"></script><![endif]-->
+	<!-- <link href='http://fonts.googleapis.com/css?family=Nunito:400,300,700' rel='stylesheet' type='text/css'> -->
+	<style type="text/css">
+/* latin */
+@font-face {
+  font-family: 'Nunito';
+  font-style: normal;
+  font-weight: 300;
+  src: local('Nunito-Light'), url(asset/font/1TiHc9yag0wq3lDO9cw0voX0hVgzZQUfRDuZrPvH3D8.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+}
+/* latin */
+@font-face {
+  font-family: 'Nunito';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Nunito-Regular'), url(asset/font/6TbRXKWJjpj6V2v_WyRbMX-_kf6ByYO6CLYdB4HQE-Y.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+}
+/* latin */
+@font-face {
+  font-family: 'Nunito';
+  font-style: normal;
+  font-weight: 700;
+  src: local('Nunito-Bold'), url(asset/font/TttUCfJ272GBgSKaOaD7KoX0hVgzZQUfRDuZrPvH3D8.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+}
+	</style>
+	
+	<style type="text/css">
+	.container .left-col{ opacity: 1;}
+	#pagenavi a{ font-size: 1.3em;}
+	#pagenavi .next:before{ top: 3px;}
+	#pagenavi .prev:before{ top: 3px;}
+	.container .mid-col .mid-col-container #content .archives .title{ font-size: 1.5em;}
+	.container .mid-col .mid-col-container #content article{ padding: 15px 0px;}
+	#header .subtitle {
+		line-height: 1.2em;
+		padding-top: 8px;
+	}
+	article pre{ background: none; border: none; padding: 0;}
+	article .entry-content{text-align: left;}
+	.share-comment{ padding: 25px 0px; clear: both;}
+	hr{ margin: 20px 0px;border: 0; border-top:solid 1px #ddd;}
+	</style>
+  
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+				<header id="header" class="inner">
+				 
+				 	<div class="profilepic">
+						<img src="asset/img/icon.jpg" style="width:160px;">
+					</div>
+            	
+					
+					<h1><a href="index.html">沧海一粟No.1</a></h1>
+					<p class="subtitle">如果选择了远方，便只顾风雨兼程</p>
+					<nav id="main-nav">
+						<ul class="main">
+						
+						  <li id=""><a target="self" href="index.html">Home</a></li>
+						
+						  <li id=""><a target="_self" href="archives.html">Archives</a></li>
+						
+						</ul>
+					</nav>
+
+					<nav id="sub-nav">
+						<div class="social">
+
+
+
+
+
+
+
+
+
+
+<a target="_blank" class="github" target="_blank" href="https://github.com/nimitz871016" title="GitHub">GitHub</a>
+<a target="_blank" class="email" href="mailto:nimitz_007@163.com" title="Email">Email</a>
+
+								
+
+								<a class="rss" href="atom.xml" title="RSS">RSS</a>
+							
+						</div>
+					</nav>
+				</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			<div class="mid-col-container"> <div id="content" class="inner">
+
+	<article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+		<h1 class="title" itemprop="name">72. 编辑距离</h1>
+		<div class="entry-content" itemprop="articleBody">
+			<h2 id="toc_0">题目</h2>
+
+<p>给定两个单词 word1 和 word2，计算出将 word1 转换成 word2 所使用的最少操作数 。</p>
+
+<p>你可以对一个单词进行如下三种操作：</p>
+
+<p>插入一个字符<br/>
+删除一个字符<br/>
+替换一个字符<br/>
+示例 1:</p>
+
+<p>输入: word1 = &quot;horse&quot;, word2 = &quot;ros&quot;<br/>
+输出: 3<br/>
+解释: <br/>
+horse -&gt; rorse (将 &#39;h&#39; 替换为 &#39;r&#39;)<br/>
+rorse -&gt; rose (删除 &#39;r&#39;)<br/>
+rose -&gt; ros (删除 &#39;e&#39;)<br/>
+示例 2:</p>
+
+<p>输入: word1 = &quot;intention&quot;, word2 = &quot;execution&quot;<br/>
+输出: 5<br/>
+解释: <br/>
+intention -&gt; inention (删除 &#39;t&#39;)<br/>
+inention -&gt; enention (将 &#39;i&#39; 替换为 &#39;e&#39;)<br/>
+enention -&gt; exention (将 &#39;n&#39; 替换为 &#39;x&#39;)<br/>
+exention -&gt; exection (将 &#39;n&#39; 替换为 &#39;c&#39;)<br/>
+exection -&gt; execution (插入 &#39;u&#39;)</p>
+
+<h2 id="toc_1">解题思路</h2>
+
+<ol>
+<li><p>先作弊了，看到要用dp。思考许久还是没有想法。<br/>
+解析一下自己的错误思路。<br/>
+看到有三种变换方式，有一点不知道该怎么处理。</p></li>
+<li><p>看了网上的解题报告，写下自己理解后的东西。</p>
+<p>首先，确认dp的含义<br/>
+word1记为s1， word2记为s2<br/>
+dp[i][j] = s1 从0...i， s2从0...j 两个字符串的编辑距离。所以dp的大小应该是dp[s1.length + 1][s2.length + 1].</p></li>
+</ol>
+
+<ul>
+<li><p>转换公式<br/>
+计算dp[i][j]有三种变化方式</p>
+<ol>
+<li>dp[i - 1][j], 由于对比dp[i][j]，s1少了一个，所以要insert一个，编辑距离 + 1</li>
+<li>dp[i][j - 1] 由于对比dp[i][j]，s1少了一个，所以要delete一个，编辑距离 + 1</li>
+<li>dp[i - 1][j - 1]，对比s1[i - 1] 和 s2[j - 1]的情况，如果相等，编辑距离不变，否则需要+1（替换）</li>
+</ol>
+<p>从上文可以看出，三种变换方式都有了。</p>
+<p>接下来处理边界条件</p>
+<p>dp[0][i] = i和dp[i][0] = i，分别代表增加i个，和删除i个。</p></li>
+</ul>
+
+<h2 id="toc_2">代码</h2>
+
+<pre><code class="language-text"> public int minDistance(String word1, String word2) {
+    int[][] dp = new int[word1.length() + 1][word2.length() + 1];
+    for (int i = 0; i &lt;= word1.length(); i++) {
+        dp[i][0] = i;
+    }
+    for (int j = 0; j &lt;= word2.length(); j++) {
+        dp[0][j] = j;
+    }
+    for (int i = 1; i &lt;= word1.length(); i++) {
+        for (int j = 1; j &lt;= word2.length(); j++) {
+            int a = Math.min(dp[i - 1][j] + 1, dp[i][j - 1] + 1);
+            int cost = word1.charAt(i - 1) == word2.charAt(j - 1) ? 0 : 1;
+            dp[i][j] = Math.min(a, dp[i - 1][j - 1] + cost);
+        }
+    }
+    return dp[word1.length()][word2.length()];
+}
+</code></pre>
+
+		</div>
+	</article>
+	<div class="share-comment">
+	 
+
+	  
+
+	  
+
+	</div>
+</div>        </div>
+			<footer id="footer" class="inner">Copyright &copy; 2014
+Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a> &nbsp;&nbsp; 
+Theme by <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a>
+      </footer>
+		</div>
+	</div>
+
+  
+    
+
+
+
+</body>
+</html>
