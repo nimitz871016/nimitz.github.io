@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>
     
-  39. 组合总和 - 沧海一粟No.1
+  数据库分库分表技术 - 沧海一粟No.1
   
   </title>
   
@@ -112,14 +112,14 @@
       <div class="markdown-body article-wrap">
        <div class="article">
           
-          <h1>39. 组合总和</h1>
+          <h1>数据库分库分表技术</h1>
      
         <div class="read-more clearfix">
-          <span class="date">2019/1/21</span>
+          <span class="date">2019/2/13</span>
 
           <span>posted in&nbsp;</span> 
           
-              <span class="posted-in"><a href='LeetCode.html'>LeetCode</a></span>
+              <span class="posted-in"><a href='%E6%95%B0%E6%8D%AE%E5%BA%93.html'>数据库</a></span>
            
          
           <span class="comments">
@@ -132,77 +132,206 @@
       </div><!-- article -->
 
       <div class="article-content">
-      <p><a href="https://leetcode-cn.com/problems/combination-sum/description/">https://leetcode-cn.com/problems/combination-sum/description/</a></p>
+      <h1 id="toc_0">1. 基本概念</h1>
 
-<p>给定一个无重复元素的数组  candidates 和一个目标数  target ，找出  candidates 中所有可以使数字和为  target 的组合。</p>
+<h2 id="toc_1">1.1. 拆分方式</h2>
 
-<p>candidates 中的数字可以无限制重复被选取。</p>
+<ul>
+<li><p>垂直拆分</p>
+<p>将一个库（表）拆分成多个库（表），每个库（表）的结构和原有的结构不同。</p>
+<p>这实际上可以认为是一种数据库的重新设计。拆分的原则可以是：</p>
+<pre><code class="language-text">1. 根据业务的具体情况，将热门的数据和冷门的数据分开。达到提高性能的目的。（库或者表的拆分都可以遵循这样一条原则）
+</code></pre></li>
+<li><p>水平拆分</p>
+<p>根据分片算法，将一个库（表）拆分成多个库（表），每个库（表）的结构和原有的结构相同。</p></li>
+</ul>
 
-<p>说明：</p>
+<span id="more"></span><!-- more -->
 
-<p>所有数字（包括  target）都是正整数。<br/>
-解集不能包含重复的组合。 </p>
+<h2 id="toc_2">1.2. 使用数据库的三个阶段</h2>
 
-<pre><code class="language-text">示例 1:
+<h3 id="toc_3">1.2.1 单库单表</h3>
 
-输入: candidates = [2,3,6,7], target = 7,
-所求解集为:
-[
-  [7],
-  [2,2,3]
-]
-示例 2:
+<p>单库单表是最简单的实践方式。数据库的性能取决于所使用的数据库和初始的数据库设计。</p>
 
-输入: candidates = [2,3,5], target = 8,
-所求解集为:
-[
-  [2,2,2,2],
-  [2,3,3],
-  [3,5]
-]
-</code></pre>
+<p>假如有一张User信息，需要存储User的所有信息。按照最简单的逻辑，那么就直接对应了一张User表。</p>
 
-<p>题目分析：</p>
+<h3 id="toc_4">1.2.2 单库多表</h3>
+
+<p>随着业务的不断发展。User信息不断增加。单表的性能撑不住了。尝试对User表进行水平分片。可以对User表按照某种规则进行分片，分出多个结构完全一样的子表。例如User0，User1, User2。。。</p>
+
+<p>注意，不同的数据库有不同的性能指标。例如MySQL单表的容量已5000W条记录为佳？</p>
+
+<h3 id="toc_5">1.2.3 多库多表</h3>
+
+<p>数据量继续增加，单条数据库的存储空间告警了，无法支撑业务。这时候就需要对数据库进行水平切分，将切分的数据库和表水平地分配到不同的数据库实例上去。</p>
+
+<h2 id="toc_6">2. 如何判断需要进行分库分表</h2>
+
+<p>系统不可能一开始就考虑最复杂的多库多表场景。在最开始的设计时，只能对未来的场景有一个简单的预估。那么随着系统的不断升级，合适应该采用分库分表策略呢？</p>
+
+<p>以MySQL为例，表达到千万级别就需要考虑进行分表。这样，数据就被分散在不同的表上，单表的索引大小得到了控制，会提升查询性能，对索引以及表结构的变更会很方便和高效<br/>
+。</p>
+
+<ul>
+<li>按照数据库的表大小来判断</li>
+</ul>
+
+<p>以MySQL数据库为例，单表超过5000W条记录就要考虑分表</p>
+
+<ul>
+<li>按照数据库的吞吐量来判断</li>
+</ul>
+
+<p>如果吞吐遇到瓶颈，则要考虑增加数据库实例</p>
+
+<h2 id="toc_7">2.1. 分库分表的方案</h2>
+
+<p>分库分表的方案可以分成三类:</p>
 
 <ol>
-<li>一看到这道题，就感觉要用递归来做，应该是回溯算法。百度证实无误。</li>
-<li>然后自己还没有生写过回溯。想了一会儿，结果不对，和正确解法做了一下比较，修改了一下自己的算法。标答是C++的，在java上需要修改一下，一些特别的地方要处理一下。</li>
+<li>客户端分片</li>
+<li>代理分片</li>
+<li>支持事务的分布式数据库</li>
 </ol>
 
-<p>直接上代码：</p>
+<h3 id="toc_8">2.1.1. 客户端分片</h3>
 
-<pre><code class="language-text">/**
- * 核心算法
- * @param candidates 数组
- * @param target 当前递归子问题需要计算的target
- * @param start 开始查找的index
- * @param result 当前递归的result数组
- * @param ans 最后的答案
- */
-private void findOne(int[] candidates, int target, int start, List&lt;Integer&gt; result, List&lt;List&lt;Integer&gt;&gt; ans){
-    if (target == 0){
-        List&lt;Integer&gt; list = new ArrayList&lt;&gt;(result); //这里需要新开一个数组，否则会一直复用这个对象，导致结果不对
-        ans.add(list);
-        return;
-    }else if(target &lt; candidates[start]){
-        return; //不符合的结果，不处理。
-    }else{
-        for (int i = start; i &lt; candidates.length; i++){
-            result.add(candidates[i]);
-            findOne(candidates, target - candidates[i], i, result, ans);
-            result.remove(result.size() - 1);
-            //这里有点像树的遍历，这里就是要一个节点和不要一个节点的分支。然后可以重复使用元素，所以递归子问题，仍然从i开始。
-        }
-    }
-}
+<p>客户端分片就是使用分库分表的数据库应用层直接操作分片逻辑，分片规则需要在同一个应用的多个节点之间进行同步，每个应用层都需要嵌入一个操作切片的逻辑实现。这里又可以分成三种：</p>
 
-public List&lt;List&lt;Integer&gt;&gt; combinationSum(int[] candidates, int target) {
-    List&lt;List&lt;Integer&gt;&gt; ans = new ArrayList&lt;&gt;();
-    Arrays.sort(candidates); //题目没有说排好序的数组，所以这里要先拍个序
-    findOne(candidates, target, 0, new ArrayList&lt;&gt;(), ans);
-    return ans;
-}
-</code></pre>
+<ol>
+<li>在应用层直接实现</li>
+<li>定制JDBC协议</li>
+<li><p>定制ORM框架</p></li>
+</ol>
+
+<ul>
+<li><p>在应用层直接实现</p>
+<ul>
+<li><p>优点</p>
+<ol>
+<li>实现简单，适合快速上线。</li>
+<li>切分逻辑是自己实现的，出现问题容易解决</li>
+<li>性能高</li>
+</ol></li>
+<li><p>缺点</p>
+<ol>
+<li>侵入了业务</li>
+<li>数据库保持的连接数会比较多，需要提前进行容量评估。</li>
+</ol></li>
+</ul></li>
+<li><p>通过定制JDBC协议实现</p></li>
+</ul>
+
+<p>业务开发人员不必关心分库分表的实现，分片逻辑对业务层保持透明</p>
+
+<ul>
+<li>通过定制ORM框架实现</li>
+</ul>
+
+<p>一个经典的例子，通过Mybatis配置文件的SQL中增加索引的参数来实现分片</p>
+
+<h3 id="toc_9">2.1.2 代理分片</h3>
+
+<p>代理分片发生在应用层和数据层之间。需要实现对JDBC协议的解析，并通过分片的路由规则来路由请求。对每个数据库操作都增加了一层网络传输。对性能有一定影响。</p>
+
+<h3 id="toc_10">2.1.3. 支持事务的分布式数据库</h3>
+
+<h2 id="toc_11">3. 设计一个分库分表方案需要考虑的问题</h2>
+
+<h3 id="toc_12">3.1. 切分方式</h3>
+
+<p>切分方式分为垂直切分和水平切分。</p>
+
+<blockquote>
+<p>垂直切分</p>
+</blockquote>
+
+<p>垂直切分通常用于缓解单库单表的压力。切分准则可以是冷热隔离，也可以是按照数据的活跃度。</p>
+
+<p>垂直区分的优点有：</p>
+
+<ul>
+<li>拆分后业务清晰，拆分规则明确。</li>
+<li>系统之间进行整合或扩展很容易。</li>
+<li>按照成本、应用的等级、应用的类型等将表放在不同的机器上，便于管理。</li>
+<li>便于实现动静分离，冷热分离的数据库表的设计模式。</li>
+<li>数据维护简单</li>
+</ul>
+
+<p>垂直区分的缺点有：</p>
+
+<ul>
+<li>部分业务表无法关联，只能通过接口的方式解决，提高了系统的复杂度。</li>
+<li>受每种业务的不同限制，存在单库性能瓶颈，不易进行数据扩展和提升性能。</li>
+<li>事务处理复杂。</li>
+</ul>
+
+<p>通常建议在数据设计阶段就直接考虑垂直切分。</p>
+
+<blockquote>
+<p>水平切分</p>
+</blockquote>
+
+<p>水平切分通常发生在业务不断发展，原有的单库单表已经无法满足业务需求的场景。</p>
+
+<p>水平切分的优点有：</p>
+
+<ul>
+<li>单库单表的数据保持在一定的量级，有助于性能的提高。</li>
+<li>切分的表的结构相同，应用层改造较少，只需要增加路由规则即可。</li>
+<li>提高了系统的稳定性和负载能力。</li>
+</ul>
+
+<p>水平切分的缺点有:</p>
+
+<ul>
+<li>切分后，数据是分散的，很难利用数据库的Join操作，跨库性能较差。</li>
+<li>拆分规则难以抽象。</li>
+<li>分片事务的一致性难以解决</li>
+<li>数据扩容的难度和维护量极大。</li>
+</ul>
+
+<p>综上，两种区分方式的共同缺点有:</p>
+
+<ol>
+<li>存在分布式事务的问题</li>
+<li>存在跨界点Join的问题</li>
+<li>存在跨界点合并排序，分页的问题。</li>
+<li>存在多数据源管理的问题</li>
+</ol>
+
+<h3 id="toc_13">3.1.1 水平切分的维度</h3>
+
+<p>水平切分通常是选择数据表中的一个字段。以这个字段为依据进行切分。切分的规则通常有两种。</p>
+
+<p>要求分片规则可以平均的对待新的数据也就是数据通过分片规则可以平均的进行切分。</p>
+
+<p>根据数据的特性，有以下两种分片方式。</p>
+
+<p>1）按照哈希分片</p>
+
+<p>哈希分片常常用于数据没有时效性的场景，也就是无论数据的产生时间，被访问的概率是相同的。</p>
+
+<p>这种切片的好处是数据切片比较均匀，对数据压力分散的效果较好，缺点是数据分散后，对于查询结果需要进行聚合处理。</p>
+
+<p>2) 按照时间切片</p>
+
+<p>这种切片方式天然就可以平均数据。适合于明显有时间特点的数据。例如最近的时间段，访问频繁，而历史的数据较少访问。</p>
+
+<blockquote>
+<p>总结</p>
+</blockquote>
+
+<p>在实际的场景中，两种切片方式是可以结合使用的。例如对交易数据，先按照季度进行切片，然后对于某一季度的数据按照主键哈希进行切片。</p>
+
+<h3 id="toc_14">3.1.2. 分片后事务的处理机制</h3>
+
+<p>数据库的是事务很关键。是保证数据正确的重要保证。那么数据分片后，如何保证事务呢？</p>
+
+<p>由于单表的数据切分到多个数据库表中，甚至是多个数据库实例中。所以依靠数据本身的事务机制不能满足场景的需要。</p>
+
+<p>建议在一个数据库实例中的操作尽可能使用本地事务来保持一致性，跨数据库实例的一系列更新操作需要根据事务路由在不同搞得数据源中完成。各个数据源之间的更新操作需要通过分布式事务处理。</p>
 
 
     
@@ -213,16 +342,13 @@ public List&lt;List&lt;Integer&gt;&gt; combinationSum(int[] candidates, int targ
         <div class="large-6 columns">
         <p class="text-left" style="padding:15px 0px;">
       
-          <a href="15480002725541.html" 
-          title="Previous Post: 32. 最长有效括号">&laquo; 32. 最长有效括号</a>
-      
         </p>
         </div>
         <div class="large-6 columns">
       <p class="text-right" style="padding:15px 0px;">
       
-          <a  href="15486626415496.html" 
-          title="Next Post: 55. 跳跃游戏">55. 跳跃游戏 &raquo;</a>
+          <a  href="15480007861723.html" 
+          title="Next Post: RAC中的宏定义魔法">RAC中的宏定义魔法 &raquo;</a>
       
       </p>
         </div>

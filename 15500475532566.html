@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>
     
-  39. 组合总和 - 沧海一粟No.1
+  258. 各位相加 - 沧海一粟No.1
   
   </title>
   
@@ -112,10 +112,10 @@
       <div class="markdown-body article-wrap">
        <div class="article">
           
-          <h1>39. 组合总和</h1>
+          <h1>258. 各位相加</h1>
      
         <div class="read-more clearfix">
-          <span class="date">2019/1/21</span>
+          <span class="date">2019/2/13</span>
 
           <span>posted in&nbsp;</span> 
           
@@ -132,75 +132,40 @@
       </div><!-- article -->
 
       <div class="article-content">
-      <p><a href="https://leetcode-cn.com/problems/combination-sum/description/">https://leetcode-cn.com/problems/combination-sum/description/</a></p>
+      <pre><code class="language-text">
+给定一个非负整数  num，反复将各个位上的数字相加，直到结果为一位数。
 
-<p>给定一个无重复元素的数组  candidates 和一个目标数  target ，找出  candidates 中所有可以使数字和为  target 的组合。</p>
+示例:
 
-<p>candidates 中的数字可以无限制重复被选取。</p>
-
-<p>说明：</p>
-
-<p>所有数字（包括  target）都是正整数。<br/>
-解集不能包含重复的组合。 </p>
-
-<pre><code class="language-text">示例 1:
-
-输入: candidates = [2,3,6,7], target = 7,
-所求解集为:
-[
-  [7],
-  [2,2,3]
-]
-示例 2:
-
-输入: candidates = [2,3,5], target = 8,
-所求解集为:
-[
-  [2,2,2,2],
-  [2,3,3],
-  [3,5]
-]
+输入: 38
+输出: 2 
+解释: 各位相加的过程为：3 + 8 = 11, 1 + 1 = 2。 由于 2 是一位数，所以返回 2。
+进阶:
+你可以不使用循环或者递归，且在 O(1) 时间复杂度内解决这个问题吗？
 </code></pre>
 
-<p>题目分析：</p>
+<h2 id="toc_0">解题思路：</h2>
 
-<ol>
-<li>一看到这道题，就感觉要用递归来做，应该是回溯算法。百度证实无误。</li>
-<li>然后自己还没有生写过回溯。想了一会儿，结果不对，和正确解法做了一下比较，修改了一下自己的算法。标答是C++的，在java上需要修改一下，一些特别的地方要处理一下。</li>
-</ol>
+<p>普通的方法都会解，这里就不重复了。说下O(1)的解法。</p>
 
-<p>直接上代码：</p>
+<p>这里用到 一个很巧妙的算法。</p>
 
-<pre><code class="language-text">/**
- * 核心算法
- * @param candidates 数组
- * @param target 当前递归子问题需要计算的target
- * @param start 开始查找的index
- * @param result 当前递归的result数组
- * @param ans 最后的答案
- */
-private void findOne(int[] candidates, int target, int start, List&lt;Integer&gt; result, List&lt;List&lt;Integer&gt;&gt; ans){
-    if (target == 0){
-        List&lt;Integer&gt; list = new ArrayList&lt;&gt;(result); //这里需要新开一个数组，否则会一直复用这个对象，导致结果不对
-        ans.add(list);
-        return;
-    }else if(target &lt; candidates[start]){
-        return; //不符合的结果，不处理。
-    }else{
-        for (int i = start; i &lt; candidates.length; i++){
-            result.add(candidates[i]);
-            findOne(candidates, target - candidates[i], i, result, ans);
-            result.remove(result.size() - 1);
-            //这里有点像树的遍历，这里就是要一个节点和不要一个节点的分支。然后可以重复使用元素，所以递归子问题，仍然从i开始。
+<p><img src="media/15500475532566/15500475966040.jpg" alt="" style="width:557px;"/></p>
+
+<p>根据以上，可以得出，快速求解，就是将数字不断减去9，直到不能减为止即为正解。</p>
+
+<p>那么不断减去9的过程，可以化为--&gt; mod 9</p>
+
+<p>代码如下：</p>
+
+<pre><code class="language-text">class Solution {
+    public int addDigits(int num) {
+        if (num == 0){
+            return num;
         }
+        num %= 9;
+        return num == 0 ? 9 : num;
     }
-}
-
-public List&lt;List&lt;Integer&gt;&gt; combinationSum(int[] candidates, int target) {
-    List&lt;List&lt;Integer&gt;&gt; ans = new ArrayList&lt;&gt;();
-    Arrays.sort(candidates); //题目没有说排好序的数组，所以这里要先拍个序
-    findOne(candidates, target, 0, new ArrayList&lt;&gt;(), ans);
-    return ans;
 }
 </code></pre>
 
@@ -213,16 +178,13 @@ public List&lt;List&lt;Integer&gt;&gt; combinationSum(int[] candidates, int targ
         <div class="large-6 columns">
         <p class="text-left" style="padding:15px 0px;">
       
-          <a href="15480002725541.html" 
-          title="Previous Post: 32. 最长有效括号">&laquo; 32. 最长有效括号</a>
+          <a href="15500441189502.html" 
+          title="Previous Post: 189. 旋转数组">&laquo; 189. 旋转数组</a>
       
         </p>
         </div>
         <div class="large-6 columns">
       <p class="text-right" style="padding:15px 0px;">
-      
-          <a  href="15486626415496.html" 
-          title="Next Post: 55. 跳跃游戏">55. 跳跃游戏 &raquo;</a>
       
       </p>
         </div>
