@@ -4,13 +4,61 @@
   <title><![CDATA[沧海一粟No.1]]></title>
   <link href="https://nimitz871016.github.io/atom.xml" rel="self"/>
   <link href="https://nimitz871016.github.io/"/>
-  <updated>2019-02-18T14:57:56+08:00</updated>
+  <updated>2019-03-13T14:18:12+08:00</updated>
   <id>https://nimitz871016.github.io/</id>
   <author>
     <name><![CDATA[]]></name>
     
   </author>
   <generator uri="http://www.mweb.im/">MWeb</generator>
+  
+  <entry>
+    <title type="html"><![CDATA[448. 找到所有数组中消失的数字]]></title>
+    <link href="https://nimitz871016.github.io/15523931184037.html"/>
+    <updated>2019-03-12T20:18:38+08:00</updated>
+    <id>https://nimitz871016.github.io/15523931184037.html</id>
+    <content type="html"><![CDATA[
+<h2 id="toc_0">题目描述</h2>
+
+<p>给定一个范围在  1 ≤ a[i] ≤ n ( n = 数组大小 ) 的 整型数组，数组中的元素一些出现了两次，另一些只出现一次。</p>
+
+<p>找到所有在 [1, n] 范围之间没有出现在数组中的数字。</p>
+
+<p>您能在不使用额外空间且时间复杂度为O(n)的情况下完成这个任务吗? 你可以假定返回的数组不算在额外空间内。</p>
+
+<p>示例:</p>
+
+<p>输入:<br/>
+[4,3,2,7,8,2,3,1]</p>
+
+<p>输出:<br/>
+[5,6]</p>
+
+<h2 id="toc_1">思路分析</h2>
+
+<p>关键点在于不用额外控件，时间复杂度为O（n）。这两点限制了使用排序算法，或者用额外空间来记录。</p>
+
+<p>那么，不能用额外空间，就只能用原有的数组空间了。这里有一个技巧就是用数组的下标也可以存储信息。因为数据的范围是在n之内，因此数组内出现的数字都是合法的下标。基于这个前提，本题有一个很巧妙的做法。详见代码。</p>
+
+<h2 id="toc_2">代码</h2>
+
+<pre><code class="language-text">public List&lt;Integer&gt; findDisappearedNumbers(int[] nums) {
+        List&lt;Integer&gt; result = new ArrayList&lt;&gt;();
+        for (int i = 0; i &lt; nums.length; i++){
+            //将数组中存放的值作为坐标，进行二次访问。目标是将值设置为相反数（保证是负数）。那么没有变化的位置就是缺失的值
+            nums[Math.abs(nums[i])-1] = - Math.abs(nums[Math.abs(nums[i])-1]);
+        }
+        for (int i = 0; i &lt; nums.length; i++){
+            if (nums[i] &gt; 0){
+                result.add(i);
+            }
+        }
+        return result;
+    }
+</code></pre>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[数据库分库分表技术]]></title>
