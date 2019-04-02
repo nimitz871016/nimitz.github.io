@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>
     
-  39. 组合总和 - 沧海一粟No.1
+  从logger.isDebugEnabled()谈起 - 沧海一粟No.1
   
   </title>
   
@@ -112,14 +112,14 @@
       <div class="markdown-body article-wrap">
        <div class="article">
           
-          <h1>39. 组合总和</h1>
+          <h1>从logger.isDebugEnabled()谈起</h1>
      
         <div class="read-more clearfix">
-          <span class="date">2019/1/21 0:6 上午</span>
+          <span class="date">2019/4/2 20:43 下午</span>
 
           <span>posted in&nbsp;</span> 
           
-              <span class="posted-in"><a href='LeetCode.html'>LeetCode</a></span>
+              <span class="posted-in"><a href='Java.html'>Java</a></span>
            
          
           <span class="comments">
@@ -132,77 +132,91 @@
       </div><!-- article -->
 
       <div class="article-content">
-      <p><a href="https://leetcode-cn.com/problems/combination-sum/description/">https://leetcode-cn.com/problems/combination-sum/description/</a></p>
+      <h2 id="toc_0">0. 问题</h2>
 
-<p>给定一个无重复元素的数组  candidates 和一个目标数  target ，找出  candidates 中所有可以使数字和为  target 的组合。</p>
+<p>在很多框架中，我们看到在<code>logger.debug</code>处经常会这样写</p>
 
-<p>candidates 中的数字可以无限制重复被选取。</p>
-
-<p>说明：</p>
-
-<p>所有数字（包括  target）都是正整数。<br/>
-解集不能包含重复的组合。 </p>
-
-<pre><code class="language-text">示例 1:
-
-输入: candidates = [2,3,6,7], target = 7,
-所求解集为:
-[
-  [7],
-  [2,2,3]
-]
-示例 2:
-
-输入: candidates = [2,3,5], target = 8,
-所求解集为:
-[
-  [2,2,2,2],
-  [2,3,3],
-  [3,5]
-]
+<pre><code class="language-text">if (logger.isDebugEnabled()) {
+    logger.debug(message);
+}
 </code></pre>
 
-<p>题目分析：</p>
+<p>我们知道<code>logger.debug()</code>,在日志级别不够的时候是不会输出日志的。那么这么写的目的何在？</p>
 
-<ol>
-<li>一看到这道题，就感觉要用递归来做，应该是回溯算法。百度证实无误。</li>
-<li>然后自己还没有生写过回溯。想了一会儿，结果不对，和正确解法做了一下比较，修改了一下自己的算法。标答是C++的，在java上需要修改一下，一些特别的地方要处理一下。</li>
-</ol>
+<h2 id="toc_1">1. 分析</h2>
 
-<p>直接上代码：</p>
+<p>我们来看一个例子</p>
 
-<pre><code class="language-text">/**
- * 核心算法
- * @param candidates 数组
- * @param target 当前递归子问题需要计算的target
- * @param start 开始查找的index
- * @param result 当前递归的result数组
- * @param ans 最后的答案
- */
-private void findOne(int[] candidates, int target, int start, List&lt;Integer&gt; result, List&lt;List&lt;Integer&gt;&gt; ans){
-    if (target == 0){
-        List&lt;Integer&gt; list = new ArrayList&lt;&gt;(result); //这里需要新开一个数组，否则会一直复用这个对象，导致结果不对
-        ans.add(list);
-        return;
-    }else if(target &lt; candidates[start]){
-        return; //不符合的结果，不处理。
-    }else{
-        for (int i = start; i &lt; candidates.length; i++){
-            result.add(candidates[i]);
-            findOne(candidates, target - candidates[i], i, result, ans);
-            result.remove(result.size() - 1);
-            //这里有点像树的遍历，这里就是要一个节点和不要一个节点的分支。然后可以重复使用元素，所以递归子问题，仍然从i开始。
-        }
+<pre><code class="language-text">String error = &quot;debug日志&quot;;
+logger.debug(&quot;这是一个&quot; + error);
+</code></pre>
+
+<p>按照正常的逻辑，在执行logger.debug()之前需要先行计算括号里的内容。然后才会判断当前日志级别不符合不输出。这里就存在一个无用计算的过程。相比对直接执行语句对logger.isDebugEnabled()进行先判断，显然是一个更优的方案，避免了无用的计算过程。</p>
+
+<p>然而这个结论在占位符的使用下，有了一点不同。</p>
+
+<p>再来看一个例子</p>
+
+<h3 id="toc_2">1.1. logger.debug(&quot;这是一个{}&quot;, model);</h3>
+
+<pre><code class="language-text">public static class Model{
+    int age;
+
+    @Override
+    public String toString() {
+        System.out.println(&quot;toString called&quot;);
+        return &quot;model{&quot; +
+                &quot;age=&quot; + age +
+                &#39;}&#39;;
     }
 }
-
-public List&lt;List&lt;Integer&gt;&gt; combinationSum(int[] candidates, int target) {
-    List&lt;List&lt;Integer&gt;&gt; ans = new ArrayList&lt;&gt;();
-    Arrays.sort(candidates); //题目没有说排好序的数组，所以这里要先拍个序
-    findOne(candidates, target, 0, new ArrayList&lt;&gt;(), ans);
-    return ans;
+public static void main(String[] args) {
+    Model model = new Model();
+    model.age = 3;
+    
+    logger.debug(&quot;这是一个{}&quot;, model);
 }
 </code></pre>
+
+<p>同样的作用，但是当日志级别高于debug时，不会执行括号内部的字符串拼接。也就是如果使用占位符{}来组合输出日志，可以不用判断<code>logger.isDebugEnabled()</code></p>
+
+<h3 id="toc_3">1.2. logger.debug(&quot;test:{}&quot;, test());</h3>
+
+<p>Model的toString方法在用占位符{}的方式时，没有执行，那么如果是一个普通的方法呢？</p>
+
+<pre><code class="language-text">public static String test(){
+    System.out.println(&quot;test&quot;);
+    return &quot;test&quot;;
+}
+public static void main(String[] args) {
+    logger.debug(&quot;test:{}&quot;, test()); //日志级别info
+}
+</code></pre>
+
+<p>结果，logger.debug(&quot;test:{}&quot;, test());无输出，但是test()方法在控制台打印出了test。</p>
+
+<p>结论：有占位符的存在，但是如果字符串拼接调用了函数，仍然会先执行函数，这和日志级别无关。</p>
+
+<h3 id="toc_4">1.3. logger.debug(&quot;test2:{}, {}&quot;, model, test());</h3>
+
+<pre><code class="language-text">public static String test(){
+    System.out.println(&quot;print test&quot;);
+    return &quot;fdsf&quot;;
+}
+public static void main(String[] args) {
+    Model model = new Model();
+    model.age = 3;
+    logger.debug(&quot;test1:&quot; + model);
+    model.age = 5;
+    logger.debug(&quot;test2:{}, {}&quot;, model, test());
+}
+</code></pre>
+
+<p>结果，最后一句debug，model的toString方法没有执行，而test()方法打印出了&quot;print test&quot;。也就是在占位符的作用下，对象的toString()方法不会执行，而不同方法仍然会执行。</p>
+
+<h2 id="toc_5">2. 结论</h2>
+
+<p>通过<code>logger.isDebugEnabled()</code>进行先行判断，肯定是没有错的。虽然在占位符的帮助下，当日志级别高于debug时，对象的toString()方法不会执行，但是普通的方法仍然会执行。如果能够保证logger.debug()中的内容只涉及最简单的字符串拼接和toString()，那么可以简略<code>logger.isDebugEnabled()</code>`，否则还是加上避免无用计算。</p>
 
 
     
@@ -213,16 +227,16 @@ public List&lt;List&lt;Integer&gt;&gt; combinationSum(int[] candidates, int targ
         <div class="large-6 columns">
         <p class="text-left" style="padding:15px 0px;">
       
-          <a href="15480002725541.html" 
-          title="Previous Post: 32. 最长有效括号">&laquo; 32. 最长有效括号</a>
+          <a href="15216334372729.html" 
+          title="Previous Post: Realm学习笔记">&laquo; Realm学习笔记</a>
       
         </p>
         </div>
         <div class="large-6 columns">
       <p class="text-right" style="padding:15px 0px;">
       
-          <a  href="15523931184037.html" 
-          title="Next Post: 448. 找到所有数组中消失的数字">448. 找到所有数组中消失的数字 &raquo;</a>
+          <a  href="15500645018755.html" 
+          title="Next Post: 数据库分库分表技术">数据库分库分表技术 &raquo;</a>
       
       </p>
         </div>

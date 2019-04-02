@@ -4,13 +4,429 @@
   <title><![CDATA[沧海一粟No.1]]></title>
   <link href="https://nimitz871016.github.io/atom.xml" rel="self"/>
   <link href="https://nimitz871016.github.io/"/>
-  <updated>2019-03-13T14:18:12+08:00</updated>
+  <updated>2019-04-02T21:48:00+08:00</updated>
   <id>https://nimitz871016.github.io/</id>
   <author>
     <name><![CDATA[]]></name>
     
   </author>
   <generator uri="http://www.mweb.im/">MWeb</generator>
+  
+  <entry>
+    <title type="html"><![CDATA[102. 二叉树的层次遍历]]></title>
+    <link href="https://nimitz871016.github.io/15490058580119.html"/>
+    <updated>2019-02-01T15:24:18+08:00</updated>
+    <id>https://nimitz871016.github.io/15490058580119.html</id>
+    <content type="html"><![CDATA[
+<p><a href="https://leetcode-cn.com/problems/binary-tree-level-order-traversal/description/">https://leetcode-cn.com/problems/binary-tree-level-order-traversal/description/</a></p>
+
+<h2 id="toc_0">题目</h2>
+
+<p>给定一个二叉树，返回其按层次遍历的节点值。 （即逐层地，从左到右访问所有节点）。</p>
+
+<p>例如:</p>
+
+<pre><code class="language-text">给定二叉树:  [3,9,20,null,null,15,7],
+
+
+    3
+   / \
+  9  20
+    /  \
+   15   7
+   
+
+返回其层次遍历结果：
+
+[
+  [3],
+  [9,20],
+  [15,7]
+]
+</code></pre>
+
+<h2 id="toc_1">解题思路：</h2>
+
+<p>层次遍历，没啥好说的，就是本题需要将层次区分开来。因此传统的方法，需要做一些修订。用一个队列保存当前层次的所有节点。</p>
+
+<p>每一轮遍历的时候，依次出队所有的节点，存入结果，并遍历出队的所有节点，如果有子节点则存入队列，等待下一轮遍历。</p>
+
+<p>也就是有两层的遍历，用一个临时的队列，保存中间结果</p>
+
+<h2 id="toc_2">代码：</h2>
+
+<pre><code class="language-text">public List&lt;List&lt;Integer&gt;&gt; levelOrder(TreeNode root) {
+    Queue&lt;TreeNode&gt; queue = new ArrayDeque&lt;&gt;();
+    if (root != null) {
+        queue.add(root);
+    }
+    List&lt;List&lt;Integer&gt;&gt; result = new ArrayList&lt;&gt;();
+    while(!queue.isEmpty()){
+        List&lt;Integer&gt; ans = new ArrayList&lt;&gt;();
+        Queue&lt;TreeNode&gt; tempQueue = new ArrayDeque&lt;&gt;(queue);
+        while (!tempQueue.isEmpty()){
+            TreeNode node = tempQueue.poll();
+            ans.add(node.val);
+        }
+        tempQueue = new ArrayDeque&lt;&gt;(queue);
+        queue.clear();
+        while(!tempQueue.isEmpty()){
+            TreeNode node = tempQueue.poll();
+            if (node.left != null) {
+                queue.add(node.left);
+            }
+            if (node.right != null) {
+                queue.add(node.right);
+            }
+        }
+        result.add(ans);
+    }
+    return result;
+}
+</code></pre>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[122. 买卖股票的最佳时机 II]]></title>
+    <link href="https://nimitz871016.github.io/15490112223994.html"/>
+    <updated>2019-02-01T16:53:42+08:00</updated>
+    <id>https://nimitz871016.github.io/15490112223994.html</id>
+    <content type="html"><![CDATA[
+<p><a href="https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock-ii/description/">https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock-ii/description/</a></p>
+
+<p>给定一个数组，它的第 i 个元素是一支给定股票第 i 天的价格。</p>
+
+<p>设计一个算法来计算你所能获取的最大利润。你可以尽可能地完成更多的交易（多次买卖一支股票）。</p>
+
+<p>注意：你不能同时参与多笔交易（你必须在再次购买前出售掉之前的股票）。</p>
+
+<pre><code class="language-text">示例 1:
+
+输入: [7,1,5,3,6,4]
+输出: 7
+解释: 在第 2 天（股票价格 = 1）的时候买入，在第 3 天（股票价格 = 5）的时候卖出, 这笔交易所能获得利润 = 5-1 = 4 。
+     随后，在第 4 天（股票价格 = 3）的时候买入，在第 5 天（股票价格 = 6）的时候卖出, 这笔交易所能获得利润 = 6-3 = 3 。
+示例 2:
+
+输入: [1,2,3,4,5]
+输出: 4
+解释: 在第 1 天（股票价格 = 1）的时候买入，在第 5 天 （股票价格 = 5）的时候卖出, 这笔交易所能获得利润 = 5-1 = 4 。
+     注意你不能在第 1 天和第 2 天接连购买股票，之后再将它们卖出。
+     因为这样属于同时参与了多笔交易，你必须在再次购买前出售掉之前的股票。
+示例 3:
+
+输入: [7,6,4,3,1]
+输出: 0
+解释: 在这种情况下, 没有交易完成, 所以最大利润为 0。
+</code></pre>
+
+<h2 id="toc_0">解题思路：</h2>
+
+<p>dp题。尝试写出状态转移方程。</p>
+
+<p>设s[i]，第i天股票的价格</p>
+
+<p>1) dp[i], 到第i天，最优的股票收益。</p>
+
+<pre><code class="language-text">dp[i] = max {max{ s[i] - s[j] + dp[j - 1]} j = 1...i - 1,
+</code></pre>
+
+<p>dp[i - 1]代表不卖，以及s[i] &lt; s[j]的情况,算法复杂度O(n2)</p>
+
+<h2 id="toc_1">代码：</h2>
+
+<pre><code class="language-text">public int maxProfit(int[] prices) {
+    if (prices.length == 0){
+        return 0;
+    }
+    int[] dp = new int[prices.length];
+    for (int i = 1 ; i &lt; prices.length; i++){
+        int max = dp[i - 1];
+        for (int j = 0; j &lt; i; j++){
+            int temp = prices[i] - prices[j];
+            temp = temp &lt; 0 ? 0 : temp;
+            if (j &gt; 0) {
+                if (temp &gt; 0) {
+                    temp += dp[j - 1];
+                } else {
+                    temp = dp[j - 1];
+                }
+            }
+            if (temp &gt; max){
+                max = temp;
+            }
+        }
+        dp[i] = max;
+    }
+    return dp[prices.length - 1];
+}
+</code></pre>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[169. 求众数]]></title>
+    <link href="https://nimitz871016.github.io/15500440104341.html"/>
+    <updated>2019-02-13T15:46:50+08:00</updated>
+    <id>https://nimitz871016.github.io/15500440104341.html</id>
+    <content type="html"><![CDATA[
+<p><a href="https://leetcode-cn.com/problems/majority-element/description/">https://leetcode-cn.com/problems/majority-element/description/</a></p>
+
+<pre><code class="language-text">
+给定一个大小为 n 的数组，找到其中的众数。众数是指在数组中出现次数大于  ⌊ n/2 ⌋ 的元素。
+
+你可以假设数组是非空的，并且给定的数组总是存在众数。
+
+示例 1:
+
+输入: [3,2,3]
+输出: 3
+示例 2:
+
+输入: [2,2,1,1,1,2,2]
+输出: 2
+</code></pre>
+
+<h2 id="toc_0">解题思路：</h2>
+
+<p>&emsp;&emsp;我的思路是，排序，然后逐一比对。直到找到众数为止。但是直觉告诉我应该有更优雅的方式。</p>
+
+<p>&emsp;&emsp;这是一道求众数的问题，有很多种解法，其中我感觉比较好的有两种，一种是用哈希表，这种方法需要O(n)的时间和空间，另一种是用一种叫摩尔投票法 Moore Voting，需要O(n)的时间和O(1)的空间，比前一种方法更好。这种投票法先将第一个数字假设为众数，然后把计数器设为1，比较下一个数和此数是否相等，若相等则计数器加一，反之减一。然后看此时计数器的值，若为零，则将当前值设为候选众数。以此类推直到遍历完整个数组，当前候选众数即为该数组的众数。不仔细弄懂摩尔投票法的精髓的话，过一阵子还是会忘记的，首先要明确的是这个叼炸天的方法是有前提的，就是数组中一定要有众数的存在才能使用，下面我们来看本算法的思路，这是一种先假设候选者，然后再进行验证的算法。我们现将数组中的第一个数假设为众数，然后进行统计其出现的次数，如果遇到同样的数，则计数器自增1，否则计数器自减1，如果计数器减到了0，则更换当前数字为候选者。这是一个很巧妙的设定，也是本算法的精髓所在，为啥遇到不同的要计数器减1呢，为啥减到0了又要更换候选者呢？首先是有那个强大的前提存在，一定会有一个出现超过半数的数字存在，那么如果计数器减到0了话，说明目前不是候选者数字的个数已经跟候选者的出现个数相同了，那么这个候选者已经很weak，不一定能出现超过半数，我们选择更换当前的候选者。那有可能你会有疑问，那万一后面又大量的出现了之前的候选者怎么办，不需要担心，如果之前的候选者在后面大量出现的话，其又会重新变为候选者，直到最终验证成为正确的众数，佩服算法的提出者啊。</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[189. 旋转数组]]></title>
+    <link href="https://nimitz871016.github.io/15500441189502.html"/>
+    <updated>2019-02-13T15:48:38+08:00</updated>
+    <id>https://nimitz871016.github.io/15500441189502.html</id>
+    <content type="html"><![CDATA[
+<pre><code class="language-text">给定一个数组，将数组中的元素向右移动 k 个位置，其中 k 是非负数。
+
+示例 1:
+
+输入: [1,2,3,4,5,6,7] 和 k = 3
+输出: [5,6,7,1,2,3,4]
+解释:
+向右旋转 1 步: [7,1,2,3,4,5,6]
+向右旋转 2 步: [6,7,1,2,3,4,5]
+向右旋转 3 步: [5,6,7,1,2,3,4]
+示例 2:
+
+输入: [-1,-100,3,99] 和 k = 2
+输出: [3,99,-1,-100]
+解释: 
+向右旋转 1 步: [99,-1,-100,3]
+向右旋转 2 步: [3,99,-1,-100]
+说明:
+
+尽可能想出更多的解决方案，至少有三种不同的方法可以解决这个问题。
+要求使用空间复杂度为 O(1) 的原地算法。
+</code></pre>
+
+<h2 id="toc_0">解题思路：</h2>
+
+<p>&emsp;&emsp;关键在于O(1)的算法。如果是O(n)的话，方法就太多了。这里就不说了。主要说一下O(1)的做法。</p>
+
+<p>&emsp;&emsp;采用翻转字符的方法，思路是先把前n-k个数字翻转一下，再把后k个数字翻转一下，最后再把整个数组翻转一下：</p>
+
+<p>1 2 3 4 5 6 7 <br/>
+4 3 2 1 5 6 7 <br/>
+4 3 2 1 7 6 5<br/>
+5 6 7 1 2 3 4</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[258. 各位相加]]></title>
+    <link href="https://nimitz871016.github.io/15500475532566.html"/>
+    <updated>2019-02-13T16:45:53+08:00</updated>
+    <id>https://nimitz871016.github.io/15500475532566.html</id>
+    <content type="html"><![CDATA[
+<pre><code class="language-text">
+给定一个非负整数  num，反复将各个位上的数字相加，直到结果为一位数。
+
+示例:
+
+输入: 38
+输出: 2 
+解释: 各位相加的过程为：3 + 8 = 11, 1 + 1 = 2。 由于 2 是一位数，所以返回 2。
+进阶:
+你可以不使用循环或者递归，且在 O(1) 时间复杂度内解决这个问题吗？
+</code></pre>
+
+<h2 id="toc_0">解题思路：</h2>
+
+<p>普通的方法都会解，这里就不重复了。说下O(1)的解法。</p>
+
+<p>这里用到 一个很巧妙的算法。</p>
+
+<p><img src="media/15500475532566/15500475966040.jpg" alt="" style="width:557px;"/></p>
+
+<p>根据以上，可以得出，快速求解，就是将数字不断减去9，直到不能减为止即为正解。</p>
+
+<p>那么不断减去9的过程，可以化为--&gt; mod 9</p>
+
+<p>代码如下：</p>
+
+<pre><code class="language-text">class Solution {
+    public int addDigits(int num) {
+        if (num == 0){
+            return num;
+        }
+        num %= 9;
+        return num == 0 ? 9 : num;
+    }
+}
+</code></pre>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[32. 最长有效括号]]></title>
+    <link href="https://nimitz871016.github.io/15480002725541.html"/>
+    <updated>2019-01-21T00:04:32+08:00</updated>
+    <id>https://nimitz871016.github.io/15480002725541.html</id>
+    <content type="html"><![CDATA[
+<p><a href="https://leetcode-cn.com/problems/longest-valid-parentheses/description/">https://leetcode-cn.com/problems/longest-valid-parentheses/description/</a></p>
+
+<p>给定一个只包含  &#39;(&#39; 和  &#39;)&#39; 的字符串，找出最长的包含有效括号的子串的长度。</p>
+
+<p>示例 1:</p>
+
+<pre><code class="language-text">输入: &quot;(()&quot;
+输出: 2
+解释: 最长有效括号子串为 &quot;()&quot;
+示例 2:
+
+输入: &quot;)()())&quot;
+输出: 4
+解释: 最长有效括号子串为 &quot;()()&quot;
+</code></pre>
+
+<p>代码：</p>
+
+<pre><code class="language-text">public int longestValidParentheses(String s) {
+    int[] dp = new int[s.length()];
+    int max = 0;
+    for (int i = 1; i &lt; s.length(); i++){
+        if (s.charAt(i) == &#39;(&#39;){
+            dp[i] = 0;
+        }else{
+            if (dp[i - 1] != 0) {
+                int index = i - dp[i - 1] - 1;
+                if (index &gt;= 0 &amp;&amp; s.charAt(index) == &#39;(&#39;) {
+                    dp[i] = dp[i - 1] + 2;
+                    if (index - 1 &gt;= 0 ){
+                        dp[i] += dp[index - 1];
+                    }
+                }
+            }
+            if (s.charAt(i - 1) == &#39;(&#39;){
+                if (i &gt;= 2) {
+                    dp[i] = dp[i] &gt; dp[i - 2] + 2 ? dp[i] : dp[i - 2] + 2;
+                }else{
+                    dp[i] = 2;
+                }
+            }
+            if (max &lt; dp[i]){
+                max = dp[i];
+            }
+        }
+    }
+    return max;
+}
+</code></pre>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[39. 组合总和]]></title>
+    <link href="https://nimitz871016.github.io/15480003648444.html"/>
+    <updated>2019-01-21T00:06:04+08:00</updated>
+    <id>https://nimitz871016.github.io/15480003648444.html</id>
+    <content type="html"><![CDATA[
+<p><a href="https://leetcode-cn.com/problems/combination-sum/description/">https://leetcode-cn.com/problems/combination-sum/description/</a></p>
+
+<p>给定一个无重复元素的数组  candidates 和一个目标数  target ，找出  candidates 中所有可以使数字和为  target 的组合。</p>
+
+<p>candidates 中的数字可以无限制重复被选取。</p>
+
+<p>说明：</p>
+
+<p>所有数字（包括  target）都是正整数。<br/>
+解集不能包含重复的组合。 </p>
+
+<pre><code class="language-text">示例 1:
+
+输入: candidates = [2,3,6,7], target = 7,
+所求解集为:
+[
+  [7],
+  [2,2,3]
+]
+示例 2:
+
+输入: candidates = [2,3,5], target = 8,
+所求解集为:
+[
+  [2,2,2,2],
+  [2,3,3],
+  [3,5]
+]
+</code></pre>
+
+<p>题目分析：</p>
+
+<ol>
+<li>一看到这道题，就感觉要用递归来做，应该是回溯算法。百度证实无误。</li>
+<li>然后自己还没有生写过回溯。想了一会儿，结果不对，和正确解法做了一下比较，修改了一下自己的算法。标答是C++的，在java上需要修改一下，一些特别的地方要处理一下。</li>
+</ol>
+
+<p>直接上代码：</p>
+
+<pre><code class="language-text">/**
+ * 核心算法
+ * @param candidates 数组
+ * @param target 当前递归子问题需要计算的target
+ * @param start 开始查找的index
+ * @param result 当前递归的result数组
+ * @param ans 最后的答案
+ */
+private void findOne(int[] candidates, int target, int start, List&lt;Integer&gt; result, List&lt;List&lt;Integer&gt;&gt; ans){
+    if (target == 0){
+        List&lt;Integer&gt; list = new ArrayList&lt;&gt;(result); //这里需要新开一个数组，否则会一直复用这个对象，导致结果不对
+        ans.add(list);
+        return;
+    }else if(target &lt; candidates[start]){
+        return; //不符合的结果，不处理。
+    }else{
+        for (int i = start; i &lt; candidates.length; i++){
+            result.add(candidates[i]);
+            findOne(candidates, target - candidates[i], i, result, ans);
+            result.remove(result.size() - 1);
+            //这里有点像树的遍历，这里就是要一个节点和不要一个节点的分支。然后可以重复使用元素，所以递归子问题，仍然从i开始。
+        }
+    }
+}
+
+public List&lt;List&lt;Integer&gt;&gt; combinationSum(int[] candidates, int target) {
+    List&lt;List&lt;Integer&gt;&gt; ans = new ArrayList&lt;&gt;();
+    Arrays.sort(candidates); //题目没有说排好序的数组，所以这里要先拍个序
+    findOne(candidates, target, 0, new ArrayList&lt;&gt;(), ans);
+    return ans;
+}
+</code></pre>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[448. 找到所有数组中消失的数字]]></title>
@@ -36,7 +452,7 @@
 
 <h2 id="toc_1">思路分析</h2>
 
-<p>关键点在于不用额外控件，时间复杂度为O（n）。这两点限制了使用排序算法，或者用额外空间来记录。</p>
+<p>关键点在于不用额外空间，时间复杂度为O（n）。这两点限制了使用排序算法，或者用额外空间来记录。</p>
 
 <p>那么，不能用额外空间，就只能用原有的数组空间了。这里有一个技巧就是用数组的下标也可以存储信息。因为数据的范围是在n之内，因此数组内出现的数字都是合法的下标。基于这个前提，本题有一个很巧妙的做法。详见代码。</p>
 
@@ -61,211 +477,487 @@
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[数据库分库分表技术]]></title>
-    <link href="https://nimitz871016.github.io/15500645018755.html"/>
-    <updated>2019-02-13T21:28:21+08:00</updated>
-    <id>https://nimitz871016.github.io/15500645018755.html</id>
+    <title type="html"><![CDATA[55. 跳跃游戏]]></title>
+    <link href="https://nimitz871016.github.io/15486626415496.html"/>
+    <updated>2019-01-28T16:04:01+08:00</updated>
+    <id>https://nimitz871016.github.io/15486626415496.html</id>
     <content type="html"><![CDATA[
-<h1 id="toc_0">1. 基本概念</h1>
+<p>给定一个非负整数数组，你最初位于数组的第一个位置。</p>
 
-<h2 id="toc_1">1.1. 拆分方式</h2>
+<p>数组中的每个元素代表你在该位置可以跳跃的最大长度。</p>
+
+<p>判断你是否能够到达最后一个位置。</p>
+
+<pre><code class="language-text">示例 1:
+
+输入: [2,3,1,1,4]
+输出: true
+解释: 从位置 0 到 1 跳 1 步, 然后跳 3 步到达最后一个位置。
+示例 2:
+
+输入: [3,2,1,0,4]
+输出: false
+解释: 无论怎样，你总会到达索引为 3 的位置。但该位置的最大跳跃长度是 0 ， 所以你永远不可能到达最后一个位置。
+</code></pre>
+
+<p>解题思路：</p>
+
+<p>本道题用贪心。贪心的策略很巧妙。第一次独立没有想出来。<br/>
+贪心的策略：</p>
+
+<ol>
+<li>每一步都选择最大的可能去接近结果。</li>
+<li>那么遍历一遍，如果最大的结果超过了最后一个位置。则说明最后一个位置是可达的，也就是返回true。</li>
+</ol>
+
+<p>贪心的巧妙在于，我们不在意到底是如何选择的，只在乎是否可达。</p>
+
+<p>代码：</p>
+
+<pre><code class="language-text"> public boolean canJump(int[] nums) {
+    int result = 0;
+    if (nums.length == 1){ //注意边界，最后一个台阶的值是没有意义的。因此只有一个台阶的时候，永远是true
+        return true;
+    }
+    for (int i = 0; i &lt; nums.length; i++){
+        if (i &gt; result || (nums[i] == 0 &amp;&amp; i == result)){
+            break;
+        }
+        result = Math.max(result, nums[i] + i);
+    }
+    return result &gt;= nums.length - 1;
+}
+</code></pre>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[72. 编辑距离]]></title>
+    <link href="https://nimitz871016.github.io/15489927924408.html"/>
+    <updated>2019-02-01T11:46:32+08:00</updated>
+    <id>https://nimitz871016.github.io/15489927924408.html</id>
+    <content type="html"><![CDATA[
+<h2 id="toc_0">题目</h2>
+
+<p>给定两个单词 word1 和 word2，计算出将 word1 转换成 word2 所使用的最少操作数 。</p>
+
+<p>你可以对一个单词进行如下三种操作：</p>
+
+<p>插入一个字符<br/>
+删除一个字符<br/>
+替换一个字符<br/>
+示例 1:</p>
+
+<p>输入: word1 = &quot;horse&quot;, word2 = &quot;ros&quot;<br/>
+输出: 3<br/>
+解释: <br/>
+horse -&gt; rorse (将 &#39;h&#39; 替换为 &#39;r&#39;)<br/>
+rorse -&gt; rose (删除 &#39;r&#39;)<br/>
+rose -&gt; ros (删除 &#39;e&#39;)<br/>
+示例 2:</p>
+
+<p>输入: word1 = &quot;intention&quot;, word2 = &quot;execution&quot;<br/>
+输出: 5<br/>
+解释: <br/>
+intention -&gt; inention (删除 &#39;t&#39;)<br/>
+inention -&gt; enention (将 &#39;i&#39; 替换为 &#39;e&#39;)<br/>
+enention -&gt; exention (将 &#39;n&#39; 替换为 &#39;x&#39;)<br/>
+exention -&gt; exection (将 &#39;n&#39; 替换为 &#39;c&#39;)<br/>
+exection -&gt; execution (插入 &#39;u&#39;)</p>
+
+<h2 id="toc_1">解题思路</h2>
+
+<ol>
+<li><p>先作弊了，看到要用dp。思考许久还是没有想法。<br/>
+解析一下自己的错误思路。<br/>
+看到有三种变换方式，有一点不知道该怎么处理。</p></li>
+<li><p>看了网上的解题报告，写下自己理解后的东西。</p>
+<p>首先，确认dp的含义<br/>
+word1记为s1， word2记为s2<br/>
+dp[i][j] = s1 从0...i， s2从0...j 两个字符串的编辑距离。所以dp的大小应该是dp[s1.length + 1][s2.length + 1].</p></li>
+</ol>
 
 <ul>
-<li><p>垂直拆分</p>
-<p>将一个库（表）拆分成多个库（表），每个库（表）的结构和原有的结构不同。</p>
-<p>这实际上可以认为是一种数据库的重新设计。拆分的原则可以是：</p>
-<pre><code class="language-text">1. 根据业务的具体情况，将热门的数据和冷门的数据分开。达到提高性能的目的。（库或者表的拆分都可以遵循这样一条原则）
-</code></pre></li>
-<li><p>水平拆分</p>
-<p>根据分片算法，将一个库（表）拆分成多个库（表），每个库（表）的结构和原有的结构相同。</p></li>
+<li><p>转换公式<br/>
+计算dp[i][j]有三种变化方式</p>
+<ol>
+<li>dp[i - 1][j], 由于对比dp[i][j]，s1少了一个，所以要insert一个，编辑距离 + 1</li>
+<li>dp[i][j - 1] 由于对比dp[i][j]，s1少了一个，所以要delete一个，编辑距离 + 1</li>
+<li>dp[i - 1][j - 1]，对比s1[i - 1] 和 s2[j - 1]的情况，如果相等，编辑距离不变，否则需要+1（替换）</li>
+</ol>
+<p>从上文可以看出，三种变换方式都有了。</p>
+<p>接下来处理边界条件</p>
+<p>dp[0][i] = i和dp[i][0] = i，分别代表增加i个，和删除i个。</p></li>
 </ul>
+
+<h2 id="toc_2">代码</h2>
+
+<pre><code class="language-text"> public int minDistance(String word1, String word2) {
+    int[][] dp = new int[word1.length() + 1][word2.length() + 1];
+    for (int i = 0; i &lt;= word1.length(); i++) {
+        dp[i][0] = i;
+    }
+    for (int j = 0; j &lt;= word2.length(); j++) {
+        dp[0][j] = j;
+    }
+    for (int i = 1; i &lt;= word1.length(); i++) {
+        for (int j = 1; j &lt;= word2.length(); j++) {
+            int a = Math.min(dp[i - 1][j] + 1, dp[i][j - 1] + 1);
+            int cost = word1.charAt(i - 1) == word2.charAt(j - 1) ? 0 : 1;
+            dp[i][j] = Math.min(a, dp[i - 1][j - 1] + cost);
+        }
+    }
+    return dp[word1.length()][word2.length()];
+}
+</code></pre>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Java并发编程]]></title>
+    <link href="https://nimitz871016.github.io/15479962056718.html"/>
+    <updated>2019-01-20T22:56:45+08:00</updated>
+    <id>https://nimitz871016.github.io/15479962056718.html</id>
+    <content type="html"><![CDATA[
+<p>&emsp;&emsp;本文对Java中的并发变成进行了简单的描述。是本人阅读《Java并发编程的艺术》一书的读书笔记。本文对重要的概念进行了记录。</p>
+
+<p>&emsp;&emsp;本文首先介绍了各种各样的和锁相关的概念。然后介绍了Java多线程的技术要点，最后介绍了一些经典使用案例。</p>
 
 <span id="more"></span><!-- more -->
 
-<h2 id="toc_2">1.2. 使用数据库的三个阶段</h2>
+<h2 id="toc_0">0. 重要技术要点目录</h2>
 
-<h3 id="toc_3">1.2.1 单库单表</h3>
+<h3 id="toc_1">0.1 和锁有关的概念</h3>
 
-<p>单库单表是最简单的实践方式。数据库的性能取决于所使用的数据库和初始的数据库设计。</p>
+<p>&emsp;&emsp;关于锁的概念有很多，这里一一列举。</p>
 
-<p>假如有一张User信息，需要存储User的所有信息。按照最简单的逻辑，那么就直接对应了一张User表。</p>
+<blockquote>
+<p>按照锁的的状态分</p>
+</blockquote>
 
-<h3 id="toc_4">1.2.2 单库多表</h3>
-
-<p>随着业务的不断发展。User信息不断增加。单表的性能撑不住了。尝试对User表进行水平分片。可以对User表按照某种规则进行分片，分出多个结构完全一样的子表。例如User0，User1, User2。。。</p>
-
-<p>注意，不同的数据库有不同的性能指标。例如MySQL单表的容量已5000W条记录为佳？</p>
-
-<h3 id="toc_5">1.2.3 多库多表</h3>
-
-<p>数据量继续增加，单条数据库的存储空间告警了，无法支撑业务。这时候就需要对数据库进行水平切分，将切分的数据库和表水平地分配到不同的数据库实例上去。</p>
-
-<h2 id="toc_6">2. 如何判断需要进行分库分表</h2>
-
-<p>系统不可能一开始就考虑最复杂的多库多表场景。在最开始的设计时，只能对未来的场景有一个简单的预估。那么随着系统的不断升级，合适应该采用分库分表策略呢？</p>
-
-<p>以MySQL为例，表达到千万级别就需要考虑进行分表。这样，数据就被分散在不同的表上，单表的索引大小得到了控制，会提升查询性能，对索引以及表结构的变更会很方便和高效<br/>
-。</p>
-
-<ul>
-<li>按照数据库的表大小来判断</li>
-</ul>
-
-<p>以MySQL数据库为例，单表超过5000W条记录就要考虑分表</p>
-
-<ul>
-<li>按照数据库的吞吐量来判断</li>
-</ul>
-
-<p>如果吞吐遇到瓶颈，则要考虑增加数据库实例</p>
-
-<h2 id="toc_7">2.1. 分库分表的方案</h2>
-
-<p>分库分表的方案可以分成三类:</p>
+<p>&emsp;&emsp;在Java中，按照锁的状态分，有四种状态。分别是：</p>
 
 <ol>
-<li>客户端分片</li>
-<li>代理分片</li>
-<li>支持事务的分布式数据库</li>
+<li>无锁</li>
+<li>偏向锁</li>
+<li>轻量级锁</li>
+<li>重量级锁</li>
 </ol>
 
-<h3 id="toc_8">2.1.1. 客户端分片</h3>
+<p>偏向锁是可以取消的，根据系统的实际使用情况。因为可能有的场景，系统中资源冲突严重，那么偏向锁就没有什么必要存在了，反而增加处理逻辑，更慢。</p>
 
-<p>客户端分片就是使用分库分表的数据库应用层直接操作分片逻辑，分片规则需要在同一个应用的多个节点之间进行同步，每个应用层都需要嵌入一个操作切片的逻辑实现。这里又可以分成三种：</p>
+<blockquote>
+<p>按照锁的实现方式分</p>
+</blockquote>
 
 <ol>
-<li>在应用层直接实现</li>
-<li>定制JDBC协议</li>
-<li><p>定制ORM框架</p></li>
+<li>乐观锁</li>
+<li>悲观锁</li>
 </ol>
 
-<ul>
-<li><p>在应用层直接实现</p>
-<ul>
-<li><p>优点</p>
+<p>&emsp;&emsp;在Java中没有特地讲乐观锁，悲观锁。但实际上这两种锁是可以和Java中提到的概念一一对应。</p>
+
+<blockquote>
+<p>按照试用场景分</p>
+</blockquote>
+
 <ol>
-<li>实现简单，适合快速上线。</li>
-<li>切分逻辑是自己实现的，出现问题容易解决</li>
-<li>性能高</li>
+<li>可重入锁--ReentranLock</li>
+<li>读写锁--ReentranReadWriteLock</li>
+</ol>
+
+<p>&emsp;&emsp;这两种锁是可以直接和Java中的实现对应的。</p>
+
+<blockquote>
+<p>其他</p>
+</blockquote>
+
+<ul>
+<li>volatile和synchronized</li>
+</ul>
+
+<p>&emsp;&emsp;这两个关键字是Java锁的基础（很多其他语言也有相同的使用）。例如可重入锁和读写锁其实都是对这两个关键词的应用，并不是另起炉灶。</p>
+
+<ul>
+<li>CAS操作</li>
+</ul>
+
+<p>&emsp;&emsp;CAS（Compare and swap）是一种乐观锁的操作方式。CAS操作保证了线程安全，同时没有对线程加锁。是一种常见的优化锁使用的选择。</p>
+
+<ul>
+<li>happens-before原则</li>
+</ul>
+
+<p>指令重排的相关概念。指的是按照编码逻辑的指令的执行顺序。A指令happens-beforeB指令。那么一个重要的原则是，判断是否可以重排的依据，并不是要求指令一定要按照物理顺序。只要重排后的指令执行结果和重排前一致就可以。</p>
+
+<h2 id="toc_2">1. Java中的几种锁</h2>
+
+<p>读写锁<br/>
+重入锁</p>
+
+<h2 id="toc_3">2. Java中的锁的状态</h2>
+
+<p><img src="media/15474517017096/15474518978931.jpg" alt="" style="width:608px;"/></p>
+
+<p><img src="media/15474517017096/15476277957012.jpg" alt="" style="width:595px;"/></p>
+
+<p>锁会升级不会降级。越“轻”的锁，效率越高。但是越不好解决同步的问题（不能解决的时候就要升级）。<br/>
+偏向锁就是偏向于拿锁的线程通常是同一个，这样就可以提高效率。</p>
+
+<p><img src="media/15474517017096/15476312618712.jpg" alt="" style="width:595px;"/></p>
+
+<p>Q:红框处为什么要检查线程是否活着？<br/>
+A:线程1执行完毕后,不会主动去释放偏向锁。</p>
+
+<p>Q:偏向锁是如何升级成轻量级锁的？<br/>
+A:当另一个线程获取偏向锁失败，就升级成轻量级锁。轻量级锁的特点是自旋。</p>
+
+<p>Q:轻量级锁是如何升级成重量级锁的？<br/>
+A:轻量级锁自旋到达一定条件就会升级成重量级锁。但是具体条件是啥，没有找到相关资料。</p>
+
+<p>总结，获取不到锁就会往上膨胀。直到重量级锁。</p>
+
+<p>通俗来讲就是：</p>
+
+<p>偏向锁：仅有一个线程进入临界区<br/>
+轻量级锁：多个线程交替进入临界区<br/>
+重量级锁：多个线程同时进入临界区</p>
+
+<p><strong>问题</strong><br/>
+轻量级锁是自旋的，那么根据什么条件判断会膨胀成重量级锁</p>
+
+<h2 id="toc_4">3. volatile</h2>
+
+<p>使用volatile修饰变量，可以让这个变量在各个线程之间永远显示的是最新的值。为什么会有这么一个说法？每一个线程有自己的独立缓存。对于一个共享变量，在多线程并发的情况下，可能导致自己的缓存和实际的值不等。而volaile的出现，使得线程自己的缓存无效，每一次都需要去内存中读取最新的值。<br/>
+volatile可以看做轻量的synchronized。可以减少锁的程度。提高性能。</p>
+
+<h3 id="toc_5">3. volatile实现原理的相关知识</h3>
+
+<ol>
+<li>happens-before原则，涉及到volatile的底层实现原理。</li>
+</ol>
+
+<h3 id="toc_6">4. happens-before原则</h3>
+
+<p><img src="media/15474517017096/15476423173260.jpg" alt="" style="width:598px;"/></p>
+
+<p>所以本质的意思就是指令重排不能影响计算结果。只要计算结果一样，虽然有happens-before关系，也不要求一定要按照happens-before的顺序执行<br/>
+<img src="media/15474517017096/15476476024054.jpg" alt="" style="width:592px;"/></p>
+
+<p><img src="media/15474517017096/15476561471183.jpg" alt="" style="width:593px;"/></p>
+
+<h3 id="toc_7">volatile的经典应用-单例模式</h3>
+
+<p><img src="media/15474517017096/15476573891697.jpg" alt="" style="width:601px;"/></p>
+
+<h3 id="toc_8">wait()和notify()</h3>
+
+<ol>
+<li><p>作用</p></li>
+<li><p>好处。<br/>
+wait() 等待。相比一个死循环，定期休眠来判断是否结束要好的多，因为定期休眠可能会导致响应不及时。</p></li>
+<li><p>notify() 之后，并不是对应的wait会立刻结束</p></li>
+</ol>
+
+<p><img src="media/15474517017096/15476614597968.jpg" alt="" style="width:597px;"/></p>
+
+<h3 id="toc_9">ThreadLocal</h3>
+
+<h3 id="toc_10">线程池技术</h3>
+
+<p>几种线程池的创建方式，以及适应的场景。</p>
+
+<h3 id="toc_11">锁和synchronized的关系</h3>
+
+<p><img src="media/15474517017096/15476947781313.jpg" alt="" style="width:599px;"/></p>
+
+<p><img src="media/15474517017096/15476953591669.jpg" alt="" style="width:604px;"/></p>
+
+<h3 id="toc_12">ReentrantLock 和 ReetranReadWriteLock 可重入锁和可重入读写锁</h3>
+
+<p>可重入的意思是可以被同一个线程重复加锁。<br/>
+读写锁适用于生产者消费者场景。分为读锁和写锁。</p>
+
+<h3 id="toc_13">Object的wait，notify和condition的await，signal</h3>
+
+<p><img src="media/15474517017096/15477091389472.jpg" alt="" style="width:958px;"/></p>
+
+<h3 id="toc_14">ConcurrentHashMap分析</h3>
+
+<p>使用了锁来保证线程安全。使用了锁分段技术。减少了锁的冲突，从而提高了效率。</p>
+
+<h3 id="toc_15">ConcurrentLinkedQueue分析</h3>
+
+<p><del>学习其特别的尾节点定义方式。可以很大程度减少冲突。其使用CAS操作来避免冲突。但是其特别的尾节点定义方式，使得CAS操作不那么容易失败。</del></p>
+
+<p><img src="media/15474517017096/15477115519893.jpg" alt="" style="width:603px;"/></p>
+
+<p>出队也有相似的逻辑</p>
+
+<h3 id="toc_16">Java中的阻塞队列</h3>
+
+<p><img src="media/15474517017096/15477148083195.jpg" alt="" style="width:418px;"/></p>
+
+<h4 id="toc_17">DelayQueue</h4>
+
+<p>可以支持延时获取元素的队列，要求队列中的元素必须实现Delayed接口</p>
+
+<ul>
+<li>经典场景</li>
+</ul>
+
+<p>缓存系统</p>
+
+<p>定时任务调度</p>
+
+<h4 id="toc_18">SynchronousQueue</h4>
+
+<p><img src="media/15474517017096/15477162270641.jpg" alt="" style="width:600px;"/></p>
+
+<h4 id="toc_19">LinkedBlockingQueue</h4>
+
+<p>用在工作窃取模式</p>
+
+<h4 id="toc_20">CountDownLatch join的升级版</h4>
+
+<h3 id="toc_21">Semaphore</h3>
+
+<p><img src="media/15474517017096/15477221892006.jpg" alt="" style="width:601px;"/></p>
+
+<h3 id="toc_22">线程池</h3>
+
+<ol>
+<li>队列模型的选取
+<ol>
+<li>建议使用有界队列</li>
+<li>建议和系统的核心数挂钩？？</li>
 </ol></li>
-<li><p>缺点</p>
-<ol>
-<li>侵入了业务</li>
-<li>数据库保持的连接数会比较多，需要提前进行容量评估。</li>
-</ol></li>
-</ul></li>
-<li><p>通过定制JDBC协议实现</p></li>
-</ul>
-
-<p>业务开发人员不必关心分库分表的实现，分片逻辑对业务层保持透明</p>
-
-<ul>
-<li>通过定制ORM框架实现</li>
-</ul>
-
-<p>一个经典的例子，通过Mybatis配置文件的SQL中增加索引的参数来实现分片</p>
-
-<h3 id="toc_9">2.1.2 代理分片</h3>
-
-<p>代理分片发生在应用层和数据层之间。需要实现对JDBC协议的解析，并通过分片的路由规则来路由请求。对每个数据库操作都增加了一层网络传输。对性能有一定影响。</p>
-
-<h3 id="toc_10">2.1.3. 支持事务的分布式数据库</h3>
-
-<h2 id="toc_11">3. 设计一个分库分表方案需要考虑的问题</h2>
-
-<h3 id="toc_12">3.1. 切分方式</h3>
-
-<p>切分方式分为垂直切分和水平切分。</p>
-
-<blockquote>
-<p>垂直切分</p>
-</blockquote>
-
-<p>垂直切分通常用于缓解单库单表的压力。切分准则可以是冷热隔离，也可以是按照数据的活跃度。</p>
-
-<p>垂直区分的优点有：</p>
-
-<ul>
-<li>拆分后业务清晰，拆分规则明确。</li>
-<li>系统之间进行整合或扩展很容易。</li>
-<li>按照成本、应用的等级、应用的类型等将表放在不同的机器上，便于管理。</li>
-<li>便于实现动静分离，冷热分离的数据库表的设计模式。</li>
-<li>数据维护简单</li>
-</ul>
-
-<p>垂直区分的缺点有：</p>
-
-<ul>
-<li>部分业务表无法关联，只能通过接口的方式解决，提高了系统的复杂度。</li>
-<li>受每种业务的不同限制，存在单库性能瓶颈，不易进行数据扩展和提升性能。</li>
-<li>事务处理复杂。</li>
-</ul>
-
-<p>通常建议在数据设计阶段就直接考虑垂直切分。</p>
-
-<blockquote>
-<p>水平切分</p>
-</blockquote>
-
-<p>水平切分通常发生在业务不断发展，原有的单库单表已经无法满足业务需求的场景。</p>
-
-<p>水平切分的优点有：</p>
-
-<ul>
-<li>单库单表的数据保持在一定的量级，有助于性能的提高。</li>
-<li>切分的表的结构相同，应用层改造较少，只需要增加路由规则即可。</li>
-<li>提高了系统的稳定性和负载能力。</li>
-</ul>
-
-<p>水平切分的缺点有:</p>
-
-<ul>
-<li>切分后，数据是分散的，很难利用数据库的Join操作，跨库性能较差。</li>
-<li>拆分规则难以抽象。</li>
-<li>分片事务的一致性难以解决</li>
-<li>数据扩容的难度和维护量极大。</li>
-</ul>
-
-<p>综上，两种区分方式的共同缺点有:</p>
-
-<ol>
-<li>存在分布式事务的问题</li>
-<li>存在跨界点Join的问题</li>
-<li>存在跨界点合并排序，分页的问题。</li>
-<li>存在多数据源管理的问题</li>
+<li>饱和策略的选取和试用场景</li>
 </ol>
 
-<h3 id="toc_13">3.1.1 水平切分的维度</h3>
+<h3 id="toc_23">乐观锁，悲观锁</h3>
 
-<p>水平切分通常是选择数据表中的一个字段。以这个字段为依据进行切分。切分的规则通常有两种。</p>
+<p>乐观锁就是CAS操作</p>
 
-<p>要求分片规则可以平均的对待新的数据也就是数据通过分片规则可以平均的进行切分。</p>
+<p>悲观锁就是synchronized</p>
 
-<p>根据数据的特性，有以下两种分片方式。</p>
+<p>乐观锁认为读大于写，不用一下子就把线程锁了。而是尝试一下。</p>
 
-<p>1）按照哈希分片</p>
+<p>悲观锁认为系统冲突严重，必须锁。</p>
 
-<p>哈希分片常常用于数据没有时效性的场景，也就是无论数据的产生时间，被访问的概率是相同的。</p>
+<p>CAS竞争锁<br/>
+CAS操作<br/>
+偏向锁<br/>
+轻量级锁<br/>
+乐观锁<br/>
+悲观锁<br/>
+volatile 和 ++<br/>
+threadLocal<br/>
+threadpool<br/>
+condition 是和lock相配合的<br/>
+相比wait，notify是和synchronized配合的</p>
 
-<p>这种切片的好处是数据切片比较均匀，对数据压力分散的效果较好，缺点是数据分散后，对于查询结果需要进行聚合处理。</p>
+<p>锁分段技术，代表concurrentHashMap</p>
 
-<p>2) 按照时间切片</p>
+<p>各种queue的特点，区别，和使用场景。最好有范例。各种queue的试用场景</p>
 
-<p>这种切片方式天然就可以平均数据。适合于明显有时间特点的数据。例如最近的时间段，访问频繁，而历史的数据较少访问。</p>
+<p>线程池</p>
 
-<blockquote>
-<p>总结</p>
-</blockquote>
+<p>结合阿里的java开发手册中关于线程池的部分结合理解</p>
 
-<p>在实际的场景中，两种切片方式是可以结合使用的。例如对交易数据，先按照季度进行切片，然后对于某一季度的数据按照主键哈希进行切片。</p>
+<p>工作线程worker</p>
 
-<h3 id="toc_14">3.1.2. 分片后事务的处理机制</h3>
+<p>threadLocal 和 volatile变量</p>
 
-<p>数据库的是事务很关键。是保证数据正确的重要保证。那么数据分片后，如何保证事务呢？</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[MongoDB的启动和停止]]></title>
+    <link href="https://nimitz871016.github.io/15479997745467.html"/>
+    <updated>2019-01-20T23:56:14+08:00</updated>
+    <id>https://nimitz871016.github.io/15479997745467.html</id>
+    <content type="html"><![CDATA[
+<h2 id="toc_0">1. 启动</h2>
 
-<p>由于单表的数据切分到多个数据库表中，甚至是多个数据库实例中。所以依靠数据本身的事务机制不能满足场景的需要。</p>
+<ol>
+<li>用命令行，加各种的特殊参数</li>
+<li><p>用命令行，但是所有的参数都放在一个配置文件中。如</p>
+<pre><code class="language-text">mongod -f /etc/mongod.conf
+</code></pre></li>
+<li><p>用传统的service mongod start</p></li>
+</ol>
 
-<p>建议在一个数据库实例中的操作尽可能使用本地事务来保持一致性，跨数据库实例的一系列更新操作需要根据事务路由在不同搞得数据源中完成。各个数据源之间的更新操作需要通过分布式事务处理。</p>
+<h3 id="toc_1">1.1. service mongod start</h3>
+
+<ul>
+<li>该命令本身没有任何问题。只需要注意配置启动的时候执行的语句就可以达到同样的效果。在实际使用的过程中，并不会频繁的变更需求和配置，因此用service来启动足以。</li>
+<li><p>另外如果用命令行启动，还存在权限问题。<br/>
+用mongod启动了以后，权限全部变为root。这时候再用service mongod start来启动就会有各种各样的权限问题。</p></li>
+<li><p>service start启动的脚本</p>
+<pre><code class="language-text">/usr/lib/systemd/system/mongod.service
+</code></pre></li>
+</ul>
+
+<pre><code class="language-text">[Unit]
+Description=MongoDB Database Server
+After=network.target
+Documentation=https://docs.mongodb.org/manual
+
+[Service]
+User=mongod
+Group=mongod
+Environment=&quot;OPTIONS=-f /etc/mongod.conf&quot;
+EnvironmentFile=-/etc/sysconfig/mongod
+ExecStart=/usr/bin/mongod $OPTIONS
+ExecStartPre=/usr/bin/mkdir -p /var/run/mongodb
+ExecStartPre=/usr/bin/chown mongod:mongod /var/run/mongodb
+ExecStartPre=/usr/bin/chmod 0755 /var/run/mongodb
+PermissionsStartOnly=true
+PIDFile=/var/run/mongodb/mongod.pid
+Type=forking
+# file size
+LimitFSIZE=infinity
+# cpu time
+LimitCPU=infinity
+# virtual memory size
+LimitAS=infinity
+# open files
+LimitNOFILE=64000
+# processes/threads
+LimitNPROC=64000
+# locked memory
+LimitMEMLOCK=infinity
+# total threads (user+kernel)
+TasksMax=infinity
+TasksAccounting=false
+# Recommended limits for for mongod as specified in
+# http://docs.mongodb.org/manual/reference/ulimit/#recommended-settings
+
+[Install]
+WantedBy=multi-user.target
+</code></pre>
+
+<h2 id="toc_2">2. 停止</h2>
+
+<p>强制关闭MongoDB（不建议使用）；<br/>
+service mongod stop<br/>
+或者，从MongoDB的admin中关闭（推荐用这种方法）：</p>
+
+<pre><code class="language-text">&gt;use admin
+switched to db admin
+&gt;db.shutdownServer()
+server should be down...
+</code></pre>
+
+<p>或者</p>
+
+<pre><code class="language-text">mongod --shutdown
+</code></pre>
+
+<p>使用shutdownServer关闭MongoDB，如有MongoDB主从服务器，则在服务关闭前同步主从服务器；强制关闭则不会；</p>
 
 ]]></content>
   </entry>
@@ -679,353 +1371,6 @@ TODO：</p>
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[MongoDB的启动和停止]]></title>
-    <link href="https://nimitz871016.github.io/15479997745467.html"/>
-    <updated>2019-01-20T23:56:14+08:00</updated>
-    <id>https://nimitz871016.github.io/15479997745467.html</id>
-    <content type="html"><![CDATA[
-<h2 id="toc_0">1. 启动</h2>
-
-<ol>
-<li>用命令行，加各种的特殊参数</li>
-<li><p>用命令行，但是所有的参数都放在一个配置文件中。如</p>
-<pre><code class="language-text">mongod -f /etc/mongod.conf
-</code></pre></li>
-<li><p>用传统的service mongod start</p></li>
-</ol>
-
-<h3 id="toc_1">1.1. service mongod start</h3>
-
-<ul>
-<li>该命令本身没有任何问题。只需要注意配置启动的时候执行的语句就可以达到同样的效果。在实际使用的过程中，并不会频繁的变更需求和配置，因此用service来启动足以。</li>
-<li><p>另外如果用命令行启动，还存在权限问题。<br/>
-用mongod启动了以后，权限全部变为root。这时候再用service mongod start来启动就会有各种各样的权限问题。</p></li>
-<li><p>service start启动的脚本</p>
-<pre><code class="language-text">/usr/lib/systemd/system/mongod.service
-</code></pre></li>
-</ul>
-
-<pre><code class="language-text">[Unit]
-Description=MongoDB Database Server
-After=network.target
-Documentation=https://docs.mongodb.org/manual
-
-[Service]
-User=mongod
-Group=mongod
-Environment=&quot;OPTIONS=-f /etc/mongod.conf&quot;
-EnvironmentFile=-/etc/sysconfig/mongod
-ExecStart=/usr/bin/mongod $OPTIONS
-ExecStartPre=/usr/bin/mkdir -p /var/run/mongodb
-ExecStartPre=/usr/bin/chown mongod:mongod /var/run/mongodb
-ExecStartPre=/usr/bin/chmod 0755 /var/run/mongodb
-PermissionsStartOnly=true
-PIDFile=/var/run/mongodb/mongod.pid
-Type=forking
-# file size
-LimitFSIZE=infinity
-# cpu time
-LimitCPU=infinity
-# virtual memory size
-LimitAS=infinity
-# open files
-LimitNOFILE=64000
-# processes/threads
-LimitNPROC=64000
-# locked memory
-LimitMEMLOCK=infinity
-# total threads (user+kernel)
-TasksMax=infinity
-TasksAccounting=false
-# Recommended limits for for mongod as specified in
-# http://docs.mongodb.org/manual/reference/ulimit/#recommended-settings
-
-[Install]
-WantedBy=multi-user.target
-</code></pre>
-
-<h2 id="toc_2">2. 停止</h2>
-
-<p>强制关闭MongoDB（不建议使用）；<br/>
-service mongod stop<br/>
-或者，从MongoDB的admin中关闭（推荐用这种方法）：</p>
-
-<pre><code class="language-text">&gt;use admin
-switched to db admin
-&gt;db.shutdownServer()
-server should be down...
-</code></pre>
-
-<p>或者</p>
-
-<pre><code class="language-text">mongod --shutdown
-</code></pre>
-
-<p>使用shutdownServer关闭MongoDB，如有MongoDB主从服务器，则在服务关闭前同步主从服务器；强制关闭则不会；</p>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Java并发编程]]></title>
-    <link href="https://nimitz871016.github.io/15479962056718.html"/>
-    <updated>2019-01-20T22:56:45+08:00</updated>
-    <id>https://nimitz871016.github.io/15479962056718.html</id>
-    <content type="html"><![CDATA[
-<p>&emsp;&emsp;本文对Java中的并发变成进行了简单的描述。是本人阅读《Java并发编程的艺术》一书的读书笔记。本文对重要的概念进行了记录。</p>
-
-<p>&emsp;&emsp;本文首先介绍了各种各样的和锁相关的概念。然后介绍了Java多线程的技术要点，最后介绍了一些经典使用案例。</p>
-
-<span id="more"></span><!-- more -->
-
-<h2 id="toc_0">0. 重要技术要点目录</h2>
-
-<h3 id="toc_1">0.1 和锁有关的概念</h3>
-
-<p>&emsp;&emsp;关于锁的概念有很多，这里一一列举。</p>
-
-<blockquote>
-<p>按照锁的的状态分</p>
-</blockquote>
-
-<p>&emsp;&emsp;在Java中，按照锁的状态分，有四种状态。分别是：</p>
-
-<ol>
-<li>无锁</li>
-<li>偏向锁</li>
-<li>轻量级锁</li>
-<li>重量级锁</li>
-</ol>
-
-<p>偏向锁是可以取消的，根据系统的实际使用情况。因为可能有的场景，系统中资源冲突严重，那么偏向锁就没有什么必要存在了，反而增加处理逻辑，更慢。</p>
-
-<blockquote>
-<p>按照锁的实现方式分</p>
-</blockquote>
-
-<ol>
-<li>乐观锁</li>
-<li>悲观锁</li>
-</ol>
-
-<p>&emsp;&emsp;在Java中没有特地讲乐观锁，悲观锁。但实际上这两种锁是可以和Java中提到的概念一一对应。</p>
-
-<blockquote>
-<p>按照试用场景分</p>
-</blockquote>
-
-<ol>
-<li>可重入锁--ReentranLock</li>
-<li>读写锁--ReentranReadWriteLock</li>
-</ol>
-
-<p>&emsp;&emsp;这两种锁是可以直接和Java中的实现对应的。</p>
-
-<blockquote>
-<p>其他</p>
-</blockquote>
-
-<ul>
-<li>volatile和synchronized</li>
-</ul>
-
-<p>&emsp;&emsp;这两个关键字是Java锁的基础（很多其他语言也有相同的使用）。例如可重入锁和读写锁其实都是对这两个关键词的应用，并不是另起炉灶。</p>
-
-<ul>
-<li>CAS操作</li>
-</ul>
-
-<p>&emsp;&emsp;CAS（Compare and swap）是一种乐观锁的操作方式。CAS操作保证了线程安全，同时没有对线程加锁。是一种常见的优化锁使用的选择。</p>
-
-<ul>
-<li>happens-before原则</li>
-</ul>
-
-<p>指令重排的相关概念。指的是按照编码逻辑的指令的执行顺序。A指令happens-beforeB指令。那么一个重要的原则是，判断是否可以重排的依据，并不是要求指令一定要按照物理顺序。只要重排后的指令执行结果和重排前一致就可以。</p>
-
-<h2 id="toc_2">1. Java中的几种锁</h2>
-
-<p>读写锁<br/>
-重入锁</p>
-
-<h2 id="toc_3">2. Java中的锁的状态</h2>
-
-<p><img src="media/15474517017096/15474518978931.jpg" alt="" style="width:608px;"/></p>
-
-<p><img src="media/15474517017096/15476277957012.jpg" alt="" style="width:595px;"/></p>
-
-<p>锁会升级不会降级。越“轻”的锁，效率越高。但是越不好解决同步的问题（不能解决的时候就要升级）。<br/>
-偏向锁就是偏向于拿锁的线程通常是同一个，这样就可以提高效率。</p>
-
-<p><img src="media/15474517017096/15476312618712.jpg" alt="" style="width:595px;"/></p>
-
-<p>Q:红框处为什么要检查线程是否活着？<br/>
-A:线程1执行完毕后,不会主动去释放偏向锁。</p>
-
-<p>Q:偏向锁是如何升级成轻量级锁的？<br/>
-A:当另一个线程获取偏向锁失败，就升级成轻量级锁。轻量级锁的特点是自旋。</p>
-
-<p>Q:轻量级锁是如何升级成重量级锁的？<br/>
-A:轻量级锁自旋到达一定条件就会升级成重量级锁。但是具体条件是啥，没有找到相关资料。</p>
-
-<p>总结，获取不到锁就会往上膨胀。直到重量级锁。</p>
-
-<p>通俗来讲就是：</p>
-
-<p>偏向锁：仅有一个线程进入临界区<br/>
-轻量级锁：多个线程交替进入临界区<br/>
-重量级锁：多个线程同时进入临界区</p>
-
-<p><strong>问题</strong><br/>
-轻量级锁是自旋的，那么根据什么条件判断会膨胀成重量级锁</p>
-
-<h2 id="toc_4">3. volatile</h2>
-
-<p>使用volatile修饰变量，可以让这个变量在各个线程之间永远显示的是最新的值。为什么会有这么一个说法？每一个线程有自己的独立缓存。对于一个共享变量，在多线程并发的情况下，可能导致自己的缓存和实际的值不等。而volaile的出现，使得线程自己的缓存无效，每一次都需要去内存中读取最新的值。<br/>
-volatile可以看做轻量的synchronized。可以减少锁的程度。提高性能。</p>
-
-<h3 id="toc_5">3. volatile实现原理的相关知识</h3>
-
-<ol>
-<li>happens-before原则，涉及到volatile的底层实现原理。</li>
-</ol>
-
-<h3 id="toc_6">4. happens-before原则</h3>
-
-<p><img src="media/15474517017096/15476423173260.jpg" alt="" style="width:598px;"/></p>
-
-<p>所以本质的意思就是指令重排不能影响计算结果。只要计算结果一样，虽然有happens-before关系，也不要求一定要按照happens-before的顺序执行<br/>
-<img src="media/15474517017096/15476476024054.jpg" alt="" style="width:592px;"/></p>
-
-<p><img src="media/15474517017096/15476561471183.jpg" alt="" style="width:593px;"/></p>
-
-<h3 id="toc_7">volatile的经典应用-单例模式</h3>
-
-<p><img src="media/15474517017096/15476573891697.jpg" alt="" style="width:601px;"/></p>
-
-<h3 id="toc_8">wait()和notify()</h3>
-
-<ol>
-<li><p>作用</p></li>
-<li><p>好处。<br/>
-wait() 等待。相比一个死循环，定期休眠来判断是否结束要好的多，因为定期休眠可能会导致响应不及时。</p></li>
-<li><p>notify() 之后，并不是对应的wait会立刻结束</p></li>
-</ol>
-
-<p><img src="media/15474517017096/15476614597968.jpg" alt="" style="width:597px;"/></p>
-
-<h3 id="toc_9">ThreadLocal</h3>
-
-<h3 id="toc_10">线程池技术</h3>
-
-<p>几种线程池的创建方式，以及适应的场景。</p>
-
-<h3 id="toc_11">锁和synchronized的关系</h3>
-
-<p><img src="media/15474517017096/15476947781313.jpg" alt="" style="width:599px;"/></p>
-
-<p><img src="media/15474517017096/15476953591669.jpg" alt="" style="width:604px;"/></p>
-
-<h3 id="toc_12">ReentrantLock 和 ReetranReadWriteLock 可重入锁和可重入读写锁</h3>
-
-<p>可重入的意思是可以被同一个线程重复加锁。<br/>
-读写锁适用于生产者消费者场景。分为读锁和写锁。</p>
-
-<h3 id="toc_13">Object的wait，notify和condition的await，signal</h3>
-
-<p><img src="media/15474517017096/15477091389472.jpg" alt="" style="width:958px;"/></p>
-
-<h3 id="toc_14">ConcurrentHashMap分析</h3>
-
-<p>使用了锁来保证线程安全。使用了锁分段技术。减少了锁的冲突，从而提高了效率。</p>
-
-<h3 id="toc_15">ConcurrentLinkedQueue分析</h3>
-
-<p><del>学习其特别的尾节点定义方式。可以很大程度减少冲突。其使用CAS操作来避免冲突。但是其特别的尾节点定义方式，使得CAS操作不那么容易失败。</del></p>
-
-<p><img src="media/15474517017096/15477115519893.jpg" alt="" style="width:603px;"/></p>
-
-<p>出队也有相似的逻辑</p>
-
-<h3 id="toc_16">Java中的阻塞队列</h3>
-
-<p><img src="media/15474517017096/15477148083195.jpg" alt="" style="width:418px;"/></p>
-
-<h4 id="toc_17">DelayQueue</h4>
-
-<p>可以支持延时获取元素的队列，要求队列中的元素必须实现Delayed接口</p>
-
-<ul>
-<li>经典场景</li>
-</ul>
-
-<p>缓存系统</p>
-
-<p>定时任务调度</p>
-
-<h4 id="toc_18">SynchronousQueue</h4>
-
-<p><img src="media/15474517017096/15477162270641.jpg" alt="" style="width:600px;"/></p>
-
-<h4 id="toc_19">LinkedBlockingQueue</h4>
-
-<p>用在工作窃取模式</p>
-
-<h4 id="toc_20">CountDownLatch join的升级版</h4>
-
-<h3 id="toc_21">Semaphore</h3>
-
-<p><img src="media/15474517017096/15477221892006.jpg" alt="" style="width:601px;"/></p>
-
-<h3 id="toc_22">线程池</h3>
-
-<ol>
-<li>队列模型的选取
-<ol>
-<li>建议使用有界队列</li>
-<li>建议和系统的核心数挂钩？？</li>
-</ol></li>
-<li>饱和策略的选取和试用场景</li>
-</ol>
-
-<h3 id="toc_23">乐观锁，悲观锁</h3>
-
-<p>乐观锁就是CAS操作</p>
-
-<p>悲观锁就是synchronized</p>
-
-<p>乐观锁认为读大于写，不用一下子就把线程锁了。而是尝试一下。</p>
-
-<p>悲观锁认为系统冲突严重，必须锁。</p>
-
-<p>CAS竞争锁<br/>
-CAS操作<br/>
-偏向锁<br/>
-轻量级锁<br/>
-乐观锁<br/>
-悲观锁<br/>
-volatile 和 ++<br/>
-threadLocal<br/>
-threadpool<br/>
-condition 是和lock相配合的<br/>
-相比wait，notify是和synchronized配合的</p>
-
-<p>锁分段技术，代表concurrentHashMap</p>
-
-<p>各种queue的特点，区别，和使用场景。最好有范例。各种queue的试用场景</p>
-
-<p>线程池</p>
-
-<p>结合阿里的java开发手册中关于线程池的部分结合理解</p>
-
-<p>工作线程worker</p>
-
-<p>threadLocal 和 volatile变量</p>
-
-]]></content>
-  </entry>
-  
-  <entry>
     <title type="html"><![CDATA[Realm学习笔记]]></title>
     <link href="https://nimitz871016.github.io/15216334372729.html"/>
     <updated>2018-03-21T19:57:17+08:00</updated>
@@ -1312,556 +1657,306 @@ Duck *duck =  [[Duck alloc] initWithValue:@{@&quot;animal&quot; : @{@&quot;age&q
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[32. 最长有效括号]]></title>
-    <link href="https://nimitz871016.github.io/15480002725541.html"/>
-    <updated>2019-01-21T00:04:32+08:00</updated>
-    <id>https://nimitz871016.github.io/15480002725541.html</id>
+    <title type="html"><![CDATA[从logger.isDebugEnabled()谈起]]></title>
+    <link href="https://nimitz871016.github.io/15542090064870.html"/>
+    <updated>2019-04-02T20:43:26+08:00</updated>
+    <id>https://nimitz871016.github.io/15542090064870.html</id>
     <content type="html"><![CDATA[
-<p><a href="https://leetcode-cn.com/problems/longest-valid-parentheses/description/">https://leetcode-cn.com/problems/longest-valid-parentheses/description/</a></p>
+<h2 id="toc_0">0. 问题</h2>
 
-<p>给定一个只包含  &#39;(&#39; 和  &#39;)&#39; 的字符串，找出最长的包含有效括号的子串的长度。</p>
+<p>在很多框架中，我们看到在<code>logger.debug</code>处经常会这样写</p>
 
-<p>示例 1:</p>
-
-<pre><code class="language-text">输入: &quot;(()&quot;
-输出: 2
-解释: 最长有效括号子串为 &quot;()&quot;
-示例 2:
-
-输入: &quot;)()())&quot;
-输出: 4
-解释: 最长有效括号子串为 &quot;()()&quot;
-</code></pre>
-
-<p>代码：</p>
-
-<pre><code class="language-text">public int longestValidParentheses(String s) {
-    int[] dp = new int[s.length()];
-    int max = 0;
-    for (int i = 1; i &lt; s.length(); i++){
-        if (s.charAt(i) == &#39;(&#39;){
-            dp[i] = 0;
-        }else{
-            if (dp[i - 1] != 0) {
-                int index = i - dp[i - 1] - 1;
-                if (index &gt;= 0 &amp;&amp; s.charAt(index) == &#39;(&#39;) {
-                    dp[i] = dp[i - 1] + 2;
-                    if (index - 1 &gt;= 0 ){
-                        dp[i] += dp[index - 1];
-                    }
-                }
-            }
-            if (s.charAt(i - 1) == &#39;(&#39;){
-                if (i &gt;= 2) {
-                    dp[i] = dp[i] &gt; dp[i - 2] + 2 ? dp[i] : dp[i - 2] + 2;
-                }else{
-                    dp[i] = 2;
-                }
-            }
-            if (max &lt; dp[i]){
-                max = dp[i];
-            }
-        }
-    }
-    return max;
+<pre><code class="language-text">if (logger.isDebugEnabled()) {
+    logger.debug(message);
 }
 </code></pre>
+
+<p>我们知道<code>logger.debug()</code>,在日志级别不够的时候是不会输出日志的。那么这么写的目的何在？</p>
+
+<h2 id="toc_1">1. 分析</h2>
+
+<p>我们来看一个例子</p>
+
+<pre><code class="language-text">String error = &quot;debug日志&quot;;
+logger.debug(&quot;这是一个&quot; + error);
+</code></pre>
+
+<p>按照正常的逻辑，在执行logger.debug()之前需要先行计算括号里的内容。然后才会判断当前日志级别不符合不输出。这里就存在一个无用计算的过程。相比对直接执行语句对logger.isDebugEnabled()进行先判断，显然是一个更优的方案，避免了无用的计算过程。</p>
+
+<p>然而这个结论在占位符的使用下，有了一点不同。</p>
+
+<p>再来看一个例子</p>
+
+<h3 id="toc_2">1.1. logger.debug(&quot;这是一个{}&quot;, model);</h3>
+
+<pre><code class="language-text">public static class Model{
+    int age;
+
+    @Override
+    public String toString() {
+        System.out.println(&quot;toString called&quot;);
+        return &quot;model{&quot; +
+                &quot;age=&quot; + age +
+                &#39;}&#39;;
+    }
+}
+public static void main(String[] args) {
+    Model model = new Model();
+    model.age = 3;
+    
+    logger.debug(&quot;这是一个{}&quot;, model);
+}
+</code></pre>
+
+<p>同样的作用，但是当日志级别高于debug时，不会执行括号内部的字符串拼接。也就是如果使用占位符{}来组合输出日志，可以不用判断<code>logger.isDebugEnabled()</code></p>
+
+<h3 id="toc_3">1.2. logger.debug(&quot;test:{}&quot;, test());</h3>
+
+<p>Model的toString方法在用占位符{}的方式时，没有执行，那么如果是一个普通的方法呢？</p>
+
+<pre><code class="language-text">public static String test(){
+    System.out.println(&quot;test&quot;);
+    return &quot;test&quot;;
+}
+public static void main(String[] args) {
+    logger.debug(&quot;test:{}&quot;, test()); //日志级别info
+}
+</code></pre>
+
+<p>结果，logger.debug(&quot;test:{}&quot;, test());无输出，但是test()方法在控制台打印出了test。</p>
+
+<p>结论：有占位符的存在，但是如果字符串拼接调用了函数，仍然会先执行函数，这和日志级别无关。</p>
+
+<h3 id="toc_4">1.3. logger.debug(&quot;test2:{}, {}&quot;, model, test());</h3>
+
+<pre><code class="language-text">public static String test(){
+    System.out.println(&quot;print test&quot;);
+    return &quot;fdsf&quot;;
+}
+public static void main(String[] args) {
+    Model model = new Model();
+    model.age = 3;
+    logger.debug(&quot;test1:&quot; + model);
+    model.age = 5;
+    logger.debug(&quot;test2:{}, {}&quot;, model, test());
+}
+</code></pre>
+
+<p>结果，最后一句debug，model的toString方法没有执行，而test()方法打印出了&quot;print test&quot;。也就是在占位符的作用下，对象的toString()方法不会执行，而不同方法仍然会执行。</p>
+
+<h2 id="toc_5">2. 结论</h2>
+
+<p>通过<code>logger.isDebugEnabled()</code>进行先行判断，肯定是没有错的。虽然在占位符的帮助下，当日志级别高于debug时，对象的toString()方法不会执行，但是普通的方法仍然会执行。如果能够保证logger.debug()中的内容只涉及最简单的字符串拼接和toString()，那么可以简略<code>logger.isDebugEnabled()</code>`，否则还是加上避免无用计算。</p>
 
 ]]></content>
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[39. 组合总和]]></title>
-    <link href="https://nimitz871016.github.io/15480003648444.html"/>
-    <updated>2019-01-21T00:06:04+08:00</updated>
-    <id>https://nimitz871016.github.io/15480003648444.html</id>
+    <title type="html"><![CDATA[数据库分库分表技术]]></title>
+    <link href="https://nimitz871016.github.io/15500645018755.html"/>
+    <updated>2019-02-13T21:28:21+08:00</updated>
+    <id>https://nimitz871016.github.io/15500645018755.html</id>
     <content type="html"><![CDATA[
-<p><a href="https://leetcode-cn.com/problems/combination-sum/description/">https://leetcode-cn.com/problems/combination-sum/description/</a></p>
+<h1 id="toc_0">1. 基本概念</h1>
 
-<p>给定一个无重复元素的数组  candidates 和一个目标数  target ，找出  candidates 中所有可以使数字和为  target 的组合。</p>
+<h2 id="toc_1">1.1. 拆分方式</h2>
 
-<p>candidates 中的数字可以无限制重复被选取。</p>
+<ul>
+<li><p>垂直拆分</p>
+<p>将一个库（表）拆分成多个库（表），每个库（表）的结构和原有的结构不同。</p>
+<p>这实际上可以认为是一种数据库的重新设计。拆分的原则可以是：</p>
+<pre><code class="language-text">1. 根据业务的具体情况，将热门的数据和冷门的数据分开。达到提高性能的目的。（库或者表的拆分都可以遵循这样一条原则）
+</code></pre></li>
+<li><p>水平拆分</p>
+<p>根据分片算法，将一个库（表）拆分成多个库（表），每个库（表）的结构和原有的结构相同。</p></li>
+</ul>
 
-<p>说明：</p>
+<span id="more"></span><!-- more -->
 
-<p>所有数字（包括  target）都是正整数。<br/>
-解集不能包含重复的组合。 </p>
+<h2 id="toc_2">1.2. 使用数据库的三个阶段</h2>
 
-<pre><code class="language-text">示例 1:
+<h3 id="toc_3">1.2.1 单库单表</h3>
 
-输入: candidates = [2,3,6,7], target = 7,
-所求解集为:
-[
-  [7],
-  [2,2,3]
-]
-示例 2:
+<p>单库单表是最简单的实践方式。数据库的性能取决于所使用的数据库和初始的数据库设计。</p>
 
-输入: candidates = [2,3,5], target = 8,
-所求解集为:
-[
-  [2,2,2,2],
-  [2,3,3],
-  [3,5]
-]
-</code></pre>
+<p>假如有一张User信息，需要存储User的所有信息。按照最简单的逻辑，那么就直接对应了一张User表。</p>
 
-<p>题目分析：</p>
+<h3 id="toc_4">1.2.2 单库多表</h3>
+
+<p>随着业务的不断发展。User信息不断增加。单表的性能撑不住了。尝试对User表进行水平分片。可以对User表按照某种规则进行分片，分出多个结构完全一样的子表。例如User0，User1, User2。。。</p>
+
+<p>注意，不同的数据库有不同的性能指标。例如MySQL单表的容量已5000W条记录为佳？</p>
+
+<h3 id="toc_5">1.2.3 多库多表</h3>
+
+<p>数据量继续增加，单条数据库的存储空间告警了，无法支撑业务。这时候就需要对数据库进行水平切分，将切分的数据库和表水平地分配到不同的数据库实例上去。</p>
+
+<h2 id="toc_6">2. 如何判断需要进行分库分表</h2>
+
+<p>系统不可能一开始就考虑最复杂的多库多表场景。在最开始的设计时，只能对未来的场景有一个简单的预估。那么随着系统的不断升级，合适应该采用分库分表策略呢？</p>
+
+<p>以MySQL为例，表达到千万级别就需要考虑进行分表。这样，数据就被分散在不同的表上，单表的索引大小得到了控制，会提升查询性能，对索引以及表结构的变更会很方便和高效<br/>
+。</p>
+
+<ul>
+<li>按照数据库的表大小来判断</li>
+</ul>
+
+<p>以MySQL数据库为例，单表超过5000W条记录就要考虑分表</p>
+
+<ul>
+<li>按照数据库的吞吐量来判断</li>
+</ul>
+
+<p>如果吞吐遇到瓶颈，则要考虑增加数据库实例</p>
+
+<h2 id="toc_7">2.1. 分库分表的方案</h2>
+
+<p>分库分表的方案可以分成三类:</p>
 
 <ol>
-<li>一看到这道题，就感觉要用递归来做，应该是回溯算法。百度证实无误。</li>
-<li>然后自己还没有生写过回溯。想了一会儿，结果不对，和正确解法做了一下比较，修改了一下自己的算法。标答是C++的，在java上需要修改一下，一些特别的地方要处理一下。</li>
+<li>客户端分片</li>
+<li>代理分片</li>
+<li>支持事务的分布式数据库</li>
 </ol>
 
-<p>直接上代码：</p>
+<h3 id="toc_8">2.1.1. 客户端分片</h3>
 
-<pre><code class="language-text">/**
- * 核心算法
- * @param candidates 数组
- * @param target 当前递归子问题需要计算的target
- * @param start 开始查找的index
- * @param result 当前递归的result数组
- * @param ans 最后的答案
- */
-private void findOne(int[] candidates, int target, int start, List&lt;Integer&gt; result, List&lt;List&lt;Integer&gt;&gt; ans){
-    if (target == 0){
-        List&lt;Integer&gt; list = new ArrayList&lt;&gt;(result); //这里需要新开一个数组，否则会一直复用这个对象，导致结果不对
-        ans.add(list);
-        return;
-    }else if(target &lt; candidates[start]){
-        return; //不符合的结果，不处理。
-    }else{
-        for (int i = start; i &lt; candidates.length; i++){
-            result.add(candidates[i]);
-            findOne(candidates, target - candidates[i], i, result, ans);
-            result.remove(result.size() - 1);
-            //这里有点像树的遍历，这里就是要一个节点和不要一个节点的分支。然后可以重复使用元素，所以递归子问题，仍然从i开始。
-        }
-    }
-}
-
-public List&lt;List&lt;Integer&gt;&gt; combinationSum(int[] candidates, int target) {
-    List&lt;List&lt;Integer&gt;&gt; ans = new ArrayList&lt;&gt;();
-    Arrays.sort(candidates); //题目没有说排好序的数组，所以这里要先拍个序
-    findOne(candidates, target, 0, new ArrayList&lt;&gt;(), ans);
-    return ans;
-}
-</code></pre>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[55. 跳跃游戏]]></title>
-    <link href="https://nimitz871016.github.io/15486626415496.html"/>
-    <updated>2019-01-28T16:04:01+08:00</updated>
-    <id>https://nimitz871016.github.io/15486626415496.html</id>
-    <content type="html"><![CDATA[
-<p>给定一个非负整数数组，你最初位于数组的第一个位置。</p>
-
-<p>数组中的每个元素代表你在该位置可以跳跃的最大长度。</p>
-
-<p>判断你是否能够到达最后一个位置。</p>
-
-<pre><code class="language-text">示例 1:
-
-输入: [2,3,1,1,4]
-输出: true
-解释: 从位置 0 到 1 跳 1 步, 然后跳 3 步到达最后一个位置。
-示例 2:
-
-输入: [3,2,1,0,4]
-输出: false
-解释: 无论怎样，你总会到达索引为 3 的位置。但该位置的最大跳跃长度是 0 ， 所以你永远不可能到达最后一个位置。
-</code></pre>
-
-<p>解题思路：</p>
-
-<p>本道题用贪心。贪心的策略很巧妙。第一次独立没有想出来。<br/>
-贪心的策略：</p>
+<p>客户端分片就是使用分库分表的数据库应用层直接操作分片逻辑，分片规则需要在同一个应用的多个节点之间进行同步，每个应用层都需要嵌入一个操作切片的逻辑实现。这里又可以分成三种：</p>
 
 <ol>
-<li>每一步都选择最大的可能去接近结果。</li>
-<li>那么遍历一遍，如果最大的结果超过了最后一个位置。则说明最后一个位置是可达的，也就是返回true。</li>
-</ol>
-
-<p>贪心的巧妙在于，我们不在意到底是如何选择的，只在乎是否可达。</p>
-
-<p>代码：</p>
-
-<pre><code class="language-text"> public boolean canJump(int[] nums) {
-    int result = 0;
-    if (nums.length == 1){ //注意边界，最后一个台阶的值是没有意义的。因此只有一个台阶的时候，永远是true
-        return true;
-    }
-    for (int i = 0; i &lt; nums.length; i++){
-        if (i &gt; result || (nums[i] == 0 &amp;&amp; i == result)){
-            break;
-        }
-        result = Math.max(result, nums[i] + i);
-    }
-    return result &gt;= nums.length - 1;
-}
-</code></pre>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[72. 编辑距离]]></title>
-    <link href="https://nimitz871016.github.io/15489927924408.html"/>
-    <updated>2019-02-01T11:46:32+08:00</updated>
-    <id>https://nimitz871016.github.io/15489927924408.html</id>
-    <content type="html"><![CDATA[
-<h2 id="toc_0">题目</h2>
-
-<p>给定两个单词 word1 和 word2，计算出将 word1 转换成 word2 所使用的最少操作数 。</p>
-
-<p>你可以对一个单词进行如下三种操作：</p>
-
-<p>插入一个字符<br/>
-删除一个字符<br/>
-替换一个字符<br/>
-示例 1:</p>
-
-<p>输入: word1 = &quot;horse&quot;, word2 = &quot;ros&quot;<br/>
-输出: 3<br/>
-解释: <br/>
-horse -&gt; rorse (将 &#39;h&#39; 替换为 &#39;r&#39;)<br/>
-rorse -&gt; rose (删除 &#39;r&#39;)<br/>
-rose -&gt; ros (删除 &#39;e&#39;)<br/>
-示例 2:</p>
-
-<p>输入: word1 = &quot;intention&quot;, word2 = &quot;execution&quot;<br/>
-输出: 5<br/>
-解释: <br/>
-intention -&gt; inention (删除 &#39;t&#39;)<br/>
-inention -&gt; enention (将 &#39;i&#39; 替换为 &#39;e&#39;)<br/>
-enention -&gt; exention (将 &#39;n&#39; 替换为 &#39;x&#39;)<br/>
-exention -&gt; exection (将 &#39;n&#39; 替换为 &#39;c&#39;)<br/>
-exection -&gt; execution (插入 &#39;u&#39;)</p>
-
-<h2 id="toc_1">解题思路</h2>
-
-<ol>
-<li><p>先作弊了，看到要用dp。思考许久还是没有想法。<br/>
-解析一下自己的错误思路。<br/>
-看到有三种变换方式，有一点不知道该怎么处理。</p></li>
-<li><p>看了网上的解题报告，写下自己理解后的东西。</p>
-<p>首先，确认dp的含义<br/>
-word1记为s1， word2记为s2<br/>
-dp[i][j] = s1 从0...i， s2从0...j 两个字符串的编辑距离。所以dp的大小应该是dp[s1.length + 1][s2.length + 1].</p></li>
+<li>在应用层直接实现</li>
+<li>定制JDBC协议</li>
+<li><p>定制ORM框架</p></li>
 </ol>
 
 <ul>
-<li><p>转换公式<br/>
-计算dp[i][j]有三种变化方式</p>
+<li><p>在应用层直接实现</p>
+<ul>
+<li><p>优点</p>
 <ol>
-<li>dp[i - 1][j], 由于对比dp[i][j]，s1少了一个，所以要insert一个，编辑距离 + 1</li>
-<li>dp[i][j - 1] 由于对比dp[i][j]，s1少了一个，所以要delete一个，编辑距离 + 1</li>
-<li>dp[i - 1][j - 1]，对比s1[i - 1] 和 s2[j - 1]的情况，如果相等，编辑距离不变，否则需要+1（替换）</li>
-</ol>
-<p>从上文可以看出，三种变换方式都有了。</p>
-<p>接下来处理边界条件</p>
-<p>dp[0][i] = i和dp[i][0] = i，分别代表增加i个，和删除i个。</p></li>
+<li>实现简单，适合快速上线。</li>
+<li>切分逻辑是自己实现的，出现问题容易解决</li>
+<li>性能高</li>
+</ol></li>
+<li><p>缺点</p>
+<ol>
+<li>侵入了业务</li>
+<li>数据库保持的连接数会比较多，需要提前进行容量评估。</li>
+</ol></li>
+</ul></li>
+<li><p>通过定制JDBC协议实现</p></li>
 </ul>
 
-<h2 id="toc_2">代码</h2>
+<p>业务开发人员不必关心分库分表的实现，分片逻辑对业务层保持透明</p>
 
-<pre><code class="language-text"> public int minDistance(String word1, String word2) {
-    int[][] dp = new int[word1.length() + 1][word2.length() + 1];
-    for (int i = 0; i &lt;= word1.length(); i++) {
-        dp[i][0] = i;
-    }
-    for (int j = 0; j &lt;= word2.length(); j++) {
-        dp[0][j] = j;
-    }
-    for (int i = 1; i &lt;= word1.length(); i++) {
-        for (int j = 1; j &lt;= word2.length(); j++) {
-            int a = Math.min(dp[i - 1][j] + 1, dp[i][j - 1] + 1);
-            int cost = word1.charAt(i - 1) == word2.charAt(j - 1) ? 0 : 1;
-            dp[i][j] = Math.min(a, dp[i - 1][j - 1] + cost);
-        }
-    }
-    return dp[word1.length()][word2.length()];
-}
-</code></pre>
+<ul>
+<li>通过定制ORM框架实现</li>
+</ul>
 
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[102. 二叉树的层次遍历]]></title>
-    <link href="https://nimitz871016.github.io/15490058580119.html"/>
-    <updated>2019-02-01T15:24:18+08:00</updated>
-    <id>https://nimitz871016.github.io/15490058580119.html</id>
-    <content type="html"><![CDATA[
-<p><a href="https://leetcode-cn.com/problems/binary-tree-level-order-traversal/description/">https://leetcode-cn.com/problems/binary-tree-level-order-traversal/description/</a></p>
+<p>一个经典的例子，通过Mybatis配置文件的SQL中增加索引的参数来实现分片</p>
 
-<h2 id="toc_0">题目</h2>
+<h3 id="toc_9">2.1.2 代理分片</h3>
 
-<p>给定一个二叉树，返回其按层次遍历的节点值。 （即逐层地，从左到右访问所有节点）。</p>
+<p>代理分片发生在应用层和数据层之间。需要实现对JDBC协议的解析，并通过分片的路由规则来路由请求。对每个数据库操作都增加了一层网络传输。对性能有一定影响。</p>
 
-<p>例如:</p>
+<h3 id="toc_10">2.1.3. 支持事务的分布式数据库</h3>
 
-<pre><code class="language-text">给定二叉树:  [3,9,20,null,null,15,7],
+<h2 id="toc_11">3. 设计一个分库分表方案需要考虑的问题</h2>
 
+<h3 id="toc_12">3.1. 切分方式</h3>
 
-    3
-   / \
-  9  20
-    /  \
-   15   7
-   
+<p>切分方式分为垂直切分和水平切分。</p>
 
-返回其层次遍历结果：
+<blockquote>
+<p>垂直切分</p>
+</blockquote>
 
-[
-  [3],
-  [9,20],
-  [15,7]
-]
-</code></pre>
+<p>垂直切分通常用于缓解单库单表的压力。切分准则可以是冷热隔离，也可以是按照数据的活跃度。</p>
 
-<h2 id="toc_1">解题思路：</h2>
+<p>垂直区分的优点有：</p>
 
-<p>层次遍历，没啥好说的，就是本题需要将层次区分开来。因此传统的方法，需要做一些修订。用一个队列保存当前层次的所有节点。</p>
+<ul>
+<li>拆分后业务清晰，拆分规则明确。</li>
+<li>系统之间进行整合或扩展很容易。</li>
+<li>按照成本、应用的等级、应用的类型等将表放在不同的机器上，便于管理。</li>
+<li>便于实现动静分离，冷热分离的数据库表的设计模式。</li>
+<li>数据维护简单</li>
+</ul>
 
-<p>每一轮遍历的时候，依次出队所有的节点，存入结果，并遍历出队的所有节点，如果有子节点则存入队列，等待下一轮遍历。</p>
+<p>垂直区分的缺点有：</p>
 
-<p>也就是有两层的遍历，用一个临时的队列，保存中间结果</p>
+<ul>
+<li>部分业务表无法关联，只能通过接口的方式解决，提高了系统的复杂度。</li>
+<li>受每种业务的不同限制，存在单库性能瓶颈，不易进行数据扩展和提升性能。</li>
+<li>事务处理复杂。</li>
+</ul>
 
-<h2 id="toc_2">代码：</h2>
+<p>通常建议在数据设计阶段就直接考虑垂直切分。</p>
 
-<pre><code class="language-text">public List&lt;List&lt;Integer&gt;&gt; levelOrder(TreeNode root) {
-    Queue&lt;TreeNode&gt; queue = new ArrayDeque&lt;&gt;();
-    if (root != null) {
-        queue.add(root);
-    }
-    List&lt;List&lt;Integer&gt;&gt; result = new ArrayList&lt;&gt;();
-    while(!queue.isEmpty()){
-        List&lt;Integer&gt; ans = new ArrayList&lt;&gt;();
-        Queue&lt;TreeNode&gt; tempQueue = new ArrayDeque&lt;&gt;(queue);
-        while (!tempQueue.isEmpty()){
-            TreeNode node = tempQueue.poll();
-            ans.add(node.val);
-        }
-        tempQueue = new ArrayDeque&lt;&gt;(queue);
-        queue.clear();
-        while(!tempQueue.isEmpty()){
-            TreeNode node = tempQueue.poll();
-            if (node.left != null) {
-                queue.add(node.left);
-            }
-            if (node.right != null) {
-                queue.add(node.right);
-            }
-        }
-        result.add(ans);
-    }
-    return result;
-}
-</code></pre>
+<blockquote>
+<p>水平切分</p>
+</blockquote>
 
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[122. 买卖股票的最佳时机 II]]></title>
-    <link href="https://nimitz871016.github.io/15490112223994.html"/>
-    <updated>2019-02-01T16:53:42+08:00</updated>
-    <id>https://nimitz871016.github.io/15490112223994.html</id>
-    <content type="html"><![CDATA[
-<p><a href="https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock-ii/description/">https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock-ii/description/</a></p>
+<p>水平切分通常发生在业务不断发展，原有的单库单表已经无法满足业务需求的场景。</p>
 
-<p>给定一个数组，它的第 i 个元素是一支给定股票第 i 天的价格。</p>
+<p>水平切分的优点有：</p>
 
-<p>设计一个算法来计算你所能获取的最大利润。你可以尽可能地完成更多的交易（多次买卖一支股票）。</p>
+<ul>
+<li>单库单表的数据保持在一定的量级，有助于性能的提高。</li>
+<li>切分的表的结构相同，应用层改造较少，只需要增加路由规则即可。</li>
+<li>提高了系统的稳定性和负载能力。</li>
+</ul>
 
-<p>注意：你不能同时参与多笔交易（你必须在再次购买前出售掉之前的股票）。</p>
+<p>水平切分的缺点有:</p>
 
-<pre><code class="language-text">示例 1:
+<ul>
+<li>切分后，数据是分散的，很难利用数据库的Join操作，跨库性能较差。</li>
+<li>拆分规则难以抽象。</li>
+<li>分片事务的一致性难以解决</li>
+<li>数据扩容的难度和维护量极大。</li>
+</ul>
 
-输入: [7,1,5,3,6,4]
-输出: 7
-解释: 在第 2 天（股票价格 = 1）的时候买入，在第 3 天（股票价格 = 5）的时候卖出, 这笔交易所能获得利润 = 5-1 = 4 。
-     随后，在第 4 天（股票价格 = 3）的时候买入，在第 5 天（股票价格 = 6）的时候卖出, 这笔交易所能获得利润 = 6-3 = 3 。
-示例 2:
+<p>综上，两种区分方式的共同缺点有:</p>
 
-输入: [1,2,3,4,5]
-输出: 4
-解释: 在第 1 天（股票价格 = 1）的时候买入，在第 5 天 （股票价格 = 5）的时候卖出, 这笔交易所能获得利润 = 5-1 = 4 。
-     注意你不能在第 1 天和第 2 天接连购买股票，之后再将它们卖出。
-     因为这样属于同时参与了多笔交易，你必须在再次购买前出售掉之前的股票。
-示例 3:
+<ol>
+<li>存在分布式事务的问题</li>
+<li>存在跨界点Join的问题</li>
+<li>存在跨界点合并排序，分页的问题。</li>
+<li>存在多数据源管理的问题</li>
+</ol>
 
-输入: [7,6,4,3,1]
-输出: 0
-解释: 在这种情况下, 没有交易完成, 所以最大利润为 0。
-</code></pre>
+<h3 id="toc_13">3.1.1 水平切分的维度</h3>
 
-<h2 id="toc_0">解题思路：</h2>
+<p>水平切分通常是选择数据表中的一个字段。以这个字段为依据进行切分。切分的规则通常有两种。</p>
 
-<p>dp题。尝试写出状态转移方程。</p>
+<p>要求分片规则可以平均的对待新的数据也就是数据通过分片规则可以平均的进行切分。</p>
 
-<p>设s[i]，第i天股票的价格</p>
+<p>根据数据的特性，有以下两种分片方式。</p>
 
-<p>1) dp[i], 到第i天，最优的股票收益。</p>
+<p>1）按照哈希分片</p>
 
-<pre><code class="language-text">dp[i] = max {max{ s[i] - s[j] + dp[j - 1]} j = 1...i - 1,
-</code></pre>
+<p>哈希分片常常用于数据没有时效性的场景，也就是无论数据的产生时间，被访问的概率是相同的。</p>
 
-<p>dp[i - 1]代表不卖，以及s[i] &lt; s[j]的情况,算法复杂度O(n2)</p>
+<p>这种切片的好处是数据切片比较均匀，对数据压力分散的效果较好，缺点是数据分散后，对于查询结果需要进行聚合处理。</p>
 
-<h2 id="toc_1">代码：</h2>
+<p>2) 按照时间切片</p>
 
-<pre><code class="language-text">public int maxProfit(int[] prices) {
-    if (prices.length == 0){
-        return 0;
-    }
-    int[] dp = new int[prices.length];
-    for (int i = 1 ; i &lt; prices.length; i++){
-        int max = dp[i - 1];
-        for (int j = 0; j &lt; i; j++){
-            int temp = prices[i] - prices[j];
-            temp = temp &lt; 0 ? 0 : temp;
-            if (j &gt; 0) {
-                if (temp &gt; 0) {
-                    temp += dp[j - 1];
-                } else {
-                    temp = dp[j - 1];
-                }
-            }
-            if (temp &gt; max){
-                max = temp;
-            }
-        }
-        dp[i] = max;
-    }
-    return dp[prices.length - 1];
-}
-</code></pre>
+<p>这种切片方式天然就可以平均数据。适合于明显有时间特点的数据。例如最近的时间段，访问频繁，而历史的数据较少访问。</p>
 
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[169. 求众数]]></title>
-    <link href="https://nimitz871016.github.io/15500440104341.html"/>
-    <updated>2019-02-13T15:46:50+08:00</updated>
-    <id>https://nimitz871016.github.io/15500440104341.html</id>
-    <content type="html"><![CDATA[
-<p><a href="https://leetcode-cn.com/problems/majority-element/description/">https://leetcode-cn.com/problems/majority-element/description/</a></p>
+<blockquote>
+<p>总结</p>
+</blockquote>
 
-<pre><code class="language-text">
-给定一个大小为 n 的数组，找到其中的众数。众数是指在数组中出现次数大于  ⌊ n/2 ⌋ 的元素。
+<p>在实际的场景中，两种切片方式是可以结合使用的。例如对交易数据，先按照季度进行切片，然后对于某一季度的数据按照主键哈希进行切片。</p>
 
-你可以假设数组是非空的，并且给定的数组总是存在众数。
+<h3 id="toc_14">3.1.2. 分片后事务的处理机制</h3>
 
-示例 1:
+<p>数据库的是事务很关键。是保证数据正确的重要保证。那么数据分片后，如何保证事务呢？</p>
 
-输入: [3,2,3]
-输出: 3
-示例 2:
+<p>由于单表的数据切分到多个数据库表中，甚至是多个数据库实例中。所以依靠数据本身的事务机制不能满足场景的需要。</p>
 
-输入: [2,2,1,1,1,2,2]
-输出: 2
-</code></pre>
-
-<h2 id="toc_0">解题思路：</h2>
-
-<p>&emsp;&emsp;我的思路是，排序，然后逐一比对。直到找到众数为止。但是直觉告诉我应该有更优雅的方式。</p>
-
-<p>&emsp;&emsp;这是一道求众数的问题，有很多种解法，其中我感觉比较好的有两种，一种是用哈希表，这种方法需要O(n)的时间和空间，另一种是用一种叫摩尔投票法 Moore Voting，需要O(n)的时间和O(1)的空间，比前一种方法更好。这种投票法先将第一个数字假设为众数，然后把计数器设为1，比较下一个数和此数是否相等，若相等则计数器加一，反之减一。然后看此时计数器的值，若为零，则将当前值设为候选众数。以此类推直到遍历完整个数组，当前候选众数即为该数组的众数。不仔细弄懂摩尔投票法的精髓的话，过一阵子还是会忘记的，首先要明确的是这个叼炸天的方法是有前提的，就是数组中一定要有众数的存在才能使用，下面我们来看本算法的思路，这是一种先假设候选者，然后再进行验证的算法。我们现将数组中的第一个数假设为众数，然后进行统计其出现的次数，如果遇到同样的数，则计数器自增1，否则计数器自减1，如果计数器减到了0，则更换当前数字为候选者。这是一个很巧妙的设定，也是本算法的精髓所在，为啥遇到不同的要计数器减1呢，为啥减到0了又要更换候选者呢？首先是有那个强大的前提存在，一定会有一个出现超过半数的数字存在，那么如果计数器减到0了话，说明目前不是候选者数字的个数已经跟候选者的出现个数相同了，那么这个候选者已经很weak，不一定能出现超过半数，我们选择更换当前的候选者。那有可能你会有疑问，那万一后面又大量的出现了之前的候选者怎么办，不需要担心，如果之前的候选者在后面大量出现的话，其又会重新变为候选者，直到最终验证成为正确的众数，佩服算法的提出者啊。</p>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[189. 旋转数组]]></title>
-    <link href="https://nimitz871016.github.io/15500441189502.html"/>
-    <updated>2019-02-13T15:48:38+08:00</updated>
-    <id>https://nimitz871016.github.io/15500441189502.html</id>
-    <content type="html"><![CDATA[
-<pre><code class="language-text">给定一个数组，将数组中的元素向右移动 k 个位置，其中 k 是非负数。
-
-示例 1:
-
-输入: [1,2,3,4,5,6,7] 和 k = 3
-输出: [5,6,7,1,2,3,4]
-解释:
-向右旋转 1 步: [7,1,2,3,4,5,6]
-向右旋转 2 步: [6,7,1,2,3,4,5]
-向右旋转 3 步: [5,6,7,1,2,3,4]
-示例 2:
-
-输入: [-1,-100,3,99] 和 k = 2
-输出: [3,99,-1,-100]
-解释: 
-向右旋转 1 步: [99,-1,-100,3]
-向右旋转 2 步: [3,99,-1,-100]
-说明:
-
-尽可能想出更多的解决方案，至少有三种不同的方法可以解决这个问题。
-要求使用空间复杂度为 O(1) 的原地算法。
-</code></pre>
-
-<h2 id="toc_0">解题思路：</h2>
-
-<p>&emsp;&emsp;关键在于O(1)的算法。如果是O(n)的话，方法就太多了。这里就不说了。主要说一下O(1)的做法。</p>
-
-<p>&emsp;&emsp;采用翻转字符的方法，思路是先把前n-k个数字翻转一下，再把后k个数字翻转一下，最后再把整个数组翻转一下：</p>
-
-<p>1 2 3 4 5 6 7 <br/>
-4 3 2 1 5 6 7 <br/>
-4 3 2 1 7 6 5<br/>
-5 6 7 1 2 3 4</p>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[258. 各位相加]]></title>
-    <link href="https://nimitz871016.github.io/15500475532566.html"/>
-    <updated>2019-02-13T16:45:53+08:00</updated>
-    <id>https://nimitz871016.github.io/15500475532566.html</id>
-    <content type="html"><![CDATA[
-<pre><code class="language-text">
-给定一个非负整数  num，反复将各个位上的数字相加，直到结果为一位数。
-
-示例:
-
-输入: 38
-输出: 2 
-解释: 各位相加的过程为：3 + 8 = 11, 1 + 1 = 2。 由于 2 是一位数，所以返回 2。
-进阶:
-你可以不使用循环或者递归，且在 O(1) 时间复杂度内解决这个问题吗？
-</code></pre>
-
-<h2 id="toc_0">解题思路：</h2>
-
-<p>普通的方法都会解，这里就不重复了。说下O(1)的解法。</p>
-
-<p>这里用到 一个很巧妙的算法。</p>
-
-<p><img src="media/15500475532566/15500475966040.jpg" alt="" style="width:557px;"/></p>
-
-<p>根据以上，可以得出，快速求解，就是将数字不断减去9，直到不能减为止即为正解。</p>
-
-<p>那么不断减去9的过程，可以化为--&gt; mod 9</p>
-
-<p>代码如下：</p>
-
-<pre><code class="language-text">class Solution {
-    public int addDigits(int num) {
-        if (num == 0){
-            return num;
-        }
-        num %= 9;
-        return num == 0 ? 9 : num;
-    }
-}
-</code></pre>
+<p>建议在一个数据库实例中的操作尽可能使用本地事务来保持一致性，跨数据库实例的一系列更新操作需要根据事务路由在不同搞得数据源中完成。各个数据源之间的更新操作需要通过分布式事务处理。</p>
 
 ]]></content>
   </entry>
