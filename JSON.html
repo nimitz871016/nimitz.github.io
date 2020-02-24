@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>
     
-  数据库 - 沧海一粟No.1
+  JSON - 沧海一粟No.1
   
   </title>
   
@@ -112,27 +112,111 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="15500645018755.html">
+                <a class="clearlink" href="15693167161716.html">
                 
-                  <h1>数据库分库分表技术</h1>
+                  <h1>从使用fastjson替换springboot框架默认的json解析工具说起</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
-                        	<h1 id="toc_0">1. 基本概念</h1>
+                        	<h2 id="toc_0">1. 为什么要用fastjson替换jackson</h2>
 
-<h2 id="toc_1">1.1. 拆分方式</h2>
+<p>1.在默认情况下我们在的情况下从返回的数据是</p>
 
-<ul>
-<li><p>垂直拆分</p>
-<p>将一个库（表）拆分成多个库（表），每个库（表）的结构和原有的结构不同。</p>
-<p>这实际上可以认为是一种数据库的重新设计。拆分的原则可以是：</p>
-<pre><code class="language-text">1. 根据业务的具体情况，将热门的数据和冷门的数据分开。达到提高性能的目的。（库或者表的拆分都可以遵循这样一条原则）
-</code></pre></li>
-<li><p>水平拆分</p>
-<p>根据分片算法，将一个库（表）拆分成多个库（表），每个库（表）的结构和原有的结构相同。</p></li>
-</ul>
+<p>json格式但是在{key,value}中key的值当中用默认的Jackson返还回来会忽略大小写而我们要得到得是不忽略大小写得值因此我</p>
 
+<p>们需要用FastJson替代默认得Jackson</p>
+
+<p>2.我们通常现在为了更快捷得创建类,使用lombok插件得@Data注解生成类得getter,setter及构造方法.jackson是不支持json格式</p>
+
+<p>序列化的,但是FastJson是可以做到这一点的<br/>
+————————————————<br/>
+版权声明：本文为CSDN博主「Alin_林」的原创文章，遵循 CC 4.0 BY-SA 版权协议，转载请附上原文出处链接及本声明。<br/>
+原文链接：<a href="https://blog.csdn.net/weixin_44828552/article/details/89511350">https://blog.csdn.net/weixin_44828552/article/details/89511350</a></p>
+
+<h2 id="toc_1">2. 如何替换fastjson</h2>
+
+<p>常见的替换方法有以下两种</p>
+
+<h3 id="toc_2">2.1. 方法一</h3>
+
+<pre><code class="language-text">@SpringBootApplication
+public class HelloWorld implement ApplicationRunner{
+    public static void main(String[] args){
+        SpringApplication.run(HelloWorld.class,args);
+    }
+
+    @Bean
+    public HttpMessageConverters fastJsonHttpMessageConverters(){
+        //1.定义fastJson转换器
+        FastJsonHttpMessageConverter fastConverter=new FastJsonHttpMessageConverter();
+        FastJsonConfig fastJsonConfig=new FastJsonConfig();
+        fastJsonConfig.setSerializerFeatures(SerialzerFeature.WriteMapNullValue, SerializerFeature.WriteNullListAsEmpty);
+        fastConverter.setFastJsonConfig(fastJsonConfig);
+        HttpMessageConverter&lt;?&gt; converter = fastConverter;
+        return new HttpMessageConverters(converter);
+    }   
+}
+</code></pre>
+
+<h3 id="toc_3">2.2. 方法二</h3>
+
+<pre><code class="language-text">@Configuration
+@EnableWebMvc
+public class WebConfig implements WebMvcConfigurer {
+    @Override
+    public void configureMessageConverters(List&lt;HttpMessageConverter&lt;?&gt;&gt; converters) {
+        FastJsonHttpMessageConverter fastJsonConverter = new FastJsonHttpMessageConverter();
+        FastJsonConfig config = new FastJsonConfig();
+        config.setCharset(Charset.forName(&quot;UTF-8&quot;));
+//        config.setDateFormat(&quot;yyyy-MM-dd&#39;T&#39;HH:mm:ss.SSSZ&quot;);
+//        config.setSerializerFeatures(SerializerFeature.WriteMapNullValue);
+        fastJsonConverter.setFastJsonConfig(config);
+        List&lt;MediaType&gt; list = new ArrayList&lt;&gt;();
+        list.add(MediaType.APPLICATION_JSON_UTF8);
+        fastJsonConverter.setSupportedMediaTypes(list);
+        converters.add(fastJsonConverter);
+    }
+}
+</code></pre>
+
+<h2 id="toc_4">3. 发散分析</h2>
+
+<h3 id="toc_5">3.1. Jackson的新版本</h3>
+
+<p>网络上搜集替换jackson的理由，其中一点是jackson不支持忽略key大小写。</p>
+
+<p>该点已经在2.5.0版本中解决。</p>
+
+<pre><code class="language-text">ObjectMapper objectMapper = new ObjectMapper();
+objectMapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
+CarInfo info = objectMapper.readValue(data, CarInfo.class); 
+</code></pre>
+
+<p>或在配置文件中</p>
+
+<pre><code class="language-text">spring.jackson.mapper.accept_case_insensitive_properties=true
+</code></pre>
+
+<h3 id="toc_6">3.2. 从替换fastjson，看springboot使用json解析器的逻辑</h3>
+
+<p>第二节中的两种方法都涉及到同一个类的使用，那就是<code>FastJsonHttpMessageConverter</code>和<code>HttpMessageConverter</code>。</p>
+
+<p>将FastJsonHttpMessageConverter 添加到系统的HttpMessageConverter列表中，实际操作就是增加了一种json的解析方法，可以解析的media type是application-json，使用的解析器就是FastJsonHttpMessageConverter。</p>
+
+<h2 id="toc_7">更多阅读</h2>
+
+<h3 id="toc_8">1. 三种json解析工具对比</h3>
+
+<p>fastjson这么快老外为啥还是热衷 jackson? <a href="https://blog.csdn.net/Amen_Wu/article/details/79129020">https://blog.csdn.net/Amen_Wu/article/details/79129020</a></p>
+
+<p>FastJSON、Gson和Jackson性能对比和共同缺点,注意事项<br/>
+<a href="https://blog.csdn.net/qq_28572235/article/details/78604846">https://blog.csdn.net/qq_28572235/article/details/78604846</a></p>
+
+<h2 id="toc_9">参考资料</h2>
+
+<p><a href="https://mtyurt.net/post/jackson-case-insensitive-deserialization.html">https://mtyurt.net/post/jackson-case-insensitive-deserialization.html</a><br/>
+<a href="https://blog.csdn.net/weixin_44828552/article/details/89511350">https://blog.csdn.net/weixin_44828552/article/details/89511350</a></p>
 
                         
                       </div>
@@ -140,11 +224,114 @@
                 </a>
                 <div class="read-more clearfix">
                   <div class="more-left left">
-                   <a href="15500645018755.html">Read more</a>&nbsp;&nbsp; 
-                    <span class="date">2019/02/13 21:28 下午</span>
+                  
+                    <span class="date">2019/09/24 17:18 下午</span>
                     <span>posted in&nbsp;</span> 
           				  
-          					    <span class="posted-in"><a href='%E6%95%B0%E6%8D%AE%E5%BA%93.html'>数据库</a></span>
+          					    <span class="posted-in"><a href='JSON.html'>JSON</a></span>
+          				   
+                    
+
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15693104259267.html">
+                
+                  <h1>Jackson fasterxml和codehaus的区别</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<p>作为最出名的Json解析库之一，jackson有着两个完全不一样的包名版本。<code>com.fasterxml.jackson</code>&amp;&amp;<code>org.codehaus.jackson</code>。</p>
+
+<p>这两个版本有什么区别呢？</p>
+
+<p>他们是Jackson的两大分支、也是两个版本的不同包名。Jackson从2.0开始改用新的包名fasterxml；1.x版本的包名是codehaus。除了包名不同，他们的Maven artifact id也不同。1.x版本现在只提供bug-fix，而2.x版本还在不断开发和发布中。如果是新项目，建议直接用2x，即fasterxml jackson。</p>
+
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                  
+                    <span class="date">2019/09/24 15:33 下午</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='JSON.html'>JSON</a></span>
+          				   
+                    
+
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15686164898705.html">
+                
+                  <h1>JSON反序列化乱序的问题</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<h2 id="toc_0">What</h2>
+
+<p>将Object 转成JSON时，会出现key值的顺序与原顺序不一致的情况（新的顺序按照字母序重新排序）</p>
+
+<h2 id="toc_1">Why</h2>
+
+<p>原因在于HashMap，当用fastjson反序列化时，会使用HashMap。而HashMap底层会根据map中key的hashcode和equals重新排序。</p>
+
+<h2 id="toc_2">How</h2>
+
+<p>使用LinkedHashMap替换HashMap。</p>
+
+<pre><code class="language-text">JSONObject jsonObj = new JSONObject(true);  
+Map m= jsonObj.parseObject(json, LinkedHashMap.class);  
+</code></pre>
+
+<p>这个方法可以保证第一层的map按照原顺序呗反序列化。想要递归所有层都按照原顺序需要使用</p>
+
+<pre><code class="language-text">HashMap m=JSON.parseObject(json,LinkedHashMap.class,Feature.OrderedField)；
+</code></pre>
+
+<h2 id="toc_3">PS</h2>
+
+<p>Q: jackson 会乱序吗？<br/>
+A: 不会</p>
+
+<h2 id="toc_4">参考资料</h2>
+
+<p><a href="https://github.com/alibaba/fastjson/issues/954">https://github.com/alibaba/fastjson/issues/954</a><br/>
+<a href="https://blog.csdn.net/yj1499945/article/details/78260650">https://blog.csdn.net/yj1499945/article/details/78260650</a></p>
+
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                  
+                    <span class="date">2019/09/16 14:48 下午</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='JSON.html'>JSON</a></span>
           				   
                     
 

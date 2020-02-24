@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>
     
-  数据库 - 沧海一粟No.1
+  Java中的代理模式 - 沧海一粟No.1
   
   </title>
   
@@ -103,79 +103,280 @@
        
 
  <script type="text/javascript">
-	$(function(){
-		$('#menu_item_index').addClass('is_active');
-	});
+  $(function(){
+    $('#menu_item_index').addClass('is_active');
+  });
 </script>
 <div class="row">
-	<div class="large-8 medium-8 columns">
-		<div class="markdown-body home-categories">
-		
-			<div class="article">
-                <a class="clearlink" href="15500645018755.html">
-                
-                  <h1>数据库分库分表技术</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<h1 id="toc_0">1. 基本概念</h1>
+  <div class="large-8 medium-8 columns">
+      <div class="markdown-body article-wrap">
+       <div class="article">
+          
+          <h1>Java中的代理模式</h1>
+     
+        <div class="read-more clearfix">
+          <span class="date">2019/05/26 20:59 下午</span>
 
-<h2 id="toc_1">1.1. 拆分方式</h2>
+          <span>posted in&nbsp;</span> 
+          
+              <span class="posted-in"><a href='Java.html'>Java</a></span>
+           
+         
+          <span class="comments">
+            
 
-<ul>
-<li><p>垂直拆分</p>
-<p>将一个库（表）拆分成多个库（表），每个库（表）的结构和原有的结构不同。</p>
-<p>这实际上可以认为是一种数据库的重新设计。拆分的原则可以是：</p>
-<pre><code class="language-text">1. 根据业务的具体情况，将热门的数据和冷门的数据分开。达到提高性能的目的。（库或者表的拆分都可以遵循这样一条原则）
-</code></pre></li>
-<li><p>水平拆分</p>
-<p>根据分片算法，将一个库（表）拆分成多个库（表），每个库（表）的结构和原有的结构相同。</p></li>
-</ul>
+            
+          </span>
+
+        </div>
+      </div><!-- article -->
+
+      <div class="article-content">
+      <h2 id="toc_0">1. 静态代理和动态代理</h2>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;本章节参考了<a href="https://www.ibm.com/developerworks/cn/java/j-lo-proxy-pattern/">https://www.ibm.com/developerworks/cn/java/j-lo-proxy-pattern/</a></p>
+
+<h3 id="toc_1">1.1. 定义</h3>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;静态代理和动态代理指的是实现代理模式的方式。静态模式意思是所有的代码是静态写好的。而动态代理则相对，部分代码是动态生成的。在动态代理中还分为JDK动态代理和CGLib动态代理。</p>
+
+<h3 id="toc_2">1.2. 关键实现</h3>
+
+<h4 id="toc_3">1.2.1. 静态代理</h4>
+
+<p>静态代理是基于接口实现的，他要求真实类和代理类实现同样的接口。</p>
+
+<pre><code class="language-text">public interface IDBQuery {
+    String request();
+}
+public class DBQuery implements IDBQuery{
+    public DBQuery(){
+        try{
+            Thread.sleep(1000);//假设数据库连接等耗时操作
+        }catch(InterruptedException ex){
+            ex.printStackTrace();
+        }
+    }
+
+    @Override
+    public String request() {
+// TODO Auto-generated method stub
+        return &quot;request string&quot;;
+    }
 
 
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                   <a href="15500645018755.html">Read more</a>&nbsp;&nbsp; 
-                    <span class="date">2019/02/13 21:28 下午</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='%E6%95%B0%E6%8D%AE%E5%BA%93.html'>数据库</a></span>
-          				   
-                    
+}
+public class DBQueryProxy implements IDBQuery{
+    private DBQuery real = null;
 
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
+    @Override
+    public String request() {
+// TODO Auto-generated method stub
+//在真正需要的时候才能创建真实对象，创建过程可能很慢
+        if(real==null){
+            real = new DBQuery();
+        }//在多线程环境下，这里返回一个虚假类，类似于 Future 模式
+        return real.request();
+    }
 
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-              
+}
+public class Main {
+    public static void main(String[] args){
+        IDBQuery q = new DBQueryProxy(); //使用代里
+        q.request(); //在真正使用时才创建真实对象
+    }
+}
+</code></pre>
+
+<h4 id="toc_4">1.2.2. JDK代理</h4>
+
+<p>当使用JDK代理时，一个最直观的变化就是代理类不需要和真实类实现同一个接口了。取而代之的是代理类实现了InvocationHandler，并Override了invoke方法。在方法里可以统一对实现方法做处理（方法调用前，方法调用后）。</p>
+
+<pre><code class="language-text">import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
 
 
-			<div class="row">
-			  <div class="large-6 columns">
-			  <p class="text-left" style="padding-top:25px;">
-			   
-			  </p>
-			  </div>
-			  <div class="large-6 columns">
-			<p class="text-right" style="padding-top:25px;">
-			
-			</p>
-			  </div>
-			</div>
-		</div>
-	</div><!-- large 8 -->
+public class DBQueryHandler implements InvocationHandler{
+    IDBQuery realQuery = null;//定义主题接口
+
+    @Override
+    public Object invoke(Object proxy, Method method, Object[] args)
+            throws Throwable {
+// TODO Auto-generated method stub
+        //如果第一次调用，生成真实主题
+        if(realQuery == null){
+            realQuery = new DBQuery();
+        }
+        //method.invoke(target, args); 执行调用的方法。
+        //返回真实主题完成实际的操作
+        return realQuery.request();
+    }
+    public static IDBQuery createProxy(){
+        IDBQuery proxy = (IDBQuery)Proxy.newProxyInstance(ClassLoader.getSystemClassLoader(), new Class[]{IDBQuery.class}, new DBQueryHandler()); // 注意，生成的代理类实例被强转为IDBQuery
+        return proxy;
+    }
+}
+</code></pre>
+
+<h4 id="toc_5">1.2.3. CGLib代理</h4>
+
+<p>CGLib一个直观的最大的特点就是真实类无需实现接口（当然实现了也没关系）。</p>
+
+<p>接口类</p>
+
+<pre><code class="language-text">public interface BookProxy {
+    public void addBook();
+}
+</code></pre>
+
+<p>实现类</p>
+
+<pre><code class="language-text">//该类并没有申明 BookProxy 接口
+public class BookProxyImpl {
+    public void addBook() { 
+        System.out.println(&quot;增加图书的普通方法...&quot;); 
+    } 
+}
+</code></pre>
+
+<p>代理类</p>
+
+<pre><code class="language-text">import java.lang.reflect.Method; 
+import net.sf.cglib.proxy.Enhancer; 
+import net.sf.cglib.proxy.MethodInterceptor; 
+import net.sf.cglib.proxy.MethodProxy;
+
+public class BookProxyLib implements MethodInterceptor {
+    private Object target;
+    /**
+     * 创建代理对象 
+     *
+     * @param target
+     * @return
+     */
+    public Object getInstance(Object target) {
+        this.target = target;
+        Enhancer enhancer = new Enhancer();
+        enhancer.setSuperclass(this.target.getClass());
+        // 回调方法 
+        enhancer.setCallback(this);
+        // 创建代理对象 
+        return enhancer.create();
+    }
+
+    @Override
+// 回调方法 
+    public Object intercept(Object obj, Method method, Object[] args,
+                            MethodProxy proxy) throws Throwable {
+        System.out.println(&quot;事物开始&quot;);
+        proxy.invokeSuper(obj, args);
+        System.out.println(&quot;事物结束&quot;);
+        return null;
+    }
+}
+</code></pre>
+
+<p>调用方法</p>
+
+<pre><code class="language-text">public class TestCglib { 
+    public static void main(String[] args) { 
+        BookProxyLib cglib=new BookProxyLib(); 
+        BookProxyImpl bookCglib=(BookProxyImpl)cglib.getInstance(new BookProxyImpl()); 
+        bookCglib.addBook();  //可以看到BookProxyLib并没有声明BookProxy接口，但是仍然可以调用addBook方法
+    } 
+}
+</code></pre>
+
+<h3 id="toc_6">1.3. 区别和共同点</h3>
+
+<p>静态代理是通过在代码中显式定义一个业务实现类一个代理，在代理类中对同名的业务方法进行包装，用户通过代理类调用被包装过的业务方法；</p>
+
+<p>JDK动态代理是通过接口中的方法名，在动态生成的代理类中调用业务实现类的同名方法；</p>
+
+<p>CGlib动态代理是通过继承业务类，生成的动态代理类是业务类的子类，通过重写业务方法进行代理；</p>
+
+<p><a href="https://blog.csdn.net/neosmith/article/details/51072840">https://blog.csdn.net/neosmith/article/details/51072840</a></p>
+
+<h2 id="toc_7">2. 实际应用场景举例</h2>
+
+<p>todo:没有理解cglib不用真实类实现接口的意义。因为真实类没有实现接口，但是暴露了public的方法。这和直接调用有啥区别？</p>
+
+<p>另外cglib的试用场景，真实类没有实现的接口意义何在？如果没有接口来规范统一的调用逻辑，例如一堆的实现类实现了A接口，因此必须实现A接口中定义的B方法。这样才有意义吧？</p>
+
+<p>查看spring源码，了解spring中，cglib的使用方法，来解答上述疑问。</p>
+
+<p>代理模式的意义</p>
+
+<ol>
+<li>有代理，便于解耦</li>
+<li>静态代理太麻烦，每个都要</li>
+<li>JDK代理受限于要实现接口</li>
+<li>CGLib不需要实现接口，看上去无法统一接口的方法，但是可能是用在一些common的方法，例如Object的方法。用在类创建时刻。</li>
+<li>另外让方法运行只是最基本的，代理模式的最大用途是管理原方法的运行前，后，时（切面，AOP）。</li>
+</ol>
+
+<h2 id="toc_8">3. Spring AOP和动态代理</h2>
+
+<h2 id="toc_9">4. OC中的动态代理模式浅谈</h2>
+
+<h2 id="toc_10">5. CGLib和JDK代理的性能对比</h2>
+
+
+    
+
+      </div>
+
+      <div class="row">
+        <div class="large-6 columns">
+        <p class="text-left" style="padding:15px 0px;">
+      
+          <a href="15686164898705.html" 
+          title="Previous Post: JSON反序列化乱序的问题">&laquo; JSON反序列化乱序的问题</a>
+      
+        </p>
+        </div>
+        <div class="large-6 columns">
+      <p class="text-right" style="padding:15px 0px;">
+      
+          <a  href="15554659463337.html" 
+          title="Next Post: 深入springboot原理——一步步分析springboot启动机制（starter机制）">深入springboot原理——一步步分析springboot启动机制（starter机制） &raquo;</a>
+      
+      </p>
+        </div>
+      </div>
+      <div class="comments-wrap">
+        <div class="share-comments">
+          <div id="disqus_thread"></div>
+<script>
+
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+/*
+var disqus_config = function () {
+this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+*/
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://nimitz-007.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+          
+
+          
+        </div>
+      </div>
+    </div><!-- article-wrap -->
+  </div><!-- large 8 -->
+
+
+
 
  <div class="large-4 medium-4 columns">
   <div class="hide-for-small">
@@ -334,6 +535,8 @@ Theme used <a target="_blank" href="http://github.com">GitHub CSS</a>.</p>
 
 
 
+
+<script src="asset/prism.js"></script>
 
 
 <style type="text/css">

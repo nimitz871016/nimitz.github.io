@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>
     
-  数据库 - 沧海一粟No.1
+  Jackson fasterxml和codehaus的区别 - 沧海一粟No.1
   
   </title>
   
@@ -103,79 +103,97 @@
        
 
  <script type="text/javascript">
-	$(function(){
-		$('#menu_item_index').addClass('is_active');
-	});
+  $(function(){
+    $('#menu_item_index').addClass('is_active');
+  });
 </script>
 <div class="row">
-	<div class="large-8 medium-8 columns">
-		<div class="markdown-body home-categories">
-		
-			<div class="article">
-                <a class="clearlink" href="15500645018755.html">
-                
-                  <h1>数据库分库分表技术</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<h1 id="toc_0">1. 基本概念</h1>
+  <div class="large-8 medium-8 columns">
+      <div class="markdown-body article-wrap">
+       <div class="article">
+          
+          <h1>Jackson fasterxml和codehaus的区别</h1>
+     
+        <div class="read-more clearfix">
+          <span class="date">2019/09/24 15:33 下午</span>
 
-<h2 id="toc_1">1.1. 拆分方式</h2>
+          <span>posted in&nbsp;</span> 
+          
+              <span class="posted-in"><a href='JSON.html'>JSON</a></span>
+           
+         
+          <span class="comments">
+            
 
-<ul>
-<li><p>垂直拆分</p>
-<p>将一个库（表）拆分成多个库（表），每个库（表）的结构和原有的结构不同。</p>
-<p>这实际上可以认为是一种数据库的重新设计。拆分的原则可以是：</p>
-<pre><code class="language-text">1. 根据业务的具体情况，将热门的数据和冷门的数据分开。达到提高性能的目的。（库或者表的拆分都可以遵循这样一条原则）
-</code></pre></li>
-<li><p>水平拆分</p>
-<p>根据分片算法，将一个库（表）拆分成多个库（表），每个库（表）的结构和原有的结构相同。</p></li>
-</ul>
+            
+          </span>
 
+        </div>
+      </div><!-- article -->
 
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                   <a href="15500645018755.html">Read more</a>&nbsp;&nbsp; 
-                    <span class="date">2019/02/13 21:28 下午</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='%E6%95%B0%E6%8D%AE%E5%BA%93.html'>数据库</a></span>
-          				   
-                    
+      <div class="article-content">
+      <p>作为最出名的Json解析库之一，jackson有着两个完全不一样的包名版本。<code>com.fasterxml.jackson</code>&amp;&amp;<code>org.codehaus.jackson</code>。</p>
 
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
+<p>这两个版本有什么区别呢？</p>
 
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-              
+<p>他们是Jackson的两大分支、也是两个版本的不同包名。Jackson从2.0开始改用新的包名fasterxml；1.x版本的包名是codehaus。除了包名不同，他们的Maven artifact id也不同。1.x版本现在只提供bug-fix，而2.x版本还在不断开发和发布中。如果是新项目，建议直接用2x，即fasterxml jackson。</p>
 
 
-			<div class="row">
-			  <div class="large-6 columns">
-			  <p class="text-left" style="padding-top:25px;">
-			   
-			  </p>
-			  </div>
-			  <div class="large-6 columns">
-			<p class="text-right" style="padding-top:25px;">
-			
-			</p>
-			  </div>
-			</div>
-		</div>
-	</div><!-- large 8 -->
+    
+
+      </div>
+
+      <div class="row">
+        <div class="large-6 columns">
+        <p class="text-left" style="padding:15px 0px;">
+      
+          <a href="15693167161716.html" 
+          title="Previous Post: 从使用fastjson替换springboot框架默认的json解析工具说起">&laquo; 从使用fastjson替换springboot框架默认的json解析工具说起</a>
+      
+        </p>
+        </div>
+        <div class="large-6 columns">
+      <p class="text-right" style="padding:15px 0px;">
+      
+          <a  href="15686164898705.html" 
+          title="Next Post: JSON反序列化乱序的问题">JSON反序列化乱序的问题 &raquo;</a>
+      
+      </p>
+        </div>
+      </div>
+      <div class="comments-wrap">
+        <div class="share-comments">
+          <div id="disqus_thread"></div>
+<script>
+
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+/*
+var disqus_config = function () {
+this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+*/
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://nimitz-007.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+          
+
+          
+        </div>
+      </div>
+    </div><!-- article-wrap -->
+  </div><!-- large 8 -->
+
+
+
 
  <div class="large-4 medium-4 columns">
   <div class="hide-for-small">

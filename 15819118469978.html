@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>
     
-  Java - 沧海一粟No.1
+  一道LeetCode线程题引出Java线程协作的经典案例 - 沧海一粟No.1
   
   </title>
   
@@ -103,23 +103,36 @@
        
 
  <script type="text/javascript">
-	$(function(){
-		$('#menu_item_index').addClass('is_active');
-	});
+  $(function(){
+    $('#menu_item_index').addClass('is_active');
+  });
 </script>
 <div class="row">
-	<div class="large-8 medium-8 columns">
-		<div class="markdown-body home-categories">
-		
-			<div class="article">
-                <a class="clearlink" href="15819118469978.html">
-                
-                  <h1>一道LeetCode线程题引出Java线程协作的经典案例</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<h2 id="toc_0">1. 题目</h2>
+  <div class="large-8 medium-8 columns">
+      <div class="markdown-body article-wrap">
+       <div class="article">
+          
+          <h1>一道LeetCode线程题引出Java线程协作的经典案例</h1>
+     
+        <div class="read-more clearfix">
+          <span class="date">2020/02/17 11:57 上午</span>
+
+          <span>posted in&nbsp;</span> 
+          
+              <span class="posted-in"><a href='Java.html'>Java</a></span>
+           
+         
+          <span class="comments">
+            
+
+            
+          </span>
+
+        </div>
+      </div><!-- article -->
+
+      <div class="article-content">
+      <h2 id="toc_0">1. 题目</h2>
 
 <p><strong>1115. 交替打印FooBar</strong></p>
 
@@ -529,662 +542,59 @@ class FooBar {
 
 <p><a href="https://www.cnblogs.com/shines77/p/4198046.html">https://www.cnblogs.com/shines77/p/4198046.html</a></p>
 
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                  
-                    <span class="date">2020/02/17 11:57 上午</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='Java.html'>Java</a></span>
-          				   
-                    
 
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
-
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-			<div class="article">
-                <a class="clearlink" href="15693167161716.html">
-                
-                  <h1>从使用fastjson替换springboot框架默认的json解析工具说起</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<h2 id="toc_0">1. 为什么要用fastjson替换jackson</h2>
-
-<p>1.在默认情况下我们在的情况下从返回的数据是</p>
-
-<p>json格式但是在{key,value}中key的值当中用默认的Jackson返还回来会忽略大小写而我们要得到得是不忽略大小写得值因此我</p>
-
-<p>们需要用FastJson替代默认得Jackson</p>
-
-<p>2.我们通常现在为了更快捷得创建类,使用lombok插件得@Data注解生成类得getter,setter及构造方法.jackson是不支持json格式</p>
-
-<p>序列化的,但是FastJson是可以做到这一点的<br/>
-————————————————<br/>
-版权声明：本文为CSDN博主「Alin_林」的原创文章，遵循 CC 4.0 BY-SA 版权协议，转载请附上原文出处链接及本声明。<br/>
-原文链接：<a href="https://blog.csdn.net/weixin_44828552/article/details/89511350">https://blog.csdn.net/weixin_44828552/article/details/89511350</a></p>
-
-<h2 id="toc_1">2. 如何替换fastjson</h2>
-
-<p>常见的替换方法有以下两种</p>
-
-<h3 id="toc_2">2.1. 方法一</h3>
-
-<pre><code class="language-text">@SpringBootApplication
-public class HelloWorld implement ApplicationRunner{
-    public static void main(String[] args){
-        SpringApplication.run(HelloWorld.class,args);
-    }
-
-    @Bean
-    public HttpMessageConverters fastJsonHttpMessageConverters(){
-        //1.定义fastJson转换器
-        FastJsonHttpMessageConverter fastConverter=new FastJsonHttpMessageConverter();
-        FastJsonConfig fastJsonConfig=new FastJsonConfig();
-        fastJsonConfig.setSerializerFeatures(SerialzerFeature.WriteMapNullValue, SerializerFeature.WriteNullListAsEmpty);
-        fastConverter.setFastJsonConfig(fastJsonConfig);
-        HttpMessageConverter&lt;?&gt; converter = fastConverter;
-        return new HttpMessageConverters(converter);
-    }   
-}
-</code></pre>
-
-<h3 id="toc_3">2.2. 方法二</h3>
-
-<pre><code class="language-text">@Configuration
-@EnableWebMvc
-public class WebConfig implements WebMvcConfigurer {
-    @Override
-    public void configureMessageConverters(List&lt;HttpMessageConverter&lt;?&gt;&gt; converters) {
-        FastJsonHttpMessageConverter fastJsonConverter = new FastJsonHttpMessageConverter();
-        FastJsonConfig config = new FastJsonConfig();
-        config.setCharset(Charset.forName(&quot;UTF-8&quot;));
-//        config.setDateFormat(&quot;yyyy-MM-dd&#39;T&#39;HH:mm:ss.SSSZ&quot;);
-//        config.setSerializerFeatures(SerializerFeature.WriteMapNullValue);
-        fastJsonConverter.setFastJsonConfig(config);
-        List&lt;MediaType&gt; list = new ArrayList&lt;&gt;();
-        list.add(MediaType.APPLICATION_JSON_UTF8);
-        fastJsonConverter.setSupportedMediaTypes(list);
-        converters.add(fastJsonConverter);
-    }
-}
-</code></pre>
-
-<h2 id="toc_4">3. 发散分析</h2>
-
-<h3 id="toc_5">3.1. Jackson的新版本</h3>
-
-<p>网络上搜集替换jackson的理由，其中一点是jackson不支持忽略key大小写。</p>
-
-<p>该点已经在2.5.0版本中解决。</p>
-
-<pre><code class="language-text">ObjectMapper objectMapper = new ObjectMapper();
-objectMapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
-CarInfo info = objectMapper.readValue(data, CarInfo.class); 
-</code></pre>
-
-<p>或在配置文件中</p>
-
-<pre><code class="language-text">spring.jackson.mapper.accept_case_insensitive_properties=true
-</code></pre>
-
-<h3 id="toc_6">3.2. 从替换fastjson，看springboot使用json解析器的逻辑</h3>
-
-<p>第二节中的两种方法都涉及到同一个类的使用，那就是<code>FastJsonHttpMessageConverter</code>和<code>HttpMessageConverter</code>。</p>
-
-<p>将FastJsonHttpMessageConverter 添加到系统的HttpMessageConverter列表中，实际操作就是增加了一种json的解析方法，可以解析的media type是application-json，使用的解析器就是FastJsonHttpMessageConverter。</p>
-
-<h2 id="toc_7">更多阅读</h2>
-
-<h3 id="toc_8">1. 三种json解析工具对比</h3>
-
-<p>fastjson这么快老外为啥还是热衷 jackson? <a href="https://blog.csdn.net/Amen_Wu/article/details/79129020">https://blog.csdn.net/Amen_Wu/article/details/79129020</a></p>
-
-<p>FastJSON、Gson和Jackson性能对比和共同缺点,注意事项<br/>
-<a href="https://blog.csdn.net/qq_28572235/article/details/78604846">https://blog.csdn.net/qq_28572235/article/details/78604846</a></p>
-
-<h2 id="toc_9">参考资料</h2>
-
-<p><a href="https://mtyurt.net/post/jackson-case-insensitive-deserialization.html">https://mtyurt.net/post/jackson-case-insensitive-deserialization.html</a><br/>
-<a href="https://blog.csdn.net/weixin_44828552/article/details/89511350">https://blog.csdn.net/weixin_44828552/article/details/89511350</a></p>
-
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                  
-                    <span class="date">2019/09/24 17:18 下午</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='JSON.html'>JSON</a></span>
-          				   
-                    
-
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
-
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-			<div class="article">
-                <a class="clearlink" href="15693104259267.html">
-                
-                  <h1>Jackson fasterxml和codehaus的区别</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<p>作为最出名的Json解析库之一，jackson有着两个完全不一样的包名版本。<code>com.fasterxml.jackson</code>&amp;&amp;<code>org.codehaus.jackson</code>。</p>
-
-<p>这两个版本有什么区别呢？</p>
-
-<p>他们是Jackson的两大分支、也是两个版本的不同包名。Jackson从2.0开始改用新的包名fasterxml；1.x版本的包名是codehaus。除了包名不同，他们的Maven artifact id也不同。1.x版本现在只提供bug-fix，而2.x版本还在不断开发和发布中。如果是新项目，建议直接用2x，即fasterxml jackson。</p>
-
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                  
-                    <span class="date">2019/09/24 15:33 下午</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='JSON.html'>JSON</a></span>
-          				   
-                    
-
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
-
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-			<div class="article">
-                <a class="clearlink" href="15686164898705.html">
-                
-                  <h1>JSON反序列化乱序的问题</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<h2 id="toc_0">What</h2>
-
-<p>将Object 转成JSON时，会出现key值的顺序与原顺序不一致的情况（新的顺序按照字母序重新排序）</p>
-
-<h2 id="toc_1">Why</h2>
-
-<p>原因在于HashMap，当用fastjson反序列化时，会使用HashMap。而HashMap底层会根据map中key的hashcode和equals重新排序。</p>
-
-<h2 id="toc_2">How</h2>
-
-<p>使用LinkedHashMap替换HashMap。</p>
-
-<pre><code class="language-text">JSONObject jsonObj = new JSONObject(true);  
-Map m= jsonObj.parseObject(json, LinkedHashMap.class);  
-</code></pre>
-
-<p>这个方法可以保证第一层的map按照原顺序呗反序列化。想要递归所有层都按照原顺序需要使用</p>
-
-<pre><code class="language-text">HashMap m=JSON.parseObject(json,LinkedHashMap.class,Feature.OrderedField)；
-</code></pre>
-
-<h2 id="toc_3">PS</h2>
-
-<p>Q: jackson 会乱序吗？<br/>
-A: 不会</p>
-
-<h2 id="toc_4">参考资料</h2>
-
-<p><a href="https://github.com/alibaba/fastjson/issues/954">https://github.com/alibaba/fastjson/issues/954</a><br/>
-<a href="https://blog.csdn.net/yj1499945/article/details/78260650">https://blog.csdn.net/yj1499945/article/details/78260650</a></p>
-
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                  
-                    <span class="date">2019/09/16 14:48 下午</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='JSON.html'>JSON</a></span>
-          				   
-                    
-
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
-
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-			<div class="article">
-                <a class="clearlink" href="15588755745673.html">
-                
-                  <h1>Java中的代理模式</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<h2 id="toc_0">1. 静态代理和动态代理</h2>
-
-<p>&nbsp;&nbsp;&nbsp;&nbsp;本章节参考了<a href="https://www.ibm.com/developerworks/cn/java/j-lo-proxy-pattern/">https://www.ibm.com/developerworks/cn/java/j-lo-proxy-pattern/</a></p>
-
-<h3 id="toc_1">1.1. 定义</h3>
-
-<p>&nbsp;&nbsp;&nbsp;&nbsp;静态代理和动态代理指的是实现代理模式的方式。静态模式意思是所有的代码是静态写好的。而动态代理则相对，部分代码是动态生成的。在动态代理中还分为JDK动态代理和CGLib动态代理。</p>
-
-<h3 id="toc_2">1.2. 关键实现</h3>
-
-<h4 id="toc_3">1.2.1. 静态代理</h4>
-
-<p>静态代理是基于接口实现的，他要求真实类和代理类实现同样的接口。</p>
-
-<pre><code class="language-text">public interface IDBQuery {
-    String request();
-}
-public class DBQuery implements IDBQuery{
-    public DBQuery(){
-        try{
-            Thread.sleep(1000);//假设数据库连接等耗时操作
-        }catch(InterruptedException ex){
-            ex.printStackTrace();
-        }
-    }
-
-    @Override
-    public String request() {
-// TODO Auto-generated method stub
-        return &quot;request string&quot;;
-    }
-
-
-}
-public class DBQueryProxy implements IDBQuery{
-    private DBQuery real = null;
-
-    @Override
-    public String request() {
-// TODO Auto-generated method stub
-//在真正需要的时候才能创建真实对象，创建过程可能很慢
-        if(real==null){
-            real = new DBQuery();
-        }//在多线程环境下，这里返回一个虚假类，类似于 Future 模式
-        return real.request();
-    }
-
-}
-public class Main {
-    public static void main(String[] args){
-        IDBQuery q = new DBQueryProxy(); //使用代里
-        q.request(); //在真正使用时才创建真实对象
-    }
-}
-</code></pre>
-
-<h4 id="toc_4">1.2.2. JDK代理</h4>
-
-<p>当使用JDK代理时，一个最直观的变化就是代理类不需要和真实类实现同一个接口了。取而代之的是代理类实现了InvocationHandler，并Override了invoke方法。在方法里可以统一对实现方法做处理（方法调用前，方法调用后）。</p>
-
-<pre><code class="language-text">import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-
-
-public class DBQueryHandler implements InvocationHandler{
-    IDBQuery realQuery = null;//定义主题接口
-
-    @Override
-    public Object invoke(Object proxy, Method method, Object[] args)
-            throws Throwable {
-// TODO Auto-generated method stub
-        //如果第一次调用，生成真实主题
-        if(realQuery == null){
-            realQuery = new DBQuery();
-        }
-        //method.invoke(target, args); 执行调用的方法。
-        //返回真实主题完成实际的操作
-        return realQuery.request();
-    }
-    public static IDBQuery createProxy(){
-        IDBQuery proxy = (IDBQuery)Proxy.newProxyInstance(ClassLoader.getSystemClassLoader(), new Class[]{IDBQuery.class}, new DBQueryHandler()); // 注意，生成的代理类实例被强转为IDBQuery
-        return proxy;
-    }
-}
-</code></pre>
-
-<h4 id="toc_5">1.2.3. CGLib代理</h4>
-
-<p>CGLib一个直观的最大的特点就是真实类无需实现接口（当然实现了也没关系）。</p>
-
-<p>接口类</p>
-
-<pre><code class="language-text">public interface BookProxy {
-    public void addBook();
-}
-</code></pre>
-
-<p>实现类</p>
-
-<pre><code class="language-text">//该类并没有申明 BookProxy 接口
-public class BookProxyImpl {
-    public void addBook() { 
-        System.out.println(&quot;增加图书的普通方法...&quot;); 
-    } 
-}
-</code></pre>
-
-<p>代理类</p>
-
-<pre><code class="language-text">import java.lang.reflect.Method; 
-import net.sf.cglib.proxy.Enhancer; 
-import net.sf.cglib.proxy.MethodInterceptor; 
-import net.sf.cglib.proxy.MethodProxy;
-
-public class BookProxyLib implements MethodInterceptor {
-    private Object target;
-    /**
-     * 创建代理对象 
-     *
-     * @param target
-     * @return
-     */
-    public Object getInstance(Object target) {
-        this.target = target;
-        Enhancer enhancer = new Enhancer();
-        enhancer.setSuperclass(this.target.getClass());
-        // 回调方法 
-        enhancer.setCallback(this);
-        // 创建代理对象 
-        return enhancer.create();
-    }
-
-    @Override
-// 回调方法 
-    public Object intercept(Object obj, Method method, Object[] args,
-                            MethodProxy proxy) throws Throwable {
-        System.out.println(&quot;事物开始&quot;);
-        proxy.invokeSuper(obj, args);
-        System.out.println(&quot;事物结束&quot;);
-        return null;
-    }
-}
-</code></pre>
-
-<p>调用方法</p>
-
-<pre><code class="language-text">public class TestCglib { 
-    public static void main(String[] args) { 
-        BookProxyLib cglib=new BookProxyLib(); 
-        BookProxyImpl bookCglib=(BookProxyImpl)cglib.getInstance(new BookProxyImpl()); 
-        bookCglib.addBook();  //可以看到BookProxyLib并没有声明BookProxy接口，但是仍然可以调用addBook方法
-    } 
-}
-</code></pre>
-
-<h3 id="toc_6">1.3. 区别和共同点</h3>
-
-<p>静态代理是通过在代码中显式定义一个业务实现类一个代理，在代理类中对同名的业务方法进行包装，用户通过代理类调用被包装过的业务方法；</p>
-
-<p>JDK动态代理是通过接口中的方法名，在动态生成的代理类中调用业务实现类的同名方法；</p>
-
-<p>CGlib动态代理是通过继承业务类，生成的动态代理类是业务类的子类，通过重写业务方法进行代理；</p>
-
-<p><a href="https://blog.csdn.net/neosmith/article/details/51072840">https://blog.csdn.net/neosmith/article/details/51072840</a></p>
-
-<h2 id="toc_7">2. 实际应用场景举例</h2>
-
-<p>todo:没有理解cglib不用真实类实现接口的意义。因为真实类没有实现接口，但是暴露了public的方法。这和直接调用有啥区别？</p>
-
-<p>另外cglib的试用场景，真实类没有实现的接口意义何在？如果没有接口来规范统一的调用逻辑，例如一堆的实现类实现了A接口，因此必须实现A接口中定义的B方法。这样才有意义吧？</p>
-
-<p>查看spring源码，了解spring中，cglib的使用方法，来解答上述疑问。</p>
-
-<p>代理模式的意义</p>
-
-<ol>
-<li>有代理，便于解耦</li>
-<li>静态代理太麻烦，每个都要</li>
-<li>JDK代理受限于要实现接口</li>
-<li>CGLib不需要实现接口，看上去无法统一接口的方法，但是可能是用在一些common的方法，例如Object的方法。用在类创建时刻。</li>
-<li>另外让方法运行只是最基本的，代理模式的最大用途是管理原方法的运行前，后，时（切面，AOP）。</li>
-</ol>
-
-<h2 id="toc_8">3. Spring AOP和动态代理</h2>
-
-<h2 id="toc_9">4. OC中的动态代理模式浅谈</h2>
-
-<h2 id="toc_10">5. CGLib和JDK代理的性能对比</h2>
-
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                  
-                    <span class="date">2019/05/26 20:59 下午</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='Java.html'>Java</a></span>
-          				   
-                    
-
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
-
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-			<div class="article">
-                <a class="clearlink" href="15542090064870.html">
-                
-                  <h1>从logger.isDebugEnabled()谈起</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<h2 id="toc_0">0. 问题</h2>
-
-<p>在很多框架中，我们看到在<code>logger.debug</code>处经常会这样写</p>
-
-<pre><code class="language-text">if (logger.isDebugEnabled()) {
-    logger.debug(message);
-}
-</code></pre>
-
-<p>我们知道<code>logger.debug()</code>,在日志级别不够的时候是不会输出日志的。那么这么写的目的何在？</p>
-
-<h2 id="toc_1">1. 分析</h2>
-
-<p>我们来看一个例子</p>
-
-<pre><code class="language-text">String error = &quot;debug日志&quot;;
-logger.debug(&quot;这是一个&quot; + error);
-</code></pre>
-
-<p>按照正常的逻辑，在执行logger.debug()之前需要先行计算括号里的内容。然后才会判断当前日志级别不符合不输出。这里就存在一个无用计算的过程。相比对直接执行语句对logger.isDebugEnabled()进行先判断，显然是一个更优的方案，避免了无用的计算过程。</p>
-
-<p>然而这个结论在占位符的使用下，有了一点不同。</p>
-
-<p>再来看一个例子</p>
-
-<h3 id="toc_2">1.1. logger.debug(&quot;这是一个{}&quot;, model);</h3>
-
-<pre><code class="language-text">public static class Model{
-    int age;
-
-    @Override
-    public String toString() {
-        System.out.println(&quot;toString called&quot;);
-        return &quot;model{&quot; +
-                &quot;age=&quot; + age +
-                &#39;}&#39;;
-    }
-}
-public static void main(String[] args) {
-    Model model = new Model();
-    model.age = 3;
     
-    logger.debug(&quot;这是一个{}&quot;, model);
-}
-</code></pre>
 
-<p>同样的作用，但是当日志级别高于debug时，不会执行括号内部的字符串拼接。也就是如果使用占位符{}来组合输出日志，可以不用判断<code>logger.isDebugEnabled()</code></p>
+      </div>
 
-<h3 id="toc_3">1.2. logger.debug(&quot;test:{}&quot;, test());</h3>
+      <div class="row">
+        <div class="large-6 columns">
+        <p class="text-left" style="padding:15px 0px;">
+      
+        </p>
+        </div>
+        <div class="large-6 columns">
+      <p class="text-right" style="padding:15px 0px;">
+      
+          <a  href="15814116703606.html" 
+          title="Next Post: 1349. 参加考试的最大学生数">1349. 参加考试的最大学生数 &raquo;</a>
+      
+      </p>
+        </div>
+      </div>
+      <div class="comments-wrap">
+        <div class="share-comments">
+          <div id="disqus_thread"></div>
+<script>
 
-<p>Model的toString方法在用占位符{}的方式时，没有执行，那么如果是一个普通的方法呢？</p>
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+/*
+var disqus_config = function () {
+this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+*/
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://nimitz-007.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 
-<pre><code class="language-text">public static String test(){
-    System.out.println(&quot;test&quot;);
-    return &quot;test&quot;;
-}
-public static void main(String[] args) {
-    logger.debug(&quot;test:{}&quot;, test()); //日志级别info
-}
-</code></pre>
+          
 
-<p>结果，logger.debug(&quot;test:{}&quot;, test());无输出，但是test()方法在控制台打印出了test。</p>
-
-<p>结论：有占位符的存在，但是如果字符串拼接调用了函数，仍然会先执行函数，这和日志级别无关。</p>
-
-<h3 id="toc_4">1.3. logger.debug(&quot;test2:{}, {}&quot;, model, test());</h3>
-
-<pre><code class="language-text">public static String test(){
-    System.out.println(&quot;print test&quot;);
-    return &quot;fdsf&quot;;
-}
-public static void main(String[] args) {
-    Model model = new Model();
-    model.age = 3;
-    logger.debug(&quot;test1:&quot; + model);
-    model.age = 5;
-    logger.debug(&quot;test2:{}, {}&quot;, model, test());
-}
-</code></pre>
-
-<p>结果，最后一句debug，model的toString方法没有执行，而test()方法打印出了&quot;print test&quot;。也就是在占位符的作用下，对象的toString()方法不会执行，而不同方法仍然会执行。</p>
-
-<h2 id="toc_5">2. 结论</h2>
-
-<p>通过<code>logger.isDebugEnabled()</code>进行先行判断，肯定是没有错的。虽然在占位符的帮助下，当日志级别高于debug时，对象的toString()方法不会执行，但是普通的方法仍然会执行。如果能够保证logger.debug()中的内容只涉及最简单的字符串拼接和toString()，那么可以简略<code>logger.isDebugEnabled()</code>，否则还是加上避免无用计算。</p>
-
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                  
-                    <span class="date">2019/04/02 20:43 下午</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='Java.html'>Java</a></span>
-          				   
-                    
-
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
-
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-			<div class="article">
-                <a class="clearlink" href="15479962056718.html">
-                
-                  <h1>Java并发编程</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<p>&emsp;&emsp;本文对Java中的并发变成进行了简单的描述。是本人阅读《Java并发编程的艺术》一书的读书笔记。本文对重要的概念进行了记录。</p>
-
-<p>&emsp;&emsp;本文首先介绍了各种各样的和锁相关的概念。然后介绍了Java多线程的技术要点，最后介绍了一些经典使用案例。</p>
+          
+        </div>
+      </div>
+    </div><!-- article-wrap -->
+  </div><!-- large 8 -->
 
 
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                   <a href="15479962056718.html">Read more</a>&nbsp;&nbsp; 
-                    <span class="date">2019/01/20 22:56 下午</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='Java.html'>Java</a></span>
-          				   
-                    
 
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
-
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-              
-
-
-			<div class="row">
-			  <div class="large-6 columns">
-			  <p class="text-left" style="padding-top:25px;">
-			   
-			  </p>
-			  </div>
-			  <div class="large-6 columns">
-			<p class="text-right" style="padding-top:25px;">
-			
-			</p>
-			  </div>
-			</div>
-		</div>
-	</div><!-- large 8 -->
 
  <div class="large-4 medium-4 columns">
   <div class="hide-for-small">
@@ -1343,6 +753,8 @@ Theme used <a target="_blank" href="http://github.com">GitHub CSS</a>.</p>
 
 
 
+
+<script src="asset/prism.js"></script>
 
 
 <style type="text/css">

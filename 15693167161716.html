@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>
     
-  数据库 - 沧海一粟No.1
+  从使用fastjson替换springboot框架默认的json解析工具说起 - 沧海一粟No.1
   
   </title>
   
@@ -103,79 +103,190 @@
        
 
  <script type="text/javascript">
-	$(function(){
-		$('#menu_item_index').addClass('is_active');
-	});
+  $(function(){
+    $('#menu_item_index').addClass('is_active');
+  });
 </script>
 <div class="row">
-	<div class="large-8 medium-8 columns">
-		<div class="markdown-body home-categories">
-		
-			<div class="article">
-                <a class="clearlink" href="15500645018755.html">
-                
-                  <h1>数据库分库分表技术</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<h1 id="toc_0">1. 基本概念</h1>
+  <div class="large-8 medium-8 columns">
+      <div class="markdown-body article-wrap">
+       <div class="article">
+          
+          <h1>从使用fastjson替换springboot框架默认的json解析工具说起</h1>
+     
+        <div class="read-more clearfix">
+          <span class="date">2019/09/24 17:18 下午</span>
 
-<h2 id="toc_1">1.1. 拆分方式</h2>
+          <span>posted in&nbsp;</span> 
+          
+              <span class="posted-in"><a href='JSON.html'>JSON</a></span>
+           
+         
+          <span class="comments">
+            
 
-<ul>
-<li><p>垂直拆分</p>
-<p>将一个库（表）拆分成多个库（表），每个库（表）的结构和原有的结构不同。</p>
-<p>这实际上可以认为是一种数据库的重新设计。拆分的原则可以是：</p>
-<pre><code class="language-text">1. 根据业务的具体情况，将热门的数据和冷门的数据分开。达到提高性能的目的。（库或者表的拆分都可以遵循这样一条原则）
-</code></pre></li>
-<li><p>水平拆分</p>
-<p>根据分片算法，将一个库（表）拆分成多个库（表），每个库（表）的结构和原有的结构相同。</p></li>
-</ul>
+            
+          </span>
+
+        </div>
+      </div><!-- article -->
+
+      <div class="article-content">
+      <h2 id="toc_0">1. 为什么要用fastjson替换jackson</h2>
+
+<p>1.在默认情况下我们在的情况下从返回的数据是</p>
+
+<p>json格式但是在{key,value}中key的值当中用默认的Jackson返还回来会忽略大小写而我们要得到得是不忽略大小写得值因此我</p>
+
+<p>们需要用FastJson替代默认得Jackson</p>
+
+<p>2.我们通常现在为了更快捷得创建类,使用lombok插件得@Data注解生成类得getter,setter及构造方法.jackson是不支持json格式</p>
+
+<p>序列化的,但是FastJson是可以做到这一点的<br/>
+————————————————<br/>
+版权声明：本文为CSDN博主「Alin_林」的原创文章，遵循 CC 4.0 BY-SA 版权协议，转载请附上原文出处链接及本声明。<br/>
+原文链接：<a href="https://blog.csdn.net/weixin_44828552/article/details/89511350">https://blog.csdn.net/weixin_44828552/article/details/89511350</a></p>
+
+<h2 id="toc_1">2. 如何替换fastjson</h2>
+
+<p>常见的替换方法有以下两种</p>
+
+<h3 id="toc_2">2.1. 方法一</h3>
+
+<pre><code class="language-text">@SpringBootApplication
+public class HelloWorld implement ApplicationRunner{
+    public static void main(String[] args){
+        SpringApplication.run(HelloWorld.class,args);
+    }
+
+    @Bean
+    public HttpMessageConverters fastJsonHttpMessageConverters(){
+        //1.定义fastJson转换器
+        FastJsonHttpMessageConverter fastConverter=new FastJsonHttpMessageConverter();
+        FastJsonConfig fastJsonConfig=new FastJsonConfig();
+        fastJsonConfig.setSerializerFeatures(SerialzerFeature.WriteMapNullValue, SerializerFeature.WriteNullListAsEmpty);
+        fastConverter.setFastJsonConfig(fastJsonConfig);
+        HttpMessageConverter&lt;?&gt; converter = fastConverter;
+        return new HttpMessageConverters(converter);
+    }   
+}
+</code></pre>
+
+<h3 id="toc_3">2.2. 方法二</h3>
+
+<pre><code class="language-text">@Configuration
+@EnableWebMvc
+public class WebConfig implements WebMvcConfigurer {
+    @Override
+    public void configureMessageConverters(List&lt;HttpMessageConverter&lt;?&gt;&gt; converters) {
+        FastJsonHttpMessageConverter fastJsonConverter = new FastJsonHttpMessageConverter();
+        FastJsonConfig config = new FastJsonConfig();
+        config.setCharset(Charset.forName(&quot;UTF-8&quot;));
+//        config.setDateFormat(&quot;yyyy-MM-dd&#39;T&#39;HH:mm:ss.SSSZ&quot;);
+//        config.setSerializerFeatures(SerializerFeature.WriteMapNullValue);
+        fastJsonConverter.setFastJsonConfig(config);
+        List&lt;MediaType&gt; list = new ArrayList&lt;&gt;();
+        list.add(MediaType.APPLICATION_JSON_UTF8);
+        fastJsonConverter.setSupportedMediaTypes(list);
+        converters.add(fastJsonConverter);
+    }
+}
+</code></pre>
+
+<h2 id="toc_4">3. 发散分析</h2>
+
+<h3 id="toc_5">3.1. Jackson的新版本</h3>
+
+<p>网络上搜集替换jackson的理由，其中一点是jackson不支持忽略key大小写。</p>
+
+<p>该点已经在2.5.0版本中解决。</p>
+
+<pre><code class="language-text">ObjectMapper objectMapper = new ObjectMapper();
+objectMapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
+CarInfo info = objectMapper.readValue(data, CarInfo.class); 
+</code></pre>
+
+<p>或在配置文件中</p>
+
+<pre><code class="language-text">spring.jackson.mapper.accept_case_insensitive_properties=true
+</code></pre>
+
+<h3 id="toc_6">3.2. 从替换fastjson，看springboot使用json解析器的逻辑</h3>
+
+<p>第二节中的两种方法都涉及到同一个类的使用，那就是<code>FastJsonHttpMessageConverter</code>和<code>HttpMessageConverter</code>。</p>
+
+<p>将FastJsonHttpMessageConverter 添加到系统的HttpMessageConverter列表中，实际操作就是增加了一种json的解析方法，可以解析的media type是application-json，使用的解析器就是FastJsonHttpMessageConverter。</p>
+
+<h2 id="toc_7">更多阅读</h2>
+
+<h3 id="toc_8">1. 三种json解析工具对比</h3>
+
+<p>fastjson这么快老外为啥还是热衷 jackson? <a href="https://blog.csdn.net/Amen_Wu/article/details/79129020">https://blog.csdn.net/Amen_Wu/article/details/79129020</a></p>
+
+<p>FastJSON、Gson和Jackson性能对比和共同缺点,注意事项<br/>
+<a href="https://blog.csdn.net/qq_28572235/article/details/78604846">https://blog.csdn.net/qq_28572235/article/details/78604846</a></p>
+
+<h2 id="toc_9">参考资料</h2>
+
+<p><a href="https://mtyurt.net/post/jackson-case-insensitive-deserialization.html">https://mtyurt.net/post/jackson-case-insensitive-deserialization.html</a><br/>
+<a href="https://blog.csdn.net/weixin_44828552/article/details/89511350">https://blog.csdn.net/weixin_44828552/article/details/89511350</a></p>
 
 
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                   <a href="15500645018755.html">Read more</a>&nbsp;&nbsp; 
-                    <span class="date">2019/02/13 21:28 下午</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='%E6%95%B0%E6%8D%AE%E5%BA%93.html'>数据库</a></span>
-          				   
-                    
+    
 
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
+      </div>
 
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-              
+      <div class="row">
+        <div class="large-6 columns">
+        <p class="text-left" style="padding:15px 0px;">
+      
+          <a href="15814116703606.html" 
+          title="Previous Post: 1349. 参加考试的最大学生数">&laquo; 1349. 参加考试的最大学生数</a>
+      
+        </p>
+        </div>
+        <div class="large-6 columns">
+      <p class="text-right" style="padding:15px 0px;">
+      
+          <a  href="15693104259267.html" 
+          title="Next Post: Jackson fasterxml和codehaus的区别">Jackson fasterxml和codehaus的区别 &raquo;</a>
+      
+      </p>
+        </div>
+      </div>
+      <div class="comments-wrap">
+        <div class="share-comments">
+          <div id="disqus_thread"></div>
+<script>
+
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+/*
+var disqus_config = function () {
+this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+*/
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://nimitz-007.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+          
+
+          
+        </div>
+      </div>
+    </div><!-- article-wrap -->
+  </div><!-- large 8 -->
 
 
-			<div class="row">
-			  <div class="large-6 columns">
-			  <p class="text-left" style="padding-top:25px;">
-			   
-			  </p>
-			  </div>
-			  <div class="large-6 columns">
-			<p class="text-right" style="padding-top:25px;">
-			
-			</p>
-			  </div>
-			</div>
-		</div>
-	</div><!-- large 8 -->
+
 
  <div class="large-4 medium-4 columns">
   <div class="hide-for-small">
@@ -334,6 +445,8 @@ Theme used <a target="_blank" href="http://github.com">GitHub CSS</a>.</p>
 
 
 
+
+<script src="asset/prism.js"></script>
 
 
 <style type="text/css">

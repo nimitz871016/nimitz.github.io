@@ -15,9 +15,7 @@
     <link rel="stylesheet" href="asset/css/docs.css" />
     <script src="asset/js/vendor/modernizr.js"></script>
     <script src="asset/js/vendor/jquery.js"></script>
-  <script src="asset/highlightjs/highlight.pack.js"></script>
-  <link href="asset/highlightjs/styles/github.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <script>hljs.initHighlightingOnLoad();</script>
+ 
 <script type="text/javascript">
   function before_search(){
     var searchVal = 'site:nimitz871016.github.io ' + document.getElementById('search_input').value;
@@ -90,6 +88,8 @@
             <li><a href="LeetCode.html">LeetCode</a></li>
         
             <li><a href="%E6%95%B0%E6%8D%AE%E5%BA%93.html">数据库</a></li>
+        
+            <li><a href="Springboot.html">Springboot</a></li>
          
 
       </ul>
@@ -112,77 +112,1362 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="15490058580119.html">
+                <a class="clearlink" href="15819118469978.html">
                 
-                  <h1>102. 二叉树的层次遍历</h1>
+                  <h1>一道LeetCode线程题引出Java线程协作的经典案例</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
-                        	<p><a href="https://leetcode-cn.com/problems/binary-tree-level-order-traversal/description/">https://leetcode-cn.com/problems/binary-tree-level-order-traversal/description/</a></p>
+                        	<h2 id="toc_0">1. 题目</h2>
 
-<h2 id="toc_0">题目</h2>
+<p><strong>1115. 交替打印FooBar</strong></p>
 
-<p>给定一个二叉树，返回其按层次遍历的节点值。 （即逐层地，从左到右访问所有节点）。</p>
+<p>我们提供一个类：</p>
 
-<p>例如:</p>
+<pre><code class="language-text">class FooBar {
+  public void foo() {
+    for (int i = 0; i &lt; n; i++) {
+      print(&quot;foo&quot;);
+    }
+  }
 
-<pre><code class="language-text">给定二叉树:  [3,9,20,null,null,15,7],
-
-
-    3
-   / \
-  9  20
-    /  \
-   15   7
-   
-
-返回其层次遍历结果：
-
-[
-  [3],
-  [9,20],
-  [15,7]
-]
+  public void bar() {
+    for (int i = 0; i &lt; n; i++) {
+      print(&quot;bar&quot;);
+    }
+  }
+}
 </code></pre>
 
-<h2 id="toc_1">解题思路：</h2>
+<p>两个不同的线程将会共用一个 FooBar 实例。其中一个线程将会调用 foo() 方法，另一个线程将会调用 bar() 方法。</p>
 
-<p>层次遍历，没啥好说的，就是本题需要将层次区分开来。因此传统的方法，需要做一些修订。用一个队列保存当前层次的所有节点。</p>
+<p>请设计修改程序，以确保 &quot;foobar&quot; 被输出 n 次。</p>
 
-<p>每一轮遍历的时候，依次出队所有的节点，存入结果，并遍历出队的所有节点，如果有子节点则存入队列，等待下一轮遍历。</p>
+<p> <br/>
+示例 1:</p>
 
-<p>也就是有两层的遍历，用一个临时的队列，保存中间结果</p>
+<pre><code class="language-text">输入: n = 1
+输出: &quot;foobar&quot;
+解释: 这里有两个线程被异步启动。其中一个调用 foo() 方法, 另一个调用 bar() 方法，&quot;foobar&quot; 将被输出一次。
+</code></pre>
 
-<h2 id="toc_2">代码：</h2>
+<p>示例 2:</p>
 
-<pre><code class="language-text">public List&lt;List&lt;Integer&gt;&gt; levelOrder(TreeNode root) {
-    Queue&lt;TreeNode&gt; queue = new ArrayDeque&lt;&gt;();
-    if (root != null) {
-        queue.add(root);
+<pre><code class="language-text">输入: n = 2
+输出: &quot;foobarfoobar&quot;
+解释: &quot;foobar&quot; 将被输出两次。
+</code></pre>
+
+<p>来源：力扣（LeetCode）<br/>
+链接：<a href="https://leetcode-cn.com/problems/print-foobar-alternately">https://leetcode-cn.com/problems/print-foobar-alternately</a><br/>
+著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。</p>
+
+<h2 id="toc_1">2. 分析</h2>
+
+<p>本题有两个要求</p>
+
+<ol>
+<li>顺序性，即foo要在bar之前打印，需要考虑先执行print bar的情况。</li>
+<li>交替性，foo和bar需要轮流打印。</li>
+</ol>
+
+<h2 id="toc_2">2.1. 方案一（基于volatile）</h2>
+
+<p>用一个变量来标记当前打印的是foo还是bar。这样就知道下一个操作需要打印foo还是bar。这个变量需要在线程间进行共享。共享没有问题，FooBar内的变量对同一个对象是可以访问的。但是需要能够及时同步。因此我们需要一个volatile变量。</p>
+
+<p><strong>1.0版本:</strong></p>
+
+<pre><code class="language-text">class FooBar {
+    private int n;
+
+    volatile boolean flag = true;
+
+    public FooBar(int n) {
+        this.n = n;
     }
-    List&lt;List&lt;Integer&gt;&gt; result = new ArrayList&lt;&gt;();
-    while(!queue.isEmpty()){
-        List&lt;Integer&gt; ans = new ArrayList&lt;&gt;();
-        Queue&lt;TreeNode&gt; tempQueue = new ArrayDeque&lt;&gt;(queue);
-        while (!tempQueue.isEmpty()){
-            TreeNode node = tempQueue.poll();
-            ans.add(node.val);
-        }
-        tempQueue = new ArrayDeque&lt;&gt;(queue);
-        queue.clear();
-        while(!tempQueue.isEmpty()){
-            TreeNode node = tempQueue.poll();
-            if (node.left != null) {
-                queue.add(node.left);
+
+    public void foo(Runnable printFoo) throws InterruptedException {
+        for (int i = 0; i &lt; n; i++) {
+            while (!flag){
             }
-            if (node.right != null) {
-                queue.add(node.right);
+                // printFoo.run() outputs &quot;foo&quot;. Do not change or remove this line.
+            printFoo.run();
+            flag = false;
+        }
+    }
+
+    public void bar(Runnable printBar) throws InterruptedException {
+
+        for (int i = 0; i &lt; n; i++) {
+                // printBar.run() outputs &quot;bar&quot;. Do not change or remove this line.
+            while (flag){
+            }
+            printBar.run();
+            flag = true;
+        }
+    }
+}
+</code></pre>
+
+<p><img src="media/15819118469978/15819276109011.jpg" alt="" style="width:1142px;"/></p>
+
+<p>提交，超时了。为啥呢？</p>
+
+<p>考虑CPU单核的情况，<code>while (flag){}</code>如果是bar线程先运行，将会不停执行while。foo线程无法抢占时间片，自然无法开始第一步print foo了。在多核环境下，虽然不会造成另一线程无法抢占时间片的问题，但是while循环是很耗时的，占用大量CPU资源，这也会使得运行时间变长而超时。</p>
+
+<p>基于这样的分析，修改一下，增加Thread.sleep()，每次循环的时候，休眠一会儿。</p>
+
+<p><strong>2.0版本:</strong></p>
+
+<pre><code class="language-text">class FooBar {
+    private int n;
+
+    volatile boolean flag = true;
+
+    public FooBar(int n) {
+        this.n = n;
+    }
+
+    public void foo(Runnable printFoo) throws InterruptedException {
+        for (int i = 0; i &lt; n; i++) {
+            while (!flag){
+                Thread.sleep(20);
+            }
+                // printFoo.run() outputs &quot;foo&quot;. Do not change or remove this line.
+            printFoo.run();
+            flag = false;
+        }
+    }
+
+    public void bar(Runnable printBar) throws InterruptedException {
+
+        for (int i = 0; i &lt; n; i++) {
+                // printBar.run() outputs &quot;bar&quot;. Do not change or remove this line.
+            while (flag){
+                Thread.sleep(20);
+            }
+            printBar.run();
+            flag = true;
+        }
+    }
+}
+</code></pre>
+
+<p>提交，进步了一点。还是<strong>超时</strong>。<br/>
+<img src="media/15819118469978/15819276627967.jpg" alt="" style="width:1139px;"/></p>
+
+<p>我们已经把休眠时间调整的很小了（20ms），希望程序可以快点切换到下一个打印。我们或许可以通过继续把休眠时间调整的更小来通过这道题，但是我们有一个更好的方法。<code>Thread.yield()</code></p>
+
+<p><strong>3.0版本来了:</strong></p>
+
+<pre><code class="language-text">class FooBar {
+    private int n;
+
+    volatile boolean flag = true;
+
+    public FooBar(int n) {
+        this.n = n;
+    }
+
+    public void foo(Runnable printFoo) throws InterruptedException {
+        for (int i = 0; i &lt; n; i++) {
+            while (!flag){
+                Thread.yield();
+            }
+                // printFoo.run() outputs &quot;foo&quot;. Do not change or remove this line.
+            printFoo.run();
+            flag = false;
+        }
+    }
+
+    public void bar(Runnable printBar) throws InterruptedException {
+
+        for (int i = 0; i &lt; n; i++) {
+                // printBar.run() outputs &quot;bar&quot;. Do not change or remove this line.
+            while (flag){
+                Thread.yield();
+            }
+            printBar.run();
+            flag = true;
+        }
+    }
+}
+</code></pre>
+
+<p><img src="media/15819118469978/15819289512587.jpg" alt="" style="width:1159px;"/><br/>
+通过了！！！</p>
+
+<pre><code class="language-text">摘抄自LeetCode评论：https://leetcode-cn.com/problems/print-foobar-alternately/solution/xian-cheng-ping-zhang-de-wen-ti-yi-ban-you-san-cho/
+while循环是比较耗费性能的，可能会导致执行结果超时。可以通过Thread.yield进一步控制线程的执行，而非比较粗力度的循环。当某个线程调用yield()方法时，就会从运行状态转换到就绪状态后，CPU从就绪状态线程队列中只会选择与该线程优先级相同或者更高优先级的线程去执行。总之加上Thread.yield性能会更高一点，因此用时会更少
+</code></pre>
+
+<p>什么是Thread.yield()?</p>
+
+<p>摘抄自：<a href="https://www.cnblogs.com/java-spring/p/8309931.html">https://www.cnblogs.com/java-spring/p/8309931.html</a></p>
+
+<p>Java线程中的Thread.yield( )方法，译为线程让步。顾名思义，就是说当一个线程使用了这个方法之后，它就会把自己CPU执行的时间让掉，<br/>
+让自己或者其它的线程运行，注意是让自己或者其他线程运行，并不是单纯的让给其他线程。<br/>
+yield()的作用是让步。它能让当前线程由“运行状态”进入到“就绪状态”，从而让其它具有相同优先级的等待线程获取执行权；但是，并不能保证在当前线程调用yield()之后，其它具有相同优先级的线程就一定能获得执行权；也有可能是当前线程又进入到“运行状态”继续运行！<br/>
+举个例子：一帮朋友在排队上公交车，轮到Yield的时候，他突然说：我不想先上去了，咱们大家来竞赛上公交车。然后所有人就一块冲向公交车，<br/>
+有可能是其他人先上车了，也有可能是Yield先上车了。<br/>
+但是线程是有优先级的，优先级越高的人，就一定能第一个上车吗？这是不一定的，优先级高的人仅仅只是第一个上车的概率大了一点而已，<br/>
+最终第一个上车的，也有可能是优先级最低的人。并且所谓的优先级执行，是在大量执行次数中才能体现出来的。</p>
+
+<h2 id="toc_3">2.2 方案二 Semaphore</h2>
+
+<p>Semaphore<br/>
+<a href="https://blog.csdn.net/hanchao5272/article/details/79780045">https://blog.csdn.net/hanchao5272/article/details/79780045</a></p>
+
+<p>基于Semaphore的代码如下:</p>
+
+<pre><code class="language-text">class FooBar {
+
+    private int n;
+
+    private Semaphore semaphore = new Semaphore(1);
+
+    private volatile boolean foo = false;
+
+    public FooBar(int n) {
+        this.n = n;
+    }
+
+    public void foo(Runnable printFoo) throws InterruptedException {
+
+        for (int i = 0; i &lt; n; i++) {
+            semaphore.acquire();
+            // printFoo.run() outputs &quot;foo&quot;. Do not change or remove this line.
+            printFoo.run();
+            foo = true;
+        }
+    }
+
+    public void bar(Runnable printBar) throws InterruptedException {
+
+        for (int i = 0; i &lt; n; i++) {
+            while (!foo) {
+            }
+            // printBar.run() outputs &quot;bar&quot;. Do not change or remove this line.
+            printBar.run();
+            foo = false;
+            semaphore.release();
+        }
+    }
+}
+
+作者：san-mu-32
+链接：https://leetcode-cn.com/problems/print-foobar-alternately/solution/tong-guo-yi-ge-xin-hao-liang-kong-zhi-foohe-barde-/
+来源：力扣（LeetCode）
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+</code></pre>
+
+<p><img src="media/15819118469978/15819321426228.jpg" alt="" style="width:759px;"/></p>
+
+<p>涉及多线程，运行时间并不稳定。和方案一类似，在while循环中加入Thread.yield()，速度有一定提升。<br/>
+<img src="media/15819118469978/15819322651608.jpg" alt="" style="width:716px;"/></p>
+
+<h2 id="toc_4">2.3. 方案三 notify &amp;&amp; wait</h2>
+
+<p><a href="https://www.jianshu.com/p/1dafbf42cc54">https://www.jianshu.com/p/1dafbf42cc54</a></p>
+
+<pre><code class="language-text">class FooBar {
+
+    private int              n;
+    private volatile boolean isFoo;
+
+    public FooBar(int n) {
+        this.n = n;
+    }
+
+    public synchronized void foo(Runnable printFoo) throws InterruptedException {
+
+        for (int i = 0; i &lt; n; i++) {
+            //            synchronized (lock) {
+            // printFoo.run() outputs &quot;foo&quot;. Do not change or remove this line.
+            printFoo.run();
+            isFoo = true;
+            this.notify();
+            if (i &lt; n - 1) {
+                this.wait();
+            }
+            //            }
+        }
+    }
+
+    public synchronized void bar(Runnable printBar) throws InterruptedException {
+        if (!isFoo) {
+            this.wait();
+        }
+        for (int i = 0; i &lt; n; i++) {
+            //            synchronized (lock) {
+            // printBar.run() outputs &quot;bar&quot;. Do not change or remove this line.
+            printBar.run();
+            this.notify();
+            if (i &lt; n - 1) {
+                this.wait();
+            }
+            //            }
+        }
+    }
+}
+</code></pre>
+
+<p><img src="media/15819118469978/15820959963519.jpg" alt="" style="width:747px;"/><br/>
+运行时间不稳定，应该是LeetCode的问题。</p>
+
+<h2 id="toc_5">2.4. 方案四 CyclicBarrier</h2>
+
+<p><a href="https://www.jianshu.com/p/333fd8faa56e">https://www.jianshu.com/p/333fd8faa56e</a></p>
+
+<pre><code class="language-text">class FooBar {
+    private int n;
+
+    public FooBar(int n) {
+        this.n = n;
+    }
+
+    CyclicBarrier cb = new CyclicBarrier(2);
+    volatile boolean fin = true;
+
+    public void foo(Runnable printFoo) throws InterruptedException {
+        for (int i = 0; i &lt; n; i++) {
+            while(!fin);
+            printFoo.run();
+            fin = false;
+            try {
+        cb.await();
+        } catch (BrokenBarrierException e) {
+        }
+        }
+    }
+
+    public void bar(Runnable printBar) throws InterruptedException {
+        for (int i = 0; i &lt; n; i++) {
+            try {
+        cb.await();
+        } catch (BrokenBarrierException e) {
+        }
+            printBar.run();
+            fin = true;
+        }
+    }
+}
+
+作者：KevinBauer
+链接：https://leetcode-cn.com/problems/print-foobar-alternately/solution/java-bing-fa-gong-ju-lei-da-lian-bing-by-kevinbaue/
+来源：力扣（LeetCode）
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+</code></pre>
+
+<h2 id="toc_6">2.5. 方案五 CyclicBarrier + CountdownLatch</h2>
+
+<p>CyclicBarrier用于保证每一轮的foobar的打印。CountdownLatch用于保证单轮内，先打印foo，再打印bar。</p>
+
+<pre><code class="language-text">import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.CyclicBarrier;
+class FooBar {
+    private int n;
+    private CountDownLatch a;
+    private CyclicBarrier barrier;// 使用CyclicBarrier保证任务按组执行
+    public FooBar(int n) {
+        this.n = n;
+        a = new CountDownLatch(1);
+        barrier = new CyclicBarrier(2);// 保证每组内有两个任务
+    }
+
+    public void foo(Runnable printFoo) throws InterruptedException {
+
+        try {
+            for (int i = 0; i &lt; n; i++) {
+                printFoo.run();
+                a.countDown();// printFoo方法完成调用countDown
+                barrier.await();// 等待printBar方法执行完成
+            }
+        } catch(Exception e) {}
+    }
+
+    public void bar(Runnable printBar) throws InterruptedException {
+
+        try {
+            for (int i = 0; i &lt; n; i++) {
+                a.await();// 等待printFoo方法先执行
+                printBar.run();
+                a = new CountDownLatch(1); // 保证下一次依旧等待printFoo方法先执行
+                barrier.await();// 等待printFoo方法执行完成
+            }
+        } catch(Exception e) {}
+    }
+}
+
+作者：bonaluo
+链接：https://leetcode-cn.com/problems/print-foobar-alternately/solution/javashi-yong-yi-ge-countdownlatchhe-yi-ge-cyclicba/
+来源：力扣（LeetCode）
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+</code></pre>
+
+<h2 id="toc_7">3. 总结</h2>
+
+<p>本题需要解决两个问题。</p>
+
+<ol>
+<li>两个线程必须先后执行，</li>
+<li>foo线程必须保证先执行。</li>
+</ol>
+
+<p>为了解决这两个问题，5个方案选择了不同的方案组合。主要分为无锁和有锁两种方案。</p>
+
+<p>为了解决foo线程先执行的问题。有使用volatile变量和CountdownLatch两种方法。volatile变量使用的是无锁的方案。通过一个死循环，组织bar线程先运行。优点是可以快速感知状态变换，无需线程切换。缺点是资源消耗大，需要使用Thread.yield()。否则会超时。CountdownLatch采用的是有锁的方案，因此会有线程的切换，单不会大量占用系统资源。在线程占用时间长的场景体验更佳。</p>
+
+<p>为了让两个线程先后执行，需要在foo线程执行后挂起线程，让bar线程运行。在bar线程运行后，再让foo线程执行。无锁方案，继续用volatile变量即可。有锁方案则可以有几种选择。Semaphore，CyclicBarrier，notify&amp;wait，Lock。</p>
+
+<h2 id="toc_8">4. 引申</h2>
+
+<p>　　在 单核 / 单CPU 的系统上使用 自旋锁 是没有意义的，因为它就一个运行线程/核心，你占着不放，那么其他线程将得不到运行，其他线程得不到运行，这个锁就不能被解锁。换句话说，在 单核 / 单CPU 系统使用 自旋锁，除了浪费点时间外没有一点好处。这时如果让这个线程（记为线程A）休眠，其他线程就得以运行，然后就可能会解锁这个 自旋锁，线程A就可能在重新被唤醒后，如愿以偿的持有锁。</p>
+
+<p>　　在 多核 / 多CPU 的系统上，特别是大量的线程只会短时间的持有锁的时候，这时如果使用 互斥锁，在使线程睡眠和唤醒上浪费大量的时间，也许会显著降低程序的运行性能。使用 自旋锁，线程可以充分利用系统调度程序分配的时间片(经常阻塞很短的时间，不用休眠，然后马上继续它们后面的工作了)，以达到更高的处理能力和吞吐量。</p>
+
+<p><a href="https://www.cnblogs.com/shines77/p/4198046.html">https://www.cnblogs.com/shines77/p/4198046.html</a></p>
+
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                  
+                    <span class="date">2020/02/17 11:57 上午</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='Java.html'>Java</a></span>
+          				   
+                    
+
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15814116703606.html">
+                
+                  <h1>1349. 参加考试的最大学生数</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<p>给你一个 <code>m * n</code> 的矩阵 seats 表示教室中的座位分布。如果座位是坏的（不可用），就用 &#39;#&#39; 表示；否则，用 &#39;.&#39; 表示。</p>
+
+<p>学生可以看到左侧、右侧、左上、右上这四个方向上紧邻他的学生的答卷，但是看不到直接坐在他前面或者后面的学生的答卷。请你计算并返回该考场可以容纳的一起参加考试且无法作弊的最大学生人数。</p>
+
+<p>学生必须坐在状况良好的座位上。<br/>
+ </p>
+
+<p>示例 1：</p>
+
+<p><img src="media/15814116703606/15814117367670.jpg" alt="" style="width:361px;"/></p>
+
+<pre><code class="language-text">输入：seats = [[&quot;#&quot;,&quot;.&quot;,&quot;#&quot;,&quot;#&quot;,&quot;.&quot;,&quot;#&quot;],
+              [&quot;.&quot;,&quot;#&quot;,&quot;#&quot;,&quot;#&quot;,&quot;#&quot;,&quot;.&quot;],
+              [&quot;#&quot;,&quot;.&quot;,&quot;#&quot;,&quot;#&quot;,&quot;.&quot;,&quot;#&quot;]]
+输出：4
+解释：教师可以让 4 个学生坐在可用的座位上，这样他们就无法在考试中作弊。 
+</code></pre>
+
+<p>示例 2：</p>
+
+<pre><code class="language-text">输入：seats = [[&quot;.&quot;,&quot;#&quot;],
+              [&quot;#&quot;,&quot;#&quot;],
+              [&quot;#&quot;,&quot;.&quot;],
+              [&quot;#&quot;,&quot;#&quot;],
+              [&quot;.&quot;,&quot;#&quot;]]
+输出：3
+解释：让所有学生坐在可用的座位上。
+</code></pre>
+
+<p>示例 3：</p>
+
+<pre><code class="language-text">输入：seats = [[&quot;#&quot;,&quot;.&quot;,&quot;.&quot;,&quot;.&quot;,&quot;#&quot;],
+              [&quot;.&quot;,&quot;#&quot;,&quot;.&quot;,&quot;#&quot;,&quot;.&quot;],
+              [&quot;.&quot;,&quot;.&quot;,&quot;#&quot;,&quot;.&quot;,&quot;.&quot;],
+              [&quot;.&quot;,&quot;#&quot;,&quot;.&quot;,&quot;#&quot;,&quot;.&quot;],
+              [&quot;#&quot;,&quot;.&quot;,&quot;.&quot;,&quot;.&quot;,&quot;#&quot;]]
+输出：10
+解释：让学生坐在第 1、3 和 5 列的可用座位上。
+</code></pre>
+
+<p>提示：</p>
+
+<ul>
+<li>seats 只包含字符 &#39;.&#39; 和&#39;#&#39;</li>
+<li>m == seats.length</li>
+<li>n == seats[i].length</li>
+<li>1 &lt;= m &lt;= 8</li>
+<li>1 &lt;= n &lt;= 8</li>
+</ul>
+
+<h2 id="toc_0">2. 结题思路</h2>
+
+<h3 id="toc_1">2.1. 思路过程</h3>
+
+<ol>
+<li>当前行的状态只和前一行的状态有关。</li>
+<li>为了表示前一行的状态，加上题目矩阵规模小于8，可以使用状态压缩。</li>
+<li>一个简便方法，采用位运算快速进行移位，以及有效状态的判断。</li>
+</ol>
+
+<h3 id="toc_2">2.2. 细节考虑</h3>
+
+<ol>
+<li>位运算，通过左移，右移一位，可以快速判断，当前的状态是否合法。</li>
+<li>将合法的座位，映射为0。坏掉的座位，映射为1，与当前状态与（&amp;），可以快速判断当前状态是否合法</li>
+</ol>
+
+<h2 id="toc_3">3. 代码</h2>
+
+<pre><code class="language-text">public int maxStudents(char[][] seats) {
+    int m = seats.length;
+    int n = seats[0].length;
+    int[][] dp = new int[m + 1][1 &lt;&lt; n];
+    int[] tmp = new int[m];
+    int sum;
+    for (int i = 0; i &lt; m; i++) {
+        sum = 0;
+        for (char c : seats[i]) {
+            sum = sum &lt;&lt; 1;
+            if (c == &#39;#&#39;) {
+                sum += 1;
             }
         }
-        result.add(ans);
+        tmp[i] = sum;
+    }
+    for (int i = m - 1; i &gt;= 0; i--) {
+        for (int j = 0; j &lt; 1 &lt;&lt; n; j++) {
+            if ((j &amp; (j &lt;&lt; 1)) == 0 &amp;&amp; (j &amp; (j &gt;&gt; 1)) == 0 &amp;&amp; (j &amp; tmp[i]) == 0) {
+                for (int k = 0; k &lt; 1 &lt;&lt; n; k++) {
+                    if ((k &amp; (j &lt;&lt; 1)) == 0 &amp;&amp; (k &amp; (j &gt;&gt; 1)) == 0) {
+                        dp[i][j] = Math.max(dp[i][j], Integer.bitCount(j) + dp[i + 1][k]);
+                    }
+                }
+            }
+        }
+    }
+    int result = 0;
+    for (int i = 0; i &lt; 1 &lt;&lt; n; i++) {
+        result = Math.max(0, dp[0][i]);
     }
     return result;
+}
+</code></pre>
+
+<h2 id="toc_4">其他解法</h2>
+
+<p>mark一下，学习:<br/>
+<a href="https://leetcode-cn.com/problems/maximum-students-taking-exam/solution/er-fen-tu-zui-da-du-li-ji-by-lightcml/">https://leetcode-cn.com/problems/maximum-students-taking-exam/solution/er-fen-tu-zui-da-du-li-ji-by-lightcml/</a></p>
+
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                  
+                    <span class="date">2020/02/11 17:01 下午</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='LeetCode.html'>LeetCode</a></span>
+          				   
+                    
+
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15693167161716.html">
+                
+                  <h1>从使用fastjson替换springboot框架默认的json解析工具说起</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<h2 id="toc_0">1. 为什么要用fastjson替换jackson</h2>
+
+<p>1.在默认情况下我们在的情况下从返回的数据是</p>
+
+<p>json格式但是在{key,value}中key的值当中用默认的Jackson返还回来会忽略大小写而我们要得到得是不忽略大小写得值因此我</p>
+
+<p>们需要用FastJson替代默认得Jackson</p>
+
+<p>2.我们通常现在为了更快捷得创建类,使用lombok插件得@Data注解生成类得getter,setter及构造方法.jackson是不支持json格式</p>
+
+<p>序列化的,但是FastJson是可以做到这一点的<br/>
+————————————————<br/>
+版权声明：本文为CSDN博主「Alin_林」的原创文章，遵循 CC 4.0 BY-SA 版权协议，转载请附上原文出处链接及本声明。<br/>
+原文链接：<a href="https://blog.csdn.net/weixin_44828552/article/details/89511350">https://blog.csdn.net/weixin_44828552/article/details/89511350</a></p>
+
+<h2 id="toc_1">2. 如何替换fastjson</h2>
+
+<p>常见的替换方法有以下两种</p>
+
+<h3 id="toc_2">2.1. 方法一</h3>
+
+<pre><code class="language-text">@SpringBootApplication
+public class HelloWorld implement ApplicationRunner{
+    public static void main(String[] args){
+        SpringApplication.run(HelloWorld.class,args);
+    }
+
+    @Bean
+    public HttpMessageConverters fastJsonHttpMessageConverters(){
+        //1.定义fastJson转换器
+        FastJsonHttpMessageConverter fastConverter=new FastJsonHttpMessageConverter();
+        FastJsonConfig fastJsonConfig=new FastJsonConfig();
+        fastJsonConfig.setSerializerFeatures(SerialzerFeature.WriteMapNullValue, SerializerFeature.WriteNullListAsEmpty);
+        fastConverter.setFastJsonConfig(fastJsonConfig);
+        HttpMessageConverter&lt;?&gt; converter = fastConverter;
+        return new HttpMessageConverters(converter);
+    }   
+}
+</code></pre>
+
+<h3 id="toc_3">2.2. 方法二</h3>
+
+<pre><code class="language-text">@Configuration
+@EnableWebMvc
+public class WebConfig implements WebMvcConfigurer {
+    @Override
+    public void configureMessageConverters(List&lt;HttpMessageConverter&lt;?&gt;&gt; converters) {
+        FastJsonHttpMessageConverter fastJsonConverter = new FastJsonHttpMessageConverter();
+        FastJsonConfig config = new FastJsonConfig();
+        config.setCharset(Charset.forName(&quot;UTF-8&quot;));
+//        config.setDateFormat(&quot;yyyy-MM-dd&#39;T&#39;HH:mm:ss.SSSZ&quot;);
+//        config.setSerializerFeatures(SerializerFeature.WriteMapNullValue);
+        fastJsonConverter.setFastJsonConfig(config);
+        List&lt;MediaType&gt; list = new ArrayList&lt;&gt;();
+        list.add(MediaType.APPLICATION_JSON_UTF8);
+        fastJsonConverter.setSupportedMediaTypes(list);
+        converters.add(fastJsonConverter);
+    }
+}
+</code></pre>
+
+<h2 id="toc_4">3. 发散分析</h2>
+
+<h3 id="toc_5">3.1. Jackson的新版本</h3>
+
+<p>网络上搜集替换jackson的理由，其中一点是jackson不支持忽略key大小写。</p>
+
+<p>该点已经在2.5.0版本中解决。</p>
+
+<pre><code class="language-text">ObjectMapper objectMapper = new ObjectMapper();
+objectMapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
+CarInfo info = objectMapper.readValue(data, CarInfo.class); 
+</code></pre>
+
+<p>或在配置文件中</p>
+
+<pre><code class="language-text">spring.jackson.mapper.accept_case_insensitive_properties=true
+</code></pre>
+
+<h3 id="toc_6">3.2. 从替换fastjson，看springboot使用json解析器的逻辑</h3>
+
+<p>第二节中的两种方法都涉及到同一个类的使用，那就是<code>FastJsonHttpMessageConverter</code>和<code>HttpMessageConverter</code>。</p>
+
+<p>将FastJsonHttpMessageConverter 添加到系统的HttpMessageConverter列表中，实际操作就是增加了一种json的解析方法，可以解析的media type是application-json，使用的解析器就是FastJsonHttpMessageConverter。</p>
+
+<h2 id="toc_7">更多阅读</h2>
+
+<h3 id="toc_8">1. 三种json解析工具对比</h3>
+
+<p>fastjson这么快老外为啥还是热衷 jackson? <a href="https://blog.csdn.net/Amen_Wu/article/details/79129020">https://blog.csdn.net/Amen_Wu/article/details/79129020</a></p>
+
+<p>FastJSON、Gson和Jackson性能对比和共同缺点,注意事项<br/>
+<a href="https://blog.csdn.net/qq_28572235/article/details/78604846">https://blog.csdn.net/qq_28572235/article/details/78604846</a></p>
+
+<h2 id="toc_9">参考资料</h2>
+
+<p><a href="https://mtyurt.net/post/jackson-case-insensitive-deserialization.html">https://mtyurt.net/post/jackson-case-insensitive-deserialization.html</a><br/>
+<a href="https://blog.csdn.net/weixin_44828552/article/details/89511350">https://blog.csdn.net/weixin_44828552/article/details/89511350</a></p>
+
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                  
+                    <span class="date">2019/09/24 17:18 下午</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='JSON.html'>JSON</a></span>
+          				   
+                    
+
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15693104259267.html">
+                
+                  <h1>Jackson fasterxml和codehaus的区别</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<p>作为最出名的Json解析库之一，jackson有着两个完全不一样的包名版本。<code>com.fasterxml.jackson</code>&amp;&amp;<code>org.codehaus.jackson</code>。</p>
+
+<p>这两个版本有什么区别呢？</p>
+
+<p>他们是Jackson的两大分支、也是两个版本的不同包名。Jackson从2.0开始改用新的包名fasterxml；1.x版本的包名是codehaus。除了包名不同，他们的Maven artifact id也不同。1.x版本现在只提供bug-fix，而2.x版本还在不断开发和发布中。如果是新项目，建议直接用2x，即fasterxml jackson。</p>
+
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                  
+                    <span class="date">2019/09/24 15:33 下午</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='JSON.html'>JSON</a></span>
+          				   
+                    
+
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15686164898705.html">
+                
+                  <h1>JSON反序列化乱序的问题</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<h2 id="toc_0">What</h2>
+
+<p>将Object 转成JSON时，会出现key值的顺序与原顺序不一致的情况（新的顺序按照字母序重新排序）</p>
+
+<h2 id="toc_1">Why</h2>
+
+<p>原因在于HashMap，当用fastjson反序列化时，会使用HashMap。而HashMap底层会根据map中key的hashcode和equals重新排序。</p>
+
+<h2 id="toc_2">How</h2>
+
+<p>使用LinkedHashMap替换HashMap。</p>
+
+<pre><code class="language-text">JSONObject jsonObj = new JSONObject(true);  
+Map m= jsonObj.parseObject(json, LinkedHashMap.class);  
+</code></pre>
+
+<p>这个方法可以保证第一层的map按照原顺序呗反序列化。想要递归所有层都按照原顺序需要使用</p>
+
+<pre><code class="language-text">HashMap m=JSON.parseObject(json,LinkedHashMap.class,Feature.OrderedField)；
+</code></pre>
+
+<h2 id="toc_3">PS</h2>
+
+<p>Q: jackson 会乱序吗？<br/>
+A: 不会</p>
+
+<h2 id="toc_4">参考资料</h2>
+
+<p><a href="https://github.com/alibaba/fastjson/issues/954">https://github.com/alibaba/fastjson/issues/954</a><br/>
+<a href="https://blog.csdn.net/yj1499945/article/details/78260650">https://blog.csdn.net/yj1499945/article/details/78260650</a></p>
+
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                  
+                    <span class="date">2019/09/16 14:48 下午</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='JSON.html'>JSON</a></span>
+          				   
+                    
+
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15588755745673.html">
+                
+                  <h1>Java中的代理模式</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<h2 id="toc_0">1. 静态代理和动态代理</h2>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;本章节参考了<a href="https://www.ibm.com/developerworks/cn/java/j-lo-proxy-pattern/">https://www.ibm.com/developerworks/cn/java/j-lo-proxy-pattern/</a></p>
+
+<h3 id="toc_1">1.1. 定义</h3>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;静态代理和动态代理指的是实现代理模式的方式。静态模式意思是所有的代码是静态写好的。而动态代理则相对，部分代码是动态生成的。在动态代理中还分为JDK动态代理和CGLib动态代理。</p>
+
+<h3 id="toc_2">1.2. 关键实现</h3>
+
+<h4 id="toc_3">1.2.1. 静态代理</h4>
+
+<p>静态代理是基于接口实现的，他要求真实类和代理类实现同样的接口。</p>
+
+<pre><code class="language-text">public interface IDBQuery {
+    String request();
+}
+public class DBQuery implements IDBQuery{
+    public DBQuery(){
+        try{
+            Thread.sleep(1000);//假设数据库连接等耗时操作
+        }catch(InterruptedException ex){
+            ex.printStackTrace();
+        }
+    }
+
+    @Override
+    public String request() {
+// TODO Auto-generated method stub
+        return &quot;request string&quot;;
+    }
+
+
+}
+public class DBQueryProxy implements IDBQuery{
+    private DBQuery real = null;
+
+    @Override
+    public String request() {
+// TODO Auto-generated method stub
+//在真正需要的时候才能创建真实对象，创建过程可能很慢
+        if(real==null){
+            real = new DBQuery();
+        }//在多线程环境下，这里返回一个虚假类，类似于 Future 模式
+        return real.request();
+    }
+
+}
+public class Main {
+    public static void main(String[] args){
+        IDBQuery q = new DBQueryProxy(); //使用代里
+        q.request(); //在真正使用时才创建真实对象
+    }
+}
+</code></pre>
+
+<h4 id="toc_4">1.2.2. JDK代理</h4>
+
+<p>当使用JDK代理时，一个最直观的变化就是代理类不需要和真实类实现同一个接口了。取而代之的是代理类实现了InvocationHandler，并Override了invoke方法。在方法里可以统一对实现方法做处理（方法调用前，方法调用后）。</p>
+
+<pre><code class="language-text">import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+
+
+public class DBQueryHandler implements InvocationHandler{
+    IDBQuery realQuery = null;//定义主题接口
+
+    @Override
+    public Object invoke(Object proxy, Method method, Object[] args)
+            throws Throwable {
+// TODO Auto-generated method stub
+        //如果第一次调用，生成真实主题
+        if(realQuery == null){
+            realQuery = new DBQuery();
+        }
+        //method.invoke(target, args); 执行调用的方法。
+        //返回真实主题完成实际的操作
+        return realQuery.request();
+    }
+    public static IDBQuery createProxy(){
+        IDBQuery proxy = (IDBQuery)Proxy.newProxyInstance(ClassLoader.getSystemClassLoader(), new Class[]{IDBQuery.class}, new DBQueryHandler()); // 注意，生成的代理类实例被强转为IDBQuery
+        return proxy;
+    }
+}
+</code></pre>
+
+<h4 id="toc_5">1.2.3. CGLib代理</h4>
+
+<p>CGLib一个直观的最大的特点就是真实类无需实现接口（当然实现了也没关系）。</p>
+
+<p>接口类</p>
+
+<pre><code class="language-text">public interface BookProxy {
+    public void addBook();
+}
+</code></pre>
+
+<p>实现类</p>
+
+<pre><code class="language-text">//该类并没有申明 BookProxy 接口
+public class BookProxyImpl {
+    public void addBook() { 
+        System.out.println(&quot;增加图书的普通方法...&quot;); 
+    } 
+}
+</code></pre>
+
+<p>代理类</p>
+
+<pre><code class="language-text">import java.lang.reflect.Method; 
+import net.sf.cglib.proxy.Enhancer; 
+import net.sf.cglib.proxy.MethodInterceptor; 
+import net.sf.cglib.proxy.MethodProxy;
+
+public class BookProxyLib implements MethodInterceptor {
+    private Object target;
+    /**
+     * 创建代理对象 
+     *
+     * @param target
+     * @return
+     */
+    public Object getInstance(Object target) {
+        this.target = target;
+        Enhancer enhancer = new Enhancer();
+        enhancer.setSuperclass(this.target.getClass());
+        // 回调方法 
+        enhancer.setCallback(this);
+        // 创建代理对象 
+        return enhancer.create();
+    }
+
+    @Override
+// 回调方法 
+    public Object intercept(Object obj, Method method, Object[] args,
+                            MethodProxy proxy) throws Throwable {
+        System.out.println(&quot;事物开始&quot;);
+        proxy.invokeSuper(obj, args);
+        System.out.println(&quot;事物结束&quot;);
+        return null;
+    }
+}
+</code></pre>
+
+<p>调用方法</p>
+
+<pre><code class="language-text">public class TestCglib { 
+    public static void main(String[] args) { 
+        BookProxyLib cglib=new BookProxyLib(); 
+        BookProxyImpl bookCglib=(BookProxyImpl)cglib.getInstance(new BookProxyImpl()); 
+        bookCglib.addBook();  //可以看到BookProxyLib并没有声明BookProxy接口，但是仍然可以调用addBook方法
+    } 
+}
+</code></pre>
+
+<h3 id="toc_6">1.3. 区别和共同点</h3>
+
+<p>静态代理是通过在代码中显式定义一个业务实现类一个代理，在代理类中对同名的业务方法进行包装，用户通过代理类调用被包装过的业务方法；</p>
+
+<p>JDK动态代理是通过接口中的方法名，在动态生成的代理类中调用业务实现类的同名方法；</p>
+
+<p>CGlib动态代理是通过继承业务类，生成的动态代理类是业务类的子类，通过重写业务方法进行代理；</p>
+
+<p><a href="https://blog.csdn.net/neosmith/article/details/51072840">https://blog.csdn.net/neosmith/article/details/51072840</a></p>
+
+<h2 id="toc_7">2. 实际应用场景举例</h2>
+
+<p>todo:没有理解cglib不用真实类实现接口的意义。因为真实类没有实现接口，但是暴露了public的方法。这和直接调用有啥区别？</p>
+
+<p>另外cglib的试用场景，真实类没有实现的接口意义何在？如果没有接口来规范统一的调用逻辑，例如一堆的实现类实现了A接口，因此必须实现A接口中定义的B方法。这样才有意义吧？</p>
+
+<p>查看spring源码，了解spring中，cglib的使用方法，来解答上述疑问。</p>
+
+<p>代理模式的意义</p>
+
+<ol>
+<li>有代理，便于解耦</li>
+<li>静态代理太麻烦，每个都要</li>
+<li>JDK代理受限于要实现接口</li>
+<li>CGLib不需要实现接口，看上去无法统一接口的方法，但是可能是用在一些common的方法，例如Object的方法。用在类创建时刻。</li>
+<li>另外让方法运行只是最基本的，代理模式的最大用途是管理原方法的运行前，后，时（切面，AOP）。</li>
+</ol>
+
+<h2 id="toc_8">3. Spring AOP和动态代理</h2>
+
+<h2 id="toc_9">4. OC中的动态代理模式浅谈</h2>
+
+<h2 id="toc_10">5. CGLib和JDK代理的性能对比</h2>
+
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                  
+                    <span class="date">2019/05/26 20:59 下午</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='Java.html'>Java</a></span>
+          				   
+                    
+
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15554659463337.html">
+                
+                  <h1>深入springboot原理——一步步分析springboot启动机制（starter机制）</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                  
+                    <span class="date">2019/04/17 09:52 上午</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='Springboot.html'>Springboot</a></span>
+          				   
+                    
+
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15542090064870.html">
+                
+                  <h1>从logger.isDebugEnabled()谈起</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<h2 id="toc_0">0. 问题</h2>
+
+<p>在很多框架中，我们看到在<code>logger.debug</code>处经常会这样写</p>
+
+<pre><code class="language-text">if (logger.isDebugEnabled()) {
+    logger.debug(message);
+}
+</code></pre>
+
+<p>我们知道<code>logger.debug()</code>,在日志级别不够的时候是不会输出日志的。那么这么写的目的何在？</p>
+
+<h2 id="toc_1">1. 分析</h2>
+
+<p>我们来看一个例子</p>
+
+<pre><code class="language-text">String error = &quot;debug日志&quot;;
+logger.debug(&quot;这是一个&quot; + error);
+</code></pre>
+
+<p>按照正常的逻辑，在执行logger.debug()之前需要先行计算括号里的内容。然后才会判断当前日志级别不符合不输出。这里就存在一个无用计算的过程。相比对直接执行语句对logger.isDebugEnabled()进行先判断，显然是一个更优的方案，避免了无用的计算过程。</p>
+
+<p>然而这个结论在占位符的使用下，有了一点不同。</p>
+
+<p>再来看一个例子</p>
+
+<h3 id="toc_2">1.1. logger.debug(&quot;这是一个{}&quot;, model);</h3>
+
+<pre><code class="language-text">public static class Model{
+    int age;
+
+    @Override
+    public String toString() {
+        System.out.println(&quot;toString called&quot;);
+        return &quot;model{&quot; +
+                &quot;age=&quot; + age +
+                &#39;}&#39;;
+    }
+}
+public static void main(String[] args) {
+    Model model = new Model();
+    model.age = 3;
+    
+    logger.debug(&quot;这是一个{}&quot;, model);
+}
+</code></pre>
+
+<p>同样的作用，但是当日志级别高于debug时，不会执行括号内部的字符串拼接。也就是如果使用占位符{}来组合输出日志，可以不用判断<code>logger.isDebugEnabled()</code></p>
+
+<h3 id="toc_3">1.2. logger.debug(&quot;test:{}&quot;, test());</h3>
+
+<p>Model的toString方法在用占位符{}的方式时，没有执行，那么如果是一个普通的方法呢？</p>
+
+<pre><code class="language-text">public static String test(){
+    System.out.println(&quot;test&quot;);
+    return &quot;test&quot;;
+}
+public static void main(String[] args) {
+    logger.debug(&quot;test:{}&quot;, test()); //日志级别info
+}
+</code></pre>
+
+<p>结果，logger.debug(&quot;test:{}&quot;, test());无输出，但是test()方法在控制台打印出了test。</p>
+
+<p>结论：有占位符的存在，但是如果字符串拼接调用了函数，仍然会先执行函数，这和日志级别无关。</p>
+
+<h3 id="toc_4">1.3. logger.debug(&quot;test2:{}, {}&quot;, model, test());</h3>
+
+<pre><code class="language-text">public static String test(){
+    System.out.println(&quot;print test&quot;);
+    return &quot;fdsf&quot;;
+}
+public static void main(String[] args) {
+    Model model = new Model();
+    model.age = 3;
+    logger.debug(&quot;test1:&quot; + model);
+    model.age = 5;
+    logger.debug(&quot;test2:{}, {}&quot;, model, test());
+}
+</code></pre>
+
+<p>结果，最后一句debug，model的toString方法没有执行，而test()方法打印出了&quot;print test&quot;。也就是在占位符的作用下，对象的toString()方法不会执行，而不同方法仍然会执行。</p>
+
+<h2 id="toc_5">2. 结论</h2>
+
+<p>通过<code>logger.isDebugEnabled()</code>进行先行判断，肯定是没有错的。虽然在占位符的帮助下，当日志级别高于debug时，对象的toString()方法不会执行，但是普通的方法仍然会执行。如果能够保证logger.debug()中的内容只涉及最简单的字符串拼接和toString()，那么可以简略<code>logger.isDebugEnabled()</code>，否则还是加上避免无用计算。</p>
+
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                  
+                    <span class="date">2019/04/02 20:43 下午</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='Java.html'>Java</a></span>
+          				   
+                    
+
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15523931184037.html">
+                
+                  <h1>448. 找到所有数组中消失的数字</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<h2 id="toc_0">题目描述</h2>
+
+<p>给定一个范围在  1 ≤ a[i] ≤ n ( n = 数组大小 ) 的 整型数组，数组中的元素一些出现了两次，另一些只出现一次。</p>
+
+<p>找到所有在 [1, n] 范围之间没有出现在数组中的数字。</p>
+
+<p>您能在不使用额外空间且时间复杂度为O(n)的情况下完成这个任务吗? 你可以假定返回的数组不算在额外空间内。</p>
+
+<p>示例:</p>
+
+<p>输入:<br/>
+[4,3,2,7,8,2,3,1]</p>
+
+<p>输出:<br/>
+[5,6]</p>
+
+<h2 id="toc_1">思路分析</h2>
+
+<p>关键点在于不用额外空间，时间复杂度为O（n）。这两点限制了使用排序算法，或者用额外空间来记录。</p>
+
+<p>那么，不能用额外空间，就只能用原有的数组空间了。这里有一个技巧就是用数组的下标也可以存储信息。因为数据的范围是在n之内，因此数组内出现的数字都是合法的下标。基于这个前提，本题有一个很巧妙的做法。详见代码。</p>
+
+<h2 id="toc_2">代码</h2>
+
+<pre><code class="language-text">public List&lt;Integer&gt; findDisappearedNumbers(int[] nums) {
+        List&lt;Integer&gt; result = new ArrayList&lt;&gt;();
+        for (int i = 0; i &lt; nums.length; i++){
+            //将数组中存放的值作为坐标，进行二次访问。目标是将值设置为相反数（保证是负数）。那么没有变化的位置就是缺失的值
+            nums[Math.abs(nums[i])-1] = - Math.abs(nums[Math.abs(nums[i])-1]);
+        }
+        for (int i = 0; i &lt; nums.length; i++){
+            if (nums[i] &gt; 0){
+                result.add(i);
+            }
+        }
+        return result;
+    }
+</code></pre>
+
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                  
+                    <span class="date">2019/03/12 20:18 下午</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='LeetCode.html'>LeetCode</a></span>
+          				   
+                    
+
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15500645018755.html">
+                
+                  <h1>数据库分库分表技术</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<h1 id="toc_0">1. 基本概念</h1>
+
+<h2 id="toc_1">1.1. 拆分方式</h2>
+
+<ul>
+<li><p>垂直拆分</p>
+<p>将一个库（表）拆分成多个库（表），每个库（表）的结构和原有的结构不同。</p>
+<p>这实际上可以认为是一种数据库的重新设计。拆分的原则可以是：</p>
+<pre><code class="language-text">1. 根据业务的具体情况，将热门的数据和冷门的数据分开。达到提高性能的目的。（库或者表的拆分都可以遵循这样一条原则）
+</code></pre></li>
+<li><p>水平拆分</p>
+<p>根据分片算法，将一个库（表）拆分成多个库（表），每个库（表）的结构和原有的结构相同。</p></li>
+</ul>
+
+
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                   <a href="15500645018755.html">Read more</a>&nbsp;&nbsp; 
+                    <span class="date">2019/02/13 21:28 下午</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='%E6%95%B0%E6%8D%AE%E5%BA%93.html'>数据库</a></span>
+          				   
+                    
+
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15500475532566.html">
+                
+                  <h1>258. 各位相加</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<pre><code class="language-text">
+给定一个非负整数  num，反复将各个位上的数字相加，直到结果为一位数。
+
+示例:
+
+输入: 38
+输出: 2 
+解释: 各位相加的过程为：3 + 8 = 11, 1 + 1 = 2。 由于 2 是一位数，所以返回 2。
+进阶:
+你可以不使用循环或者递归，且在 O(1) 时间复杂度内解决这个问题吗？
+</code></pre>
+
+<h2 id="toc_0">解题思路：</h2>
+
+<p>普通的方法都会解，这里就不重复了。说下O(1)的解法。</p>
+
+<p>这里用到 一个很巧妙的算法。</p>
+
+<p><img src="media/15500475532566/15500475966040.jpg" alt="" style="width:557px;"/></p>
+
+<p>根据以上，可以得出，快速求解，就是将数字不断减去9，直到不能减为止即为正解。</p>
+
+<p>那么不断减去9的过程，可以化为--&gt; mod 9</p>
+
+<p>代码如下：</p>
+
+<pre><code class="language-text">class Solution {
+    public int addDigits(int num) {
+        if (num == 0){
+            return num;
+        }
+        num %= 9;
+        return num == 0 ? 9 : num;
+    }
 }
 </code></pre>
 
@@ -193,11 +1478,136 @@
                 <div class="read-more clearfix">
                   <div class="more-left left">
                   
-                    <span class="date">2019/2/1 15:24 下午</span>
+                    <span class="date">2019/02/13 16:45 下午</span>
                     <span>posted in&nbsp;</span> 
           				  
           					    <span class="posted-in"><a href='LeetCode.html'>LeetCode</a></span>
           				   
+                    
+
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15500441189502.html">
+                
+                  <h1>189. 旋转数组</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<pre><code class="language-text">给定一个数组，将数组中的元素向右移动 k 个位置，其中 k 是非负数。
+
+示例 1:
+
+输入: [1,2,3,4,5,6,7] 和 k = 3
+输出: [5,6,7,1,2,3,4]
+解释:
+向右旋转 1 步: [7,1,2,3,4,5,6]
+向右旋转 2 步: [6,7,1,2,3,4,5]
+向右旋转 3 步: [5,6,7,1,2,3,4]
+示例 2:
+
+输入: [-1,-100,3,99] 和 k = 2
+输出: [3,99,-1,-100]
+解释: 
+向右旋转 1 步: [99,-1,-100,3]
+向右旋转 2 步: [3,99,-1,-100]
+说明:
+
+尽可能想出更多的解决方案，至少有三种不同的方法可以解决这个问题。
+要求使用空间复杂度为 O(1) 的原地算法。
+</code></pre>
+
+<h2 id="toc_0">解题思路：</h2>
+
+<p>&emsp;&emsp;关键在于O(1)的算法。如果是O(n)的话，方法就太多了。这里就不说了。主要说一下O(1)的做法。</p>
+
+<p>&emsp;&emsp;采用翻转字符的方法，思路是先把前n-k个数字翻转一下，再把后k个数字翻转一下，最后再把整个数组翻转一下：</p>
+
+<p>1 2 3 4 5 6 7 <br/>
+4 3 2 1 5 6 7 <br/>
+4 3 2 1 7 6 5<br/>
+5 6 7 1 2 3 4</p>
+
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                  
+                    <span class="date">2019/02/13 15:48 下午</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='LeetCode.html'>LeetCode</a></span>
+          				   
+                    
+
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15500440104341.html">
+                
+                  <h1>169. 求众数</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<p><a href="https://leetcode-cn.com/problems/majority-element/description/">https://leetcode-cn.com/problems/majority-element/description/</a></p>
+
+<pre><code class="language-text">
+给定一个大小为 n 的数组，找到其中的众数。众数是指在数组中出现次数大于  ⌊ n/2 ⌋ 的元素。
+
+你可以假设数组是非空的，并且给定的数组总是存在众数。
+
+示例 1:
+
+输入: [3,2,3]
+输出: 3
+示例 2:
+
+输入: [2,2,1,1,1,2,2]
+输出: 2
+</code></pre>
+
+<h2 id="toc_0">解题思路：</h2>
+
+<p>&emsp;&emsp;我的思路是，排序，然后逐一比对。直到找到众数为止。但是直觉告诉我应该有更优雅的方式。</p>
+
+<p>&emsp;&emsp;这是一道求众数的问题，有很多种解法，其中我感觉比较好的有两种，一种是用哈希表，这种方法需要O(n)的时间和空间，另一种是用一种叫摩尔投票法 Moore Voting，需要O(n)的时间和O(1)的空间，比前一种方法更好。这种投票法先将第一个数字假设为众数，然后把计数器设为1，比较下一个数和此数是否相等，若相等则计数器加一，反之减一。然后看此时计数器的值，若为零，则将当前值设为候选众数。以此类推直到遍历完整个数组，当前候选众数即为该数组的众数。不仔细弄懂摩尔投票法的精髓的话，过一阵子还是会忘记的，首先要明确的是这个叼炸天的方法是有前提的，就是数组中一定要有众数的存在才能使用，下面我们来看本算法的思路，这是一种先假设候选者，然后再进行验证的算法。我们现将数组中的第一个数假设为众数，然后进行统计其出现的次数，如果遇到同样的数，则计数器自增1，否则计数器自减1，如果计数器减到了0，则更换当前数字为候选者。这是一个很巧妙的设定，也是本算法的精髓所在，为啥遇到不同的要计数器减1呢，为啥减到0了又要更换候选者呢？首先是有那个强大的前提存在，一定会有一个出现超过半数的数字存在，那么如果计数器减到0了话，说明目前不是候选者数字的个数已经跟候选者的出现个数相同了，那么这个候选者已经很weak，不一定能出现超过半数，我们选择更换当前的候选者。那有可能你会有疑问，那万一后面又大量的出现了之前的候选者怎么办，不需要担心，如果之前的候选者在后面大量出现的话，其又会重新变为候选者，直到最终验证成为正确的众数，佩服算法的提出者啊。</p>
+
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                  
+                    <span class="date">2019/02/13 15:46 下午</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='LeetCode.html'>LeetCode</a></span>
+          				   
+                    
+
                   </div>
                   <div class="more-right right">
                   <span class="comments">
@@ -294,11 +1704,13 @@
                 <div class="read-more clearfix">
                   <div class="more-left left">
                   
-                    <span class="date">2019/2/1 16:53 下午</span>
+                    <span class="date">2019/02/01 16:53 下午</span>
                     <span>posted in&nbsp;</span> 
           				  
           					    <span class="posted-in"><a href='LeetCode.html'>LeetCode</a></span>
           				   
+                    
+
                   </div>
                   <div class="more-right right">
                   <span class="comments">
@@ -311,498 +1723,77 @@
               </div><!-- article -->
         
 			<div class="article">
-                <a class="clearlink" href="15500440104341.html">
+                <a class="clearlink" href="15490058580119.html">
                 
-                  <h1>169. 求众数</h1>
+                  <h1>102. 二叉树的层次遍历</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
-                        	<p><a href="https://leetcode-cn.com/problems/majority-element/description/">https://leetcode-cn.com/problems/majority-element/description/</a></p>
+                        	<p><a href="https://leetcode-cn.com/problems/binary-tree-level-order-traversal/description/">https://leetcode-cn.com/problems/binary-tree-level-order-traversal/description/</a></p>
 
-<pre><code class="language-text">
-给定一个大小为 n 的数组，找到其中的众数。众数是指在数组中出现次数大于  ⌊ n/2 ⌋ 的元素。
+<h2 id="toc_0">题目</h2>
 
-你可以假设数组是非空的，并且给定的数组总是存在众数。
+<p>给定一个二叉树，返回其按层次遍历的节点值。 （即逐层地，从左到右访问所有节点）。</p>
 
-示例 1:
+<p>例如:</p>
 
-输入: [3,2,3]
-输出: 3
-示例 2:
+<pre><code class="language-text">给定二叉树:  [3,9,20,null,null,15,7],
 
-输入: [2,2,1,1,1,2,2]
-输出: 2
-</code></pre>
 
-<h2 id="toc_0">解题思路：</h2>
+    3
+   / \
+  9  20
+    /  \
+   15   7
+   
 
-<p>&emsp;&emsp;我的思路是，排序，然后逐一比对。直到找到众数为止。但是直觉告诉我应该有更优雅的方式。</p>
+返回其层次遍历结果：
 
-<p>&emsp;&emsp;这是一道求众数的问题，有很多种解法，其中我感觉比较好的有两种，一种是用哈希表，这种方法需要O(n)的时间和空间，另一种是用一种叫摩尔投票法 Moore Voting，需要O(n)的时间和O(1)的空间，比前一种方法更好。这种投票法先将第一个数字假设为众数，然后把计数器设为1，比较下一个数和此数是否相等，若相等则计数器加一，反之减一。然后看此时计数器的值，若为零，则将当前值设为候选众数。以此类推直到遍历完整个数组，当前候选众数即为该数组的众数。不仔细弄懂摩尔投票法的精髓的话，过一阵子还是会忘记的，首先要明确的是这个叼炸天的方法是有前提的，就是数组中一定要有众数的存在才能使用，下面我们来看本算法的思路，这是一种先假设候选者，然后再进行验证的算法。我们现将数组中的第一个数假设为众数，然后进行统计其出现的次数，如果遇到同样的数，则计数器自增1，否则计数器自减1，如果计数器减到了0，则更换当前数字为候选者。这是一个很巧妙的设定，也是本算法的精髓所在，为啥遇到不同的要计数器减1呢，为啥减到0了又要更换候选者呢？首先是有那个强大的前提存在，一定会有一个出现超过半数的数字存在，那么如果计数器减到0了话，说明目前不是候选者数字的个数已经跟候选者的出现个数相同了，那么这个候选者已经很weak，不一定能出现超过半数，我们选择更换当前的候选者。那有可能你会有疑问，那万一后面又大量的出现了之前的候选者怎么办，不需要担心，如果之前的候选者在后面大量出现的话，其又会重新变为候选者，直到最终验证成为正确的众数，佩服算法的提出者啊。</p>
-
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                  
-                    <span class="date">2019/2/13 15:46 下午</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='LeetCode.html'>LeetCode</a></span>
-          				   
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
-
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-			<div class="article">
-                <a class="clearlink" href="15500441189502.html">
-                
-                  <h1>189. 旋转数组</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<pre><code class="language-text">给定一个数组，将数组中的元素向右移动 k 个位置，其中 k 是非负数。
-
-示例 1:
-
-输入: [1,2,3,4,5,6,7] 和 k = 3
-输出: [5,6,7,1,2,3,4]
-解释:
-向右旋转 1 步: [7,1,2,3,4,5,6]
-向右旋转 2 步: [6,7,1,2,3,4,5]
-向右旋转 3 步: [5,6,7,1,2,3,4]
-示例 2:
-
-输入: [-1,-100,3,99] 和 k = 2
-输出: [3,99,-1,-100]
-解释: 
-向右旋转 1 步: [99,-1,-100,3]
-向右旋转 2 步: [3,99,-1,-100]
-说明:
-
-尽可能想出更多的解决方案，至少有三种不同的方法可以解决这个问题。
-要求使用空间复杂度为 O(1) 的原地算法。
-</code></pre>
-
-<h2 id="toc_0">解题思路：</h2>
-
-<p>&emsp;&emsp;关键在于O(1)的算法。如果是O(n)的话，方法就太多了。这里就不说了。主要说一下O(1)的做法。</p>
-
-<p>&emsp;&emsp;采用翻转字符的方法，思路是先把前n-k个数字翻转一下，再把后k个数字翻转一下，最后再把整个数组翻转一下：</p>
-
-<p>1 2 3 4 5 6 7 <br/>
-4 3 2 1 5 6 7 <br/>
-4 3 2 1 7 6 5<br/>
-5 6 7 1 2 3 4</p>
-
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                  
-                    <span class="date">2019/2/13 15:48 下午</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='LeetCode.html'>LeetCode</a></span>
-          				   
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
-
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-			<div class="article">
-                <a class="clearlink" href="15500475532566.html">
-                
-                  <h1>258. 各位相加</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<pre><code class="language-text">
-给定一个非负整数  num，反复将各个位上的数字相加，直到结果为一位数。
-
-示例:
-
-输入: 38
-输出: 2 
-解释: 各位相加的过程为：3 + 8 = 11, 1 + 1 = 2。 由于 2 是一位数，所以返回 2。
-进阶:
-你可以不使用循环或者递归，且在 O(1) 时间复杂度内解决这个问题吗？
-</code></pre>
-
-<h2 id="toc_0">解题思路：</h2>
-
-<p>普通的方法都会解，这里就不重复了。说下O(1)的解法。</p>
-
-<p>这里用到 一个很巧妙的算法。</p>
-
-<p><img src="media/15500475532566/15500475966040.jpg" alt="" style="width:557px;"/></p>
-
-<p>根据以上，可以得出，快速求解，就是将数字不断减去9，直到不能减为止即为正解。</p>
-
-<p>那么不断减去9的过程，可以化为--&gt; mod 9</p>
-
-<p>代码如下：</p>
-
-<pre><code class="language-text">class Solution {
-    public int addDigits(int num) {
-        if (num == 0){
-            return num;
-        }
-        num %= 9;
-        return num == 0 ? 9 : num;
-    }
-}
-</code></pre>
-
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                  
-                    <span class="date">2019/2/13 16:45 下午</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='LeetCode.html'>LeetCode</a></span>
-          				   
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
-
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-			<div class="article">
-                <a class="clearlink" href="15480002725541.html">
-                
-                  <h1>32. 最长有效括号</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<p><a href="https://leetcode-cn.com/problems/longest-valid-parentheses/description/">https://leetcode-cn.com/problems/longest-valid-parentheses/description/</a></p>
-
-<p>给定一个只包含  &#39;(&#39; 和  &#39;)&#39; 的字符串，找出最长的包含有效括号的子串的长度。</p>
-
-<p>示例 1:</p>
-
-<pre><code class="language-text">输入: &quot;(()&quot;
-输出: 2
-解释: 最长有效括号子串为 &quot;()&quot;
-示例 2:
-
-输入: &quot;)()())&quot;
-输出: 4
-解释: 最长有效括号子串为 &quot;()()&quot;
-</code></pre>
-
-<p>代码：</p>
-
-<pre><code class="language-text">public int longestValidParentheses(String s) {
-    int[] dp = new int[s.length()];
-    int max = 0;
-    for (int i = 1; i &lt; s.length(); i++){
-        if (s.charAt(i) == &#39;(&#39;){
-            dp[i] = 0;
-        }else{
-            if (dp[i - 1] != 0) {
-                int index = i - dp[i - 1] - 1;
-                if (index &gt;= 0 &amp;&amp; s.charAt(index) == &#39;(&#39;) {
-                    dp[i] = dp[i - 1] + 2;
-                    if (index - 1 &gt;= 0 ){
-                        dp[i] += dp[index - 1];
-                    }
-                }
-            }
-            if (s.charAt(i - 1) == &#39;(&#39;){
-                if (i &gt;= 2) {
-                    dp[i] = dp[i] &gt; dp[i - 2] + 2 ? dp[i] : dp[i - 2] + 2;
-                }else{
-                    dp[i] = 2;
-                }
-            }
-            if (max &lt; dp[i]){
-                max = dp[i];
-            }
-        }
-    }
-    return max;
-}
-</code></pre>
-
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                  
-                    <span class="date">2019/1/21 0:4 上午</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='LeetCode.html'>LeetCode</a></span>
-          				   
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
-
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-			<div class="article">
-                <a class="clearlink" href="15480003648444.html">
-                
-                  <h1>39. 组合总和</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<p><a href="https://leetcode-cn.com/problems/combination-sum/description/">https://leetcode-cn.com/problems/combination-sum/description/</a></p>
-
-<p>给定一个无重复元素的数组  candidates 和一个目标数  target ，找出  candidates 中所有可以使数字和为  target 的组合。</p>
-
-<p>candidates 中的数字可以无限制重复被选取。</p>
-
-<p>说明：</p>
-
-<p>所有数字（包括  target）都是正整数。<br/>
-解集不能包含重复的组合。 </p>
-
-<pre><code class="language-text">示例 1:
-
-输入: candidates = [2,3,6,7], target = 7,
-所求解集为:
 [
-  [7],
-  [2,2,3]
-]
-示例 2:
-
-输入: candidates = [2,3,5], target = 8,
-所求解集为:
-[
-  [2,2,2,2],
-  [2,3,3],
-  [3,5]
+  [3],
+  [9,20],
+  [15,7]
 ]
 </code></pre>
 
-<p>题目分析：</p>
+<h2 id="toc_1">解题思路：</h2>
 
-<ol>
-<li>一看到这道题，就感觉要用递归来做，应该是回溯算法。百度证实无误。</li>
-<li>然后自己还没有生写过回溯。想了一会儿，结果不对，和正确解法做了一下比较，修改了一下自己的算法。标答是C++的，在java上需要修改一下，一些特别的地方要处理一下。</li>
-</ol>
+<p>层次遍历，没啥好说的，就是本题需要将层次区分开来。因此传统的方法，需要做一些修订。用一个队列保存当前层次的所有节点。</p>
 
-<p>直接上代码：</p>
+<p>每一轮遍历的时候，依次出队所有的节点，存入结果，并遍历出队的所有节点，如果有子节点则存入队列，等待下一轮遍历。</p>
 
-<pre><code class="language-text">/**
- * 核心算法
- * @param candidates 数组
- * @param target 当前递归子问题需要计算的target
- * @param start 开始查找的index
- * @param result 当前递归的result数组
- * @param ans 最后的答案
- */
-private void findOne(int[] candidates, int target, int start, List&lt;Integer&gt; result, List&lt;List&lt;Integer&gt;&gt; ans){
-    if (target == 0){
-        List&lt;Integer&gt; list = new ArrayList&lt;&gt;(result); //这里需要新开一个数组，否则会一直复用这个对象，导致结果不对
-        ans.add(list);
-        return;
-    }else if(target &lt; candidates[start]){
-        return; //不符合的结果，不处理。
-    }else{
-        for (int i = start; i &lt; candidates.length; i++){
-            result.add(candidates[i]);
-            findOne(candidates, target - candidates[i], i, result, ans);
-            result.remove(result.size() - 1);
-            //这里有点像树的遍历，这里就是要一个节点和不要一个节点的分支。然后可以重复使用元素，所以递归子问题，仍然从i开始。
-        }
+<p>也就是有两层的遍历，用一个临时的队列，保存中间结果</p>
+
+<h2 id="toc_2">代码：</h2>
+
+<pre><code class="language-text">public List&lt;List&lt;Integer&gt;&gt; levelOrder(TreeNode root) {
+    Queue&lt;TreeNode&gt; queue = new ArrayDeque&lt;&gt;();
+    if (root != null) {
+        queue.add(root);
     }
-}
-
-public List&lt;List&lt;Integer&gt;&gt; combinationSum(int[] candidates, int target) {
-    List&lt;List&lt;Integer&gt;&gt; ans = new ArrayList&lt;&gt;();
-    Arrays.sort(candidates); //题目没有说排好序的数组，所以这里要先拍个序
-    findOne(candidates, target, 0, new ArrayList&lt;&gt;(), ans);
-    return ans;
-}
-</code></pre>
-
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                  
-                    <span class="date">2019/1/21 0:6 上午</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='LeetCode.html'>LeetCode</a></span>
-          				   
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
-
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-			<div class="article">
-                <a class="clearlink" href="15523931184037.html">
-                
-                  <h1>448. 找到所有数组中消失的数字</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<h2 id="toc_0">题目描述</h2>
-
-<p>给定一个范围在  1 ≤ a[i] ≤ n ( n = 数组大小 ) 的 整型数组，数组中的元素一些出现了两次，另一些只出现一次。</p>
-
-<p>找到所有在 [1, n] 范围之间没有出现在数组中的数字。</p>
-
-<p>您能在不使用额外空间且时间复杂度为O(n)的情况下完成这个任务吗? 你可以假定返回的数组不算在额外空间内。</p>
-
-<p>示例:</p>
-
-<p>输入:<br/>
-[4,3,2,7,8,2,3,1]</p>
-
-<p>输出:<br/>
-[5,6]</p>
-
-<h2 id="toc_1">思路分析</h2>
-
-<p>关键点在于不用额外空间，时间复杂度为O（n）。这两点限制了使用排序算法，或者用额外空间来记录。</p>
-
-<p>那么，不能用额外空间，就只能用原有的数组空间了。这里有一个技巧就是用数组的下标也可以存储信息。因为数据的范围是在n之内，因此数组内出现的数字都是合法的下标。基于这个前提，本题有一个很巧妙的做法。详见代码。</p>
-
-<h2 id="toc_2">代码</h2>
-
-<pre><code class="language-text">public List&lt;Integer&gt; findDisappearedNumbers(int[] nums) {
-        List&lt;Integer&gt; result = new ArrayList&lt;&gt;();
-        for (int i = 0; i &lt; nums.length; i++){
-            //将数组中存放的值作为坐标，进行二次访问。目标是将值设置为相反数（保证是负数）。那么没有变化的位置就是缺失的值
-            nums[Math.abs(nums[i])-1] = - Math.abs(nums[Math.abs(nums[i])-1]);
+    List&lt;List&lt;Integer&gt;&gt; result = new ArrayList&lt;&gt;();
+    while(!queue.isEmpty()){
+        List&lt;Integer&gt; ans = new ArrayList&lt;&gt;();
+        Queue&lt;TreeNode&gt; tempQueue = new ArrayDeque&lt;&gt;(queue);
+        while (!tempQueue.isEmpty()){
+            TreeNode node = tempQueue.poll();
+            ans.add(node.val);
         }
-        for (int i = 0; i &lt; nums.length; i++){
-            if (nums[i] &gt; 0){
-                result.add(i);
+        tempQueue = new ArrayDeque&lt;&gt;(queue);
+        queue.clear();
+        while(!tempQueue.isEmpty()){
+            TreeNode node = tempQueue.poll();
+            if (node.left != null) {
+                queue.add(node.left);
+            }
+            if (node.right != null) {
+                queue.add(node.right);
             }
         }
-        return result;
+        result.add(ans);
     }
-</code></pre>
-
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                  
-                    <span class="date">2019/3/12 20:18 下午</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='LeetCode.html'>LeetCode</a></span>
-          				   
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
-
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-			<div class="article">
-                <a class="clearlink" href="15486626415496.html">
-                
-                  <h1>55. 跳跃游戏</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<p>给定一个非负整数数组，你最初位于数组的第一个位置。</p>
-
-<p>数组中的每个元素代表你在该位置可以跳跃的最大长度。</p>
-
-<p>判断你是否能够到达最后一个位置。</p>
-
-<pre><code class="language-text">示例 1:
-
-输入: [2,3,1,1,4]
-输出: true
-解释: 从位置 0 到 1 跳 1 步, 然后跳 3 步到达最后一个位置。
-示例 2:
-
-输入: [3,2,1,0,4]
-输出: false
-解释: 无论怎样，你总会到达索引为 3 的位置。但该位置的最大跳跃长度是 0 ， 所以你永远不可能到达最后一个位置。
-</code></pre>
-
-<p>解题思路：</p>
-
-<p>本道题用贪心。贪心的策略很巧妙。第一次独立没有想出来。<br/>
-贪心的策略：</p>
-
-<ol>
-<li>每一步都选择最大的可能去接近结果。</li>
-<li>那么遍历一遍，如果最大的结果超过了最后一个位置。则说明最后一个位置是可达的，也就是返回true。</li>
-</ol>
-
-<p>贪心的巧妙在于，我们不在意到底是如何选择的，只在乎是否可达。</p>
-
-<p>代码：</p>
-
-<pre><code class="language-text"> public boolean canJump(int[] nums) {
-    int result = 0;
-    if (nums.length == 1){ //注意边界，最后一个台阶的值是没有意义的。因此只有一个台阶的时候，永远是true
-        return true;
-    }
-    for (int i = 0; i &lt; nums.length; i++){
-        if (i &gt; result || (nums[i] == 0 &amp;&amp; i == result)){
-            break;
-        }
-        result = Math.max(result, nums[i] + i);
-    }
-    return result &gt;= nums.length - 1;
+    return result;
 }
 </code></pre>
 
@@ -813,11 +1804,13 @@ public List&lt;List&lt;Integer&gt;&gt; combinationSum(int[] candidates, int targ
                 <div class="read-more clearfix">
                   <div class="more-left left">
                   
-                    <span class="date">2019/1/28 16:4 下午</span>
+                    <span class="date">2019/02/01 15:24 下午</span>
                     <span>posted in&nbsp;</span> 
           				  
           					    <span class="posted-in"><a href='LeetCode.html'>LeetCode</a></span>
           				   
+                    
+
                   </div>
                   <div class="more-right right">
                   <span class="comments">
@@ -918,11 +1911,13 @@ dp[i][j] = s1 从0...i， s2从0...j 两个字符串的编辑距离。所以dp�
                 <div class="read-more clearfix">
                   <div class="more-left left">
                   
-                    <span class="date">2019/2/1 11:46 上午</span>
+                    <span class="date">2019/02/01 11:46 上午</span>
                     <span>posted in&nbsp;</span> 
           				  
           					    <span class="posted-in"><a href='LeetCode.html'>LeetCode</a></span>
           				   
+                    
+
                   </div>
                   <div class="more-right right">
                   <span class="comments">
@@ -935,16 +1930,108 @@ dp[i][j] = s1 从0...i， s2从0...j 两个字符串的编辑距离。所以dp�
               </div><!-- article -->
         
 			<div class="article">
-                <a class="clearlink" href="15479962056718.html">
+                <a class="clearlink" href="15486626415496.html">
                 
-                  <h1>Java并发编程</h1>
+                  <h1>55. 跳跃游戏</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
-                        	<p>&emsp;&emsp;本文对Java中的并发变成进行了简单的描述。是本人阅读《Java并发编程的艺术》一书的读书笔记。本文对重要的概念进行了记录。</p>
+                        	<p>给定一个非负整数数组，你最初位于数组的第一个位置。</p>
 
-<p>&emsp;&emsp;本文首先介绍了各种各样的和锁相关的概念。然后介绍了Java多线程的技术要点，最后介绍了一些经典使用案例。</p>
+<p>数组中的每个元素代表你在该位置可以跳跃的最大长度。</p>
+
+<p>判断你是否能够到达最后一个位置。</p>
+
+<pre><code class="language-text">示例 1:
+
+输入: [2,3,1,1,4]
+输出: true
+解释: 从位置 0 到 1 跳 1 步, 然后跳 3 步到达最后一个位置。
+示例 2:
+
+输入: [3,2,1,0,4]
+输出: false
+解释: 无论怎样，你总会到达索引为 3 的位置。但该位置的最大跳跃长度是 0 ， 所以你永远不可能到达最后一个位置。
+</code></pre>
+
+<p>解题思路：</p>
+
+<p>本道题用贪心。贪心的策略很巧妙。第一次独立没有想出来。<br/>
+贪心的策略：</p>
+
+<ol>
+<li>每一步都选择最大的可能去接近结果。</li>
+<li>那么遍历一遍，如果最大的结果超过了最后一个位置。则说明最后一个位置是可达的，也就是返回true。</li>
+</ol>
+
+<p>贪心的巧妙在于，我们不在意到底是如何选择的，只在乎是否可达。</p>
+
+<p>代码：</p>
+
+<pre><code class="language-text"> public boolean canJump(int[] nums) {
+    int result = 0;
+    if (nums.length == 1){ //注意边界，最后一个台阶的值是没有意义的。因此只有一个台阶的时候，永远是true
+        return true;
+    }
+    for (int i = 0; i &lt; nums.length; i++){
+        if (i &gt; result || (nums[i] == 0 &amp;&amp; i == result)){
+            break;
+        }
+        result = Math.max(result, nums[i] + i);
+    }
+    return result &gt;= nums.length - 1;
+}
+</code></pre>
+
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                  
+                    <span class="date">2019/01/28 16:04 下午</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='LeetCode.html'>LeetCode</a></span>
+          				   
+                    
+
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15480007861723.html">
+                
+                  <h1>RAC中的宏定义魔法</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<p><a href="https://onevcat.com/2014/01/black-magic-in-macro/">https://onevcat.com/2014/01/black-magic-in-macro/</a></p>
+
+<h2 id="toc_0">1. #的作用</h2>
+
+<h2 id="toc_1">2. ##的作用</h2>
+
+<h2 id="toc_2">3. <strong>VA_ARGS</strong>的作用</h2>
+
+<h2 id="toc_3">4. RAC()</h2>
+
+<h3 id="toc_4">4.1 函数功能</h3>
+
+<p>RAC(),有两种调用方式，一个是两个参数，一个是三个参数的。函数的第一个参数代表着要绑定的对象，第二个参数要绑定的对象的属性，第三个参数代表当追踪的结果为nil时，应该赋予的值。</p>
+
+<p>这里就有一个很有趣的问题，ReactiveCocoa是如何做到用一个函数宏，自动识别参数个数，并调用正确的函数的呢？</p>
 
 
                         
@@ -953,12 +2040,202 @@ dp[i][j] = s1 从0...i， s2从0...j 两个字符串的编辑距离。所以dp�
                 </a>
                 <div class="read-more clearfix">
                   <div class="more-left left">
-                   <a href="15479962056718.html">Read more</a>&nbsp;&nbsp; 
-                    <span class="date">2019/1/20 22:56 下午</span>
+                   <a href="15480007861723.html">Read more</a>&nbsp;&nbsp; 
+                    <span class="date">2019/01/21 00:13 上午</span>
                     <span>posted in&nbsp;</span> 
           				  
-          					    <span class="posted-in"><a href='Java.html'>Java</a></span>
+          					    <span class="posted-in"><a href='iOS.html'>iOS</a></span>
           				   
+                    
+
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15480003648444.html">
+                
+                  <h1>39. 组合总和</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<p><a href="https://leetcode-cn.com/problems/combination-sum/description/">https://leetcode-cn.com/problems/combination-sum/description/</a></p>
+
+<p>给定一个无重复元素的数组  candidates 和一个目标数  target ，找出  candidates 中所有可以使数字和为  target 的组合。</p>
+
+<p>candidates 中的数字可以无限制重复被选取。</p>
+
+<p>说明：</p>
+
+<p>所有数字（包括  target）都是正整数。<br/>
+解集不能包含重复的组合。 </p>
+
+<pre><code class="language-text">示例 1:
+
+输入: candidates = [2,3,6,7], target = 7,
+所求解集为:
+[
+  [7],
+  [2,2,3]
+]
+示例 2:
+
+输入: candidates = [2,3,5], target = 8,
+所求解集为:
+[
+  [2,2,2,2],
+  [2,3,3],
+  [3,5]
+]
+</code></pre>
+
+<p>题目分析：</p>
+
+<ol>
+<li>一看到这道题，就感觉要用递归来做，应该是回溯算法。百度证实无误。</li>
+<li>然后自己还没有生写过回溯。想了一会儿，结果不对，和正确解法做了一下比较，修改了一下自己的算法。标答是C++的，在java上需要修改一下，一些特别的地方要处理一下。</li>
+</ol>
+
+<p>直接上代码：</p>
+
+<pre><code class="language-text">/**
+ * 核心算法
+ * @param candidates 数组
+ * @param target 当前递归子问题需要计算的target
+ * @param start 开始查找的index
+ * @param result 当前递归的result数组
+ * @param ans 最后的答案
+ */
+private void findOne(int[] candidates, int target, int start, List&lt;Integer&gt; result, List&lt;List&lt;Integer&gt;&gt; ans){
+    if (target == 0){
+        List&lt;Integer&gt; list = new ArrayList&lt;&gt;(result); //这里需要新开一个数组，否则会一直复用这个对象，导致结果不对
+        ans.add(list);
+        return;
+    }else if(target &lt; candidates[start]){
+        return; //不符合的结果，不处理。
+    }else{
+        for (int i = start; i &lt; candidates.length; i++){
+            result.add(candidates[i]);
+            findOne(candidates, target - candidates[i], i, result, ans);
+            result.remove(result.size() - 1);
+            //这里有点像树的遍历，这里就是要一个节点和不要一个节点的分支。然后可以重复使用元素，所以递归子问题，仍然从i开始。
+        }
+    }
+}
+
+public List&lt;List&lt;Integer&gt;&gt; combinationSum(int[] candidates, int target) {
+    List&lt;List&lt;Integer&gt;&gt; ans = new ArrayList&lt;&gt;();
+    Arrays.sort(candidates); //题目没有说排好序的数组，所以这里要先拍个序
+    findOne(candidates, target, 0, new ArrayList&lt;&gt;(), ans);
+    return ans;
+}
+</code></pre>
+
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                  
+                    <span class="date">2019/01/21 00:06 上午</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='LeetCode.html'>LeetCode</a></span>
+          				   
+                    
+
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15480002725541.html">
+                
+                  <h1>32. 最长有效括号</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<p><a href="https://leetcode-cn.com/problems/longest-valid-parentheses/description/">https://leetcode-cn.com/problems/longest-valid-parentheses/description/</a></p>
+
+<p>给定一个只包含  &#39;(&#39; 和  &#39;)&#39; 的字符串，找出最长的包含有效括号的子串的长度。</p>
+
+<p>示例 1:</p>
+
+<pre><code class="language-text">输入: &quot;(()&quot;
+输出: 2
+解释: 最长有效括号子串为 &quot;()&quot;
+示例 2:
+
+输入: &quot;)()())&quot;
+输出: 4
+解释: 最长有效括号子串为 &quot;()()&quot;
+</code></pre>
+
+<p>代码：</p>
+
+<pre><code class="language-text">public int longestValidParentheses(String s) {
+    int[] dp = new int[s.length()];
+    int max = 0;
+    for (int i = 1; i &lt; s.length(); i++){
+        if (s.charAt(i) == &#39;(&#39;){
+            dp[i] = 0;
+        }else{
+            if (dp[i - 1] != 0) {
+                int index = i - dp[i - 1] - 1;
+                if (index &gt;= 0 &amp;&amp; s.charAt(index) == &#39;(&#39;) {
+                    dp[i] = dp[i - 1] + 2;
+                    if (index - 1 &gt;= 0 ){
+                        dp[i] += dp[index - 1];
+                    }
+                }
+            }
+            if (s.charAt(i - 1) == &#39;(&#39;){
+                if (i &gt;= 2) {
+                    dp[i] = dp[i] &gt; dp[i - 2] + 2 ? dp[i] : dp[i - 2] + 2;
+                }else{
+                    dp[i] = 2;
+                }
+            }
+            if (max &lt; dp[i]){
+                max = dp[i];
+            }
+        }
+    }
+    return max;
+}
+</code></pre>
+
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                  
+                    <span class="date">2019/01/21 00:04 上午</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='LeetCode.html'>LeetCode</a></span>
+          				   
+                    
+
                   </div>
                   <div class="more-right right">
                   <span class="comments">
@@ -1064,11 +2341,13 @@ server should be down...
                 <div class="read-more clearfix">
                   <div class="more-left left">
                   
-                    <span class="date">2019/1/20 23:56 下午</span>
+                    <span class="date">2019/01/20 23:56 下午</span>
                     <span>posted in&nbsp;</span> 
           				  
           					    <span class="posted-in"><a href='MongoDB.html'>MongoDB</a></span>
           				   
+                    
+
                   </div>
                   <div class="more-right right">
                   <span class="comments">
@@ -1081,28 +2360,16 @@ server should be down...
               </div><!-- article -->
         
 			<div class="article">
-                <a class="clearlink" href="15480007861723.html">
+                <a class="clearlink" href="15479962056718.html">
                 
-                  <h1>RAC中的宏定义魔法</h1>
+                  <h1>Java并发编程</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
-                        	<p><a href="https://onevcat.com/2014/01/black-magic-in-macro/">https://onevcat.com/2014/01/black-magic-in-macro/</a></p>
+                        	<p>&emsp;&emsp;本文对Java中的并发变成进行了简单的描述。是本人阅读《Java并发编程的艺术》一书的读书笔记。本文对重要的概念进行了记录。</p>
 
-<h2 id="toc_0">1. #的作用</h2>
-
-<h2 id="toc_1">2. ##的作用</h2>
-
-<h2 id="toc_2">3. <strong>VA_ARGS</strong>的作用</h2>
-
-<h2 id="toc_3">4. RAC()</h2>
-
-<h3 id="toc_4">4.1 函数功能</h3>
-
-<p>RAC(),有两种调用方式，一个是两个参数，一个是三个参数的。函数的第一个参数代表着要绑定的对象，第二个参数要绑定的对象的属性，第三个参数代表当追踪的结果为nil时，应该赋予的值。</p>
-
-<p>这里就有一个很有趣的问题，ReactiveCocoa是如何做到用一个函数宏，自动识别参数个数，并调用正确的函数的呢？</p>
+<p>&emsp;&emsp;本文首先介绍了各种各样的和锁相关的概念。然后介绍了Java多线程的技术要点，最后介绍了一些经典使用案例。</p>
 
 
                         
@@ -1111,12 +2378,14 @@ server should be down...
                 </a>
                 <div class="read-more clearfix">
                   <div class="more-left left">
-                   <a href="15480007861723.html">Read more</a>&nbsp;&nbsp; 
-                    <span class="date">2019/1/21 0:13 上午</span>
+                   <a href="15479962056718.html">Read more</a>&nbsp;&nbsp; 
+                    <span class="date">2019/01/20 22:56 下午</span>
                     <span>posted in&nbsp;</span> 
           				  
-          					    <span class="posted-in"><a href='iOS.html'>iOS</a></span>
+          					    <span class="posted-in"><a href='Java.html'>Java</a></span>
           				   
+                    
+
                   </div>
                   <div class="more-right right">
                   <span class="comments">
@@ -1420,174 +2689,13 @@ Duck *duck =  [[Duck alloc] initWithValue:@{@&quot;animal&quot; : @{@&quot;age&q
                 <div class="read-more clearfix">
                   <div class="more-left left">
                   
-                    <span class="date">2018/3/21 19:57 下午</span>
+                    <span class="date">2018/03/21 19:57 下午</span>
                     <span>posted in&nbsp;</span> 
           				  
           					    <span class="posted-in"><a href='iOS.html'>iOS</a></span>
           				   
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
+                    
 
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-			<div class="article">
-                <a class="clearlink" href="15542090064870.html">
-                
-                  <h1>从logger.isDebugEnabled()谈起</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<h2 id="toc_0">0. 问题</h2>
-
-<p>在很多框架中，我们看到在<code>logger.debug</code>处经常会这样写</p>
-
-<pre><code class="language-text">if (logger.isDebugEnabled()) {
-    logger.debug(message);
-}
-</code></pre>
-
-<p>我们知道<code>logger.debug()</code>,在日志级别不够的时候是不会输出日志的。那么这么写的目的何在？</p>
-
-<h2 id="toc_1">1. 分析</h2>
-
-<p>我们来看一个例子</p>
-
-<pre><code class="language-text">String error = &quot;debug日志&quot;;
-logger.debug(&quot;这是一个&quot; + error);
-</code></pre>
-
-<p>按照正常的逻辑，在执行logger.debug()之前需要先行计算括号里的内容。然后才会判断当前日志级别不符合不输出。这里就存在一个无用计算的过程。相比对直接执行语句对logger.isDebugEnabled()进行先判断，显然是一个更优的方案，避免了无用的计算过程。</p>
-
-<p>然而这个结论在占位符的使用下，有了一点不同。</p>
-
-<p>再来看一个例子</p>
-
-<h3 id="toc_2">1.1. logger.debug(&quot;这是一个{}&quot;, model);</h3>
-
-<pre><code class="language-text">public static class Model{
-    int age;
-
-    @Override
-    public String toString() {
-        System.out.println(&quot;toString called&quot;);
-        return &quot;model{&quot; +
-                &quot;age=&quot; + age +
-                &#39;}&#39;;
-    }
-}
-public static void main(String[] args) {
-    Model model = new Model();
-    model.age = 3;
-    
-    logger.debug(&quot;这是一个{}&quot;, model);
-}
-</code></pre>
-
-<p>同样的作用，但是当日志级别高于debug时，不会执行括号内部的字符串拼接。也就是如果使用占位符{}来组合输出日志，可以不用判断<code>logger.isDebugEnabled()</code></p>
-
-<h3 id="toc_3">1.2. logger.debug(&quot;test:{}&quot;, test());</h3>
-
-<p>Model的toString方法在用占位符{}的方式时，没有执行，那么如果是一个普通的方法呢？</p>
-
-<pre><code class="language-text">public static String test(){
-    System.out.println(&quot;test&quot;);
-    return &quot;test&quot;;
-}
-public static void main(String[] args) {
-    logger.debug(&quot;test:{}&quot;, test()); //日志级别info
-}
-</code></pre>
-
-<p>结果，logger.debug(&quot;test:{}&quot;, test());无输出，但是test()方法在控制台打印出了test。</p>
-
-<p>结论：有占位符的存在，但是如果字符串拼接调用了函数，仍然会先执行函数，这和日志级别无关。</p>
-
-<h3 id="toc_4">1.3. logger.debug(&quot;test2:{}, {}&quot;, model, test());</h3>
-
-<pre><code class="language-text">public static String test(){
-    System.out.println(&quot;print test&quot;);
-    return &quot;fdsf&quot;;
-}
-public static void main(String[] args) {
-    Model model = new Model();
-    model.age = 3;
-    logger.debug(&quot;test1:&quot; + model);
-    model.age = 5;
-    logger.debug(&quot;test2:{}, {}&quot;, model, test());
-}
-</code></pre>
-
-<p>结果，最后一句debug，model的toString方法没有执行，而test()方法打印出了&quot;print test&quot;。也就是在占位符的作用下，对象的toString()方法不会执行，而不同方法仍然会执行。</p>
-
-<h2 id="toc_5">2. 结论</h2>
-
-<p>通过<code>logger.isDebugEnabled()</code>进行先行判断，肯定是没有错的。虽然在占位符的帮助下，当日志级别高于debug时，对象的toString()方法不会执行，但是普通的方法仍然会执行。如果能够保证logger.debug()中的内容只涉及最简单的字符串拼接和toString()，那么可以简略<code>logger.isDebugEnabled()</code>`，否则还是加上避免无用计算。</p>
-
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                  
-                    <span class="date">2019/4/2 20:43 下午</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='Java.html'>Java</a></span>
-          				   
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
-
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-			<div class="article">
-                <a class="clearlink" href="15500645018755.html">
-                
-                  <h1>数据库分库分表技术</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<h1 id="toc_0">1. 基本概念</h1>
-
-<h2 id="toc_1">1.1. 拆分方式</h2>
-
-<ul>
-<li><p>垂直拆分</p>
-<p>将一个库（表）拆分成多个库（表），每个库（表）的结构和原有的结构不同。</p>
-<p>这实际上可以认为是一种数据库的重新设计。拆分的原则可以是：</p>
-<pre><code class="language-text">1. 根据业务的具体情况，将热门的数据和冷门的数据分开。达到提高性能的目的。（库或者表的拆分都可以遵循这样一条原则）
-</code></pre></li>
-<li><p>水平拆分</p>
-<p>根据分片算法，将一个库（表）拆分成多个库（表），每个库（表）的结构和原有的结构相同。</p></li>
-</ul>
-
-
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                   <a href="15500645018755.html">Read more</a>&nbsp;&nbsp; 
-                    <span class="date">2019/2/13 21:28 下午</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='%E6%95%B0%E6%8D%AE%E5%BA%93.html'>数据库</a></span>
-          				   
                   </div>
                   <div class="more-right right">
                   <span class="comments">
@@ -1662,6 +2770,8 @@ public static void main(String[] args) {
             <a href="LeetCode.html"><strong>LeetCode</strong></a>
         
             <a href="%E6%95%B0%E6%8D%AE%E5%BA%93.html"><strong>数据库</strong></a>
+        
+            <a href="Springboot.html"><strong>Springboot</strong></a>
          
         </p>
 
@@ -1678,33 +2788,41 @@ public static void main(String[] args) {
 	      
 		      
 			      <li class="post">
-			        <a href="15490058580119.html">102. 二叉树的层次遍历</a>
+			        <a href="15819118469978.html">一道LeetCode线程题引出Java线程协作的经典案例</a>
 			      </li>
 		     
 		  
 		      
 			      <li class="post">
-			        <a href="15490112223994.html">122. 买卖股票的最佳时机 II</a>
+			        <a href="15814116703606.html">1349. 参加考试的最大学生数</a>
 			      </li>
 		     
 		  
 		      
 			      <li class="post">
-			        <a href="15500440104341.html">169. 求众数</a>
+			        <a href="15693167161716.html">从使用fastjson替换springboot框架默认的json解析工具说起</a>
 			      </li>
 		     
 		  
 		      
 			      <li class="post">
-			        <a href="15500441189502.html">189. 旋转数组</a>
+			        <a href="15693104259267.html">Jackson fasterxml和codehaus的区别</a>
 			      </li>
 		     
 		  
 		      
 			      <li class="post">
-			        <a href="15500475532566.html">258. 各位相加</a>
+			        <a href="15686164898705.html">JSON反序列化乱序的问题</a>
 			      </li>
 		     
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
 		  
 		      
 		  
@@ -1749,6 +2867,213 @@ Theme used <a target="_blank" href="http://github.com">GitHub CSS</a>.</p>
       </div>
     </div>
 
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+figure{margin: 0;padding: 0;}
+figcaption{text-align:center;}
+
+/* PrismJS 1.14.0
+ http://prismjs.com/download.html#themes=prism&languages=markup+css+clike+javascript */
+/**
+ * prism.js default theme for JavaScript, CSS and HTML
+ * Based on dabblet (http://dabblet.com)
+ * @author Lea Verou
+ */
+
+code[class*="language-"],
+pre[class*="language-"] {
+    color: black;
+    background: none;
+    text-shadow: 0 1px white;
+    font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+    text-align: left;
+    white-space: pre;
+    word-spacing: normal;
+    word-break: normal;
+    word-wrap: normal;
+    line-height: 1.5;
+    
+    -moz-tab-size: 4;
+    -o-tab-size: 4;
+    tab-size: 4;
+    
+    -webkit-hyphens: none;
+    -moz-hyphens: none;
+    -ms-hyphens: none;
+    hyphens: none;
+}
+
+pre[class*="language-"]::-moz-selection, pre[class*="language-"] ::-moz-selection,
+code[class*="language-"]::-moz-selection, code[class*="language-"] ::-moz-selection {
+    text-shadow: none;
+    background:#b3d4fc;
+}
+
+pre[class*="language-"]::selection, pre[class*="language-"] ::selection,
+code[class*="language-"]::selection, code[class*="language-"] ::selection {
+    text-shadow: none;
+    background: #b3d4fc;
+}
+
+@media print {
+    code[class*="language-"],
+    pre[class*="language-"] {
+        text-shadow: none;
+    }
+}
+
+/* Code blocks */
+pre[class*="language-"] {
+    padding: 1em;
+    margin: .5em 0;
+    overflow: auto;
+}
+
+:not(pre) > code[class*="language-"],
+pre[class*="language-"] {
+    background: #F7F7F7;
+}
+
+/* Inline code */
+:not(pre) > code[class*="language-"] {
+    padding: .1em;
+    border-radius: .3em;
+    white-space: normal;
+}
+
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+    color: slategray;
+}
+
+.token.punctuation {
+    color: #999;
+}
+
+.namespace {
+    opacity: .7;
+}
+
+.token.property,
+.token.tag,
+.token.boolean,
+.token.number,
+.token.constant,
+.token.symbol,
+.token.deleted {
+    color: #905;
+}
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin,
+.token.inserted {
+    color: #690;
+}
+
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string {
+    color: #9a6e3a;
+    background: hsla(0, 0%, 100%, .5);
+}
+
+.token.atrule,
+.token.attr-value,
+.token.keyword {
+    color: #07a;
+}
+
+.token.function,
+.token.class-name {
+    color: #DD4A68;
+}
+
+.token.regex,
+.token.important,
+.token.variable {
+    color: #e90;
+}
+
+.token.important,
+.token.bold {
+    font-weight: bold;
+}
+.token.italic {
+    font-style: italic;
+}
+
+.token.entity {
+    cursor: help;
+}
+
+
+pre[class*="language-"].line-numbers {
+    position: relative;
+    padding-left: 3.8em;
+    counter-reset: linenumber;
+}
+
+pre[class*="language-"].line-numbers > code {
+    position: relative;
+    white-space: inherit;
+}
+
+.line-numbers .line-numbers-rows {
+    position: absolute;
+    pointer-events: none;
+    top: 0;
+    font-size: 100%;
+    left: -3.8em;
+    width: 3em; /* works for line-numbers below 1000 lines */
+    letter-spacing: -1px;
+    border-right: 1px solid #999;
+
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
+}
+
+    .line-numbers-rows > span {
+        pointer-events: none;
+        display: block;
+        counter-increment: linenumber;
+    }
+
+        .line-numbers-rows > span:before {
+            content: counter(linenumber);
+            color: #999;
+            display: block;
+            padding-right: 0.8em;
+            text-align: right;
+        }
+
+</style>
+
   
     
 
@@ -1768,8 +3093,6 @@ Theme used <a target="_blank" href="http://github.com">GitHub CSS</a>.</p>
       });
      
     </script>
-
-    
 
 
 
