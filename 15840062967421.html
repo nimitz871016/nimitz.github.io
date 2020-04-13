@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>
     
-  MongoDB的启动和停止 - 沧海一粟No.1
+  从@Transactional，@Async 失效说起 - 沧海一粟No.1
   
   </title>
   
@@ -110,14 +110,14 @@
       <div class="markdown-body article-wrap">
        <div class="article">
           
-          <h1>MongoDB的启动和停止</h1>
+          <h1>从@Transactional，@Async 失效说起</h1>
      
         <div class="read-more clearfix">
-          <span class="date">2019/01/20 23:56 下午</span>
+          <span class="date">2020/03/12 17:44 下午</span>
 
           <span>posted in&nbsp;</span> 
           
-              <span class="posted-in"><a href='MongoDB.html'>MongoDB</a></span>
+              <span class="posted-in"><a href='%E6%95%B0%E6%8D%AE%E5%BA%93.html'>数据库</a></span>
            
          
           <span class="comments">
@@ -130,84 +130,43 @@
       </div><!-- article -->
 
       <div class="article-content">
-      <h2 id="toc_0">1. 启动</h2>
+      <h2 id="toc_0">1、问题描述</h2>
 
-<ol>
-<li>用命令行，加各种的特殊参数</li>
-<li><p>用命令行，但是所有的参数都放在一个配置文件中。如</p>
-<pre><code class="language-text">mongod -f /etc/mongod.conf
-</code></pre></li>
-<li><p>用传统的service mongod start</p></li>
-</ol>
+<p>当我们在同一个类中，调用一个被@Transactional,或@Async标注的方法时，这些注解是否会生效?</p>
 
-<h3 id="toc_1">1.1. service mongod start</h3>
+<p>结论是不会。</p>
 
-<ul>
-<li>该命令本身没有任何问题。只需要注意配置启动的时候执行的语句就可以达到同样的效果。在实际使用的过程中，并不会频繁的变更需求和配置，因此用service来启动足以。</li>
-<li><p>另外如果用命令行启动，还存在权限问题。<br/>
-用mongod启动了以后，权限全部变为root。这时候再用service mongod start来启动就会有各种各样的权限问题。</p></li>
-<li><p>service start启动的脚本</p>
-<pre><code class="language-text">/usr/lib/systemd/system/mongod.service
-</code></pre></li>
-</ul>
+<h2 id="toc_1">2、原因</h2>
 
-<pre><code class="language-text">[Unit]
-Description=MongoDB Database Server
-After=network.target
-Documentation=https://docs.mongodb.org/manual
+<p>Spring采用动态代理(AOP)实现对bean的管理和切片，它为我们的每个class生成一个代理对象。只有在代理对象之间进行调用时，可以触发切面逻辑。</p>
 
-[Service]
-User=mongod
-Group=mongod
-Environment=&quot;OPTIONS=-f /etc/mongod.conf&quot;
-EnvironmentFile=-/etc/sysconfig/mongod
-ExecStart=/usr/bin/mongod $OPTIONS
-ExecStartPre=/usr/bin/mkdir -p /var/run/mongodb
-ExecStartPre=/usr/bin/chown mongod:mongod /var/run/mongodb
-ExecStartPre=/usr/bin/chmod 0755 /var/run/mongodb
-PermissionsStartOnly=true
-PIDFile=/var/run/mongodb/mongod.pid
-Type=forking
-# file size
-LimitFSIZE=infinity
-# cpu time
-LimitCPU=infinity
-# virtual memory size
-LimitAS=infinity
-# open files
-LimitNOFILE=64000
-# processes/threads
-LimitNPROC=64000
-# locked memory
-LimitMEMLOCK=infinity
-# total threads (user+kernel)
-TasksMax=infinity
-TasksAccounting=false
-# Recommended limits for for mongod as specified in
-# http://docs.mongodb.org/manual/reference/ulimit/#recommended-settings
+<p>spring 在扫描bean的时候会扫描方法上是否包含@Async注解，如果包含，spring会为这个bean动态地生成一个子类（即代理类，proxy），代理类是继承原来那个bean的。此时，当这个有注解的方法被调用的时候，实际上是由代理类来调用的，代理类在调用时增加异步作用。然而，如果这个有注解的方法是被同一个类中的其他方法调用的，那么该方法的调用并没有通过代理类，而是直接通过原来的那个bean，所以就没有增加异步作用，我们看到的现象就是@Async注解无效。</p>
 
-[Install]
-WantedBy=multi-user.target
-</code></pre>
+<p>当我们调用A的bean的a()方法的时候，也是被proxyA拦截，执行proxyA拦截，执行proxyA.a()（标记3），然而，由以上代码可知，这时候它调用的是objectA.a()，也就是由原来的bean来调用a()方法了，所以代码跑到了“标记1”。由此可见，“标记2”并没有被执行到，所以异步执行的效果也没有运行。</p>
 
-<h2 id="toc_2">2. 停止</h2>
+<p><strong>特别注意: 当Spring的事务在同一个类时，它的自我调用时事务将失效.</strong><br/>
+ <strong>@Async</strong></p>
 
-<p>强制关闭MongoDB（不建议使用）；<br/>
-service mongod stop<br/>
-或者，从MongoDB的admin中关闭（推荐用这种方法）：</p>
+<h2 id="toc_2">解决方案</h2>
 
-<pre><code class="language-text">&gt;use admin
-switched to db admin
-&gt;db.shutdownServer()
-server should be down...
-</code></pre>
+<h3 id="toc_3">方案一</h3>
 
-<p>或者</p>
+<p>在当前类中通过上下文获取自己的代理对象调用异步方法</p>
 
-<pre><code class="language-text">mongod --shutdown
-</code></pre>
+<p>直接@Autowired</p>
 
-<p>使用shutdownServer关闭MongoDB，如有MongoDB主从服务器，则在服务关闭前同步主从服务器；强制关闭则不会；</p>
+<h3 id="toc_4">方案二</h3>
+
+<p>基于 AopContext 暴露代理对象</p>
+
+<p>EnableAspectJAutoProxy（exposeProxy=true）<br/>
+AopContext.currentProxy()</p>
+
+<p><a href="https://mp.weixin.qq.com/s/m7p7AP_zT1JEZrxwmVISVQ">https://mp.weixin.qq.com/s/m7p7AP_zT1JEZrxwmVISVQ</a></p>
+
+<h3 id="toc_5">方案三</h3>
+
+<p>从外部类调用</p>
 
 
     
@@ -218,16 +177,16 @@ server should be down...
         <div class="large-6 columns">
         <p class="text-left" style="padding:15px 0px;">
       
-          <a href="15842883217984.html" 
-          title="Previous Post: Java序列化的那些事">&laquo; Java序列化的那些事</a>
+          <a href="15819118469978.html" 
+          title="Previous Post: 一道LeetCode线程题引出Java线程协作的经典案例">&laquo; 一道LeetCode线程题引出Java线程协作的经典案例</a>
       
         </p>
         </div>
         <div class="large-6 columns">
       <p class="text-right" style="padding:15px 0px;">
       
-          <a  href="15480007861723.html" 
-          title="Next Post: RAC中的宏定义魔法">RAC中的宏定义魔法 &raquo;</a>
+          <a  href="15542090064870.html" 
+          title="Next Post: 从logger.isDebugEnabled()谈起">从logger.isDebugEnabled()谈起 &raquo;</a>
       
       </p>
         </div>
@@ -421,8 +380,6 @@ Theme used <a target="_blank" href="http://github.com">GitHub CSS</a>.</p>
 
 
 
-
-<script src="asset/prism.js"></script>
 
 
 <style type="text/css">

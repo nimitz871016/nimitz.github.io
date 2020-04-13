@@ -88,8 +88,6 @@
             <li><a href="LeetCode.html">LeetCode</a></li>
         
             <li><a href="%E6%95%B0%E6%8D%AE%E5%BA%93.html">数据库</a></li>
-        
-            <li><a href="Springboot.html">Springboot</a></li>
          
 
       </ul>
@@ -111,6 +109,1917 @@
 	<div class="large-8 medium-8 columns">
 		<div class="markdown-body home-categories">
 		
+			<div class="article">
+                <a class="clearlink" href="15490058580119.html">
+                
+                  <h1>102. 二叉树的层次遍历</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<p><a href="https://leetcode-cn.com/problems/binary-tree-level-order-traversal/description/">https://leetcode-cn.com/problems/binary-tree-level-order-traversal/description/</a></p>
+
+<h2 id="toc_0">题目</h2>
+
+<p>给定一个二叉树，返回其按层次遍历的节点值。 （即逐层地，从左到右访问所有节点）。</p>
+
+<p>例如:</p>
+
+<pre><code class="language-text">给定二叉树:  [3,9,20,null,null,15,7],
+
+
+    3
+   / \
+  9  20
+    /  \
+   15   7
+   
+
+返回其层次遍历结果：
+
+[
+  [3],
+  [9,20],
+  [15,7]
+]
+</code></pre>
+
+<h2 id="toc_1">解题思路：</h2>
+
+<p>层次遍历，没啥好说的，就是本题需要将层次区分开来。因此传统的方法，需要做一些修订。用一个队列保存当前层次的所有节点。</p>
+
+<p>每一轮遍历的时候，依次出队所有的节点，存入结果，并遍历出队的所有节点，如果有子节点则存入队列，等待下一轮遍历。</p>
+
+<p>也就是有两层的遍历，用一个临时的队列，保存中间结果</p>
+
+<h2 id="toc_2">代码：</h2>
+
+<pre><code class="language-text">public List&lt;List&lt;Integer&gt;&gt; levelOrder(TreeNode root) {
+    Queue&lt;TreeNode&gt; queue = new ArrayDeque&lt;&gt;();
+    if (root != null) {
+        queue.add(root);
+    }
+    List&lt;List&lt;Integer&gt;&gt; result = new ArrayList&lt;&gt;();
+    while(!queue.isEmpty()){
+        List&lt;Integer&gt; ans = new ArrayList&lt;&gt;();
+        Queue&lt;TreeNode&gt; tempQueue = new ArrayDeque&lt;&gt;(queue);
+        while (!tempQueue.isEmpty()){
+            TreeNode node = tempQueue.poll();
+            ans.add(node.val);
+        }
+        tempQueue = new ArrayDeque&lt;&gt;(queue);
+        queue.clear();
+        while(!tempQueue.isEmpty()){
+            TreeNode node = tempQueue.poll();
+            if (node.left != null) {
+                queue.add(node.left);
+            }
+            if (node.right != null) {
+                queue.add(node.right);
+            }
+        }
+        result.add(ans);
+    }
+    return result;
+}
+</code></pre>
+
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                  
+                    <span class="date">2019/02/01 15:24 下午</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='LeetCode.html'>LeetCode</a></span>
+          				   
+                    
+
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15490112223994.html">
+                
+                  <h1>122. 买卖股票的最佳时机 II</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<p><a href="https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock-ii/description/">https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock-ii/description/</a></p>
+
+<p>给定一个数组，它的第 i 个元素是一支给定股票第 i 天的价格。</p>
+
+<p>设计一个算法来计算你所能获取的最大利润。你可以尽可能地完成更多的交易（多次买卖一支股票）。</p>
+
+<p>注意：你不能同时参与多笔交易（你必须在再次购买前出售掉之前的股票）。</p>
+
+<pre><code class="language-text">示例 1:
+
+输入: [7,1,5,3,6,4]
+输出: 7
+解释: 在第 2 天（股票价格 = 1）的时候买入，在第 3 天（股票价格 = 5）的时候卖出, 这笔交易所能获得利润 = 5-1 = 4 。
+     随后，在第 4 天（股票价格 = 3）的时候买入，在第 5 天（股票价格 = 6）的时候卖出, 这笔交易所能获得利润 = 6-3 = 3 。
+示例 2:
+
+输入: [1,2,3,4,5]
+输出: 4
+解释: 在第 1 天（股票价格 = 1）的时候买入，在第 5 天 （股票价格 = 5）的时候卖出, 这笔交易所能获得利润 = 5-1 = 4 。
+     注意你不能在第 1 天和第 2 天接连购买股票，之后再将它们卖出。
+     因为这样属于同时参与了多笔交易，你必须在再次购买前出售掉之前的股票。
+示例 3:
+
+输入: [7,6,4,3,1]
+输出: 0
+解释: 在这种情况下, 没有交易完成, 所以最大利润为 0。
+</code></pre>
+
+<h2 id="toc_0">解题思路：</h2>
+
+<p>dp题。尝试写出状态转移方程。</p>
+
+<p>设s[i]，第i天股票的价格</p>
+
+<p>1) dp[i], 到第i天，最优的股票收益。</p>
+
+<pre><code class="language-text">dp[i] = max {max{ s[i] - s[j] + dp[j - 1]} j = 1...i - 1,
+</code></pre>
+
+<p>dp[i - 1]代表不卖，以及s[i] &lt; s[j]的情况,算法复杂度O(n2)</p>
+
+<h2 id="toc_1">代码：</h2>
+
+<pre><code class="language-text">public int maxProfit(int[] prices) {
+    if (prices.length == 0){
+        return 0;
+    }
+    int[] dp = new int[prices.length];
+    for (int i = 1 ; i &lt; prices.length; i++){
+        int max = dp[i - 1];
+        for (int j = 0; j &lt; i; j++){
+            int temp = prices[i] - prices[j];
+            temp = temp &lt; 0 ? 0 : temp;
+            if (j &gt; 0) {
+                if (temp &gt; 0) {
+                    temp += dp[j - 1];
+                } else {
+                    temp = dp[j - 1];
+                }
+            }
+            if (temp &gt; max){
+                max = temp;
+            }
+        }
+        dp[i] = max;
+    }
+    return dp[prices.length - 1];
+}
+</code></pre>
+
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                  
+                    <span class="date">2019/02/01 16:53 下午</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='LeetCode.html'>LeetCode</a></span>
+          				   
+                    
+
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15814116703606.html">
+                
+                  <h1>1349. 参加考试的最大学生数</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<p>给你一个 <code>m * n</code> 的矩阵 seats 表示教室中的座位分布。如果座位是坏的（不可用），就用 &#39;#&#39; 表示；否则，用 &#39;.&#39; 表示。</p>
+
+<p>学生可以看到左侧、右侧、左上、右上这四个方向上紧邻他的学生的答卷，但是看不到直接坐在他前面或者后面的学生的答卷。请你计算并返回该考场可以容纳的一起参加考试且无法作弊的最大学生人数。</p>
+
+<p>学生必须坐在状况良好的座位上。<br/>
+ </p>
+
+<p>示例 1：</p>
+
+<p><img src="media/15814116703606/15814117367670.jpg" alt="" style="width:361px;"/></p>
+
+<pre><code class="language-text">输入：seats = [[&quot;#&quot;,&quot;.&quot;,&quot;#&quot;,&quot;#&quot;,&quot;.&quot;,&quot;#&quot;],
+              [&quot;.&quot;,&quot;#&quot;,&quot;#&quot;,&quot;#&quot;,&quot;#&quot;,&quot;.&quot;],
+              [&quot;#&quot;,&quot;.&quot;,&quot;#&quot;,&quot;#&quot;,&quot;.&quot;,&quot;#&quot;]]
+输出：4
+解释：教师可以让 4 个学生坐在可用的座位上，这样他们就无法在考试中作弊。 
+</code></pre>
+
+<p>示例 2：</p>
+
+<pre><code class="language-text">输入：seats = [[&quot;.&quot;,&quot;#&quot;],
+              [&quot;#&quot;,&quot;#&quot;],
+              [&quot;#&quot;,&quot;.&quot;],
+              [&quot;#&quot;,&quot;#&quot;],
+              [&quot;.&quot;,&quot;#&quot;]]
+输出：3
+解释：让所有学生坐在可用的座位上。
+</code></pre>
+
+<p>示例 3：</p>
+
+<pre><code class="language-text">输入：seats = [[&quot;#&quot;,&quot;.&quot;,&quot;.&quot;,&quot;.&quot;,&quot;#&quot;],
+              [&quot;.&quot;,&quot;#&quot;,&quot;.&quot;,&quot;#&quot;,&quot;.&quot;],
+              [&quot;.&quot;,&quot;.&quot;,&quot;#&quot;,&quot;.&quot;,&quot;.&quot;],
+              [&quot;.&quot;,&quot;#&quot;,&quot;.&quot;,&quot;#&quot;,&quot;.&quot;],
+              [&quot;#&quot;,&quot;.&quot;,&quot;.&quot;,&quot;.&quot;,&quot;#&quot;]]
+输出：10
+解释：让学生坐在第 1、3 和 5 列的可用座位上。
+</code></pre>
+
+<p>提示：</p>
+
+<ul>
+<li>seats 只包含字符 &#39;.&#39; 和&#39;#&#39;</li>
+<li>m == seats.length</li>
+<li>n == seats[i].length</li>
+<li>1 &lt;= m &lt;= 8</li>
+<li>1 &lt;= n &lt;= 8</li>
+</ul>
+
+<h2 id="toc_0">2. 结题思路</h2>
+
+<h3 id="toc_1">2.1. 思路过程</h3>
+
+<ol>
+<li>当前行的状态只和前一行的状态有关。</li>
+<li>为了表示前一行的状态，加上题目矩阵规模小于8，可以使用状态压缩。</li>
+<li>一个简便方法，采用位运算快速进行移位，以及有效状态的判断。</li>
+</ol>
+
+<h3 id="toc_2">2.2. 细节考虑</h3>
+
+<ol>
+<li>位运算，通过左移，右移一位，可以快速判断，当前的状态是否合法。</li>
+<li>将合法的座位，映射为0。坏掉的座位，映射为1，与当前状态与（&amp;），可以快速判断当前状态是否合法</li>
+</ol>
+
+<h2 id="toc_3">3. 代码</h2>
+
+<pre><code class="language-text">public int maxStudents(char[][] seats) {
+    int m = seats.length;
+    int n = seats[0].length;
+    int[][] dp = new int[m + 1][1 &lt;&lt; n];
+    int[] tmp = new int[m];
+    int sum;
+    for (int i = 0; i &lt; m; i++) {
+        sum = 0;
+        for (char c : seats[i]) {
+            sum = sum &lt;&lt; 1;
+            if (c == &#39;#&#39;) {
+                sum += 1;
+            }
+        }
+        tmp[i] = sum;
+    }
+    for (int i = m - 1; i &gt;= 0; i--) {
+        for (int j = 0; j &lt; 1 &lt;&lt; n; j++) {
+            if ((j &amp; (j &lt;&lt; 1)) == 0 &amp;&amp; (j &amp; (j &gt;&gt; 1)) == 0 &amp;&amp; (j &amp; tmp[i]) == 0) {
+                for (int k = 0; k &lt; 1 &lt;&lt; n; k++) {
+                    if ((k &amp; (j &lt;&lt; 1)) == 0 &amp;&amp; (k &amp; (j &gt;&gt; 1)) == 0) {
+                        dp[i][j] = Math.max(dp[i][j], Integer.bitCount(j) + dp[i + 1][k]);
+                    }
+                }
+            }
+        }
+    }
+    int result = 0;
+    for (int i = 0; i &lt; 1 &lt;&lt; n; i++) {
+        result = Math.max(0, dp[0][i]);
+    }
+    return result;
+}
+</code></pre>
+
+<h2 id="toc_4">其他解法</h2>
+
+<p>mark一下，学习:<br/>
+<a href="https://leetcode-cn.com/problems/maximum-students-taking-exam/solution/er-fen-tu-zui-da-du-li-ji-by-lightcml/">https://leetcode-cn.com/problems/maximum-students-taking-exam/solution/er-fen-tu-zui-da-du-li-ji-by-lightcml/</a></p>
+
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                  
+                    <span class="date">2020/02/11 17:01 下午</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='LeetCode.html'>LeetCode</a></span>
+          				   
+                    
+
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15500440104341.html">
+                
+                  <h1>169. 求众数</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<p><a href="https://leetcode-cn.com/problems/majority-element/description/">https://leetcode-cn.com/problems/majority-element/description/</a></p>
+
+<pre><code class="language-text">
+给定一个大小为 n 的数组，找到其中的众数。众数是指在数组中出现次数大于  ⌊ n/2 ⌋ 的元素。
+
+你可以假设数组是非空的，并且给定的数组总是存在众数。
+
+示例 1:
+
+输入: [3,2,3]
+输出: 3
+示例 2:
+
+输入: [2,2,1,1,1,2,2]
+输出: 2
+</code></pre>
+
+<h2 id="toc_0">解题思路：</h2>
+
+<p>&emsp;&emsp;我的思路是，排序，然后逐一比对。直到找到众数为止。但是直觉告诉我应该有更优雅的方式。</p>
+
+<p>&emsp;&emsp;这是一道求众数的问题，有很多种解法，其中我感觉比较好的有两种，一种是用哈希表，这种方法需要O(n)的时间和空间，另一种是用一种叫摩尔投票法 Moore Voting，需要O(n)的时间和O(1)的空间，比前一种方法更好。这种投票法先将第一个数字假设为众数，然后把计数器设为1，比较下一个数和此数是否相等，若相等则计数器加一，反之减一。然后看此时计数器的值，若为零，则将当前值设为候选众数。以此类推直到遍历完整个数组，当前候选众数即为该数组的众数。不仔细弄懂摩尔投票法的精髓的话，过一阵子还是会忘记的，首先要明确的是这个叼炸天的方法是有前提的，就是数组中一定要有众数的存在才能使用，下面我们来看本算法的思路，这是一种先假设候选者，然后再进行验证的算法。我们现将数组中的第一个数假设为众数，然后进行统计其出现的次数，如果遇到同样的数，则计数器自增1，否则计数器自减1，如果计数器减到了0，则更换当前数字为候选者。这是一个很巧妙的设定，也是本算法的精髓所在，为啥遇到不同的要计数器减1呢，为啥减到0了又要更换候选者呢？首先是有那个强大的前提存在，一定会有一个出现超过半数的数字存在，那么如果计数器减到0了话，说明目前不是候选者数字的个数已经跟候选者的出现个数相同了，那么这个候选者已经很weak，不一定能出现超过半数，我们选择更换当前的候选者。那有可能你会有疑问，那万一后面又大量的出现了之前的候选者怎么办，不需要担心，如果之前的候选者在后面大量出现的话，其又会重新变为候选者，直到最终验证成为正确的众数，佩服算法的提出者啊。</p>
+
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                  
+                    <span class="date">2019/02/13 15:46 下午</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='LeetCode.html'>LeetCode</a></span>
+          				   
+                    
+
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15500441189502.html">
+                
+                  <h1>189. 旋转数组</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<pre><code class="language-text">给定一个数组，将数组中的元素向右移动 k 个位置，其中 k 是非负数。
+
+示例 1:
+
+输入: [1,2,3,4,5,6,7] 和 k = 3
+输出: [5,6,7,1,2,3,4]
+解释:
+向右旋转 1 步: [7,1,2,3,4,5,6]
+向右旋转 2 步: [6,7,1,2,3,4,5]
+向右旋转 3 步: [5,6,7,1,2,3,4]
+示例 2:
+
+输入: [-1,-100,3,99] 和 k = 2
+输出: [3,99,-1,-100]
+解释: 
+向右旋转 1 步: [99,-1,-100,3]
+向右旋转 2 步: [3,99,-1,-100]
+说明:
+
+尽可能想出更多的解决方案，至少有三种不同的方法可以解决这个问题。
+要求使用空间复杂度为 O(1) 的原地算法。
+</code></pre>
+
+<h2 id="toc_0">解题思路：</h2>
+
+<p>&emsp;&emsp;关键在于O(1)的算法。如果是O(n)的话，方法就太多了。这里就不说了。主要说一下O(1)的做法。</p>
+
+<p>&emsp;&emsp;采用翻转字符的方法，思路是先把前n-k个数字翻转一下，再把后k个数字翻转一下，最后再把整个数组翻转一下：</p>
+
+<p>1 2 3 4 5 6 7 <br/>
+4 3 2 1 5 6 7 <br/>
+4 3 2 1 7 6 5<br/>
+5 6 7 1 2 3 4</p>
+
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                  
+                    <span class="date">2019/02/13 15:48 下午</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='LeetCode.html'>LeetCode</a></span>
+          				   
+                    
+
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15500475532566.html">
+                
+                  <h1>258. 各位相加</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<pre><code class="language-text">
+给定一个非负整数  num，反复将各个位上的数字相加，直到结果为一位数。
+
+示例:
+
+输入: 38
+输出: 2 
+解释: 各位相加的过程为：3 + 8 = 11, 1 + 1 = 2。 由于 2 是一位数，所以返回 2。
+进阶:
+你可以不使用循环或者递归，且在 O(1) 时间复杂度内解决这个问题吗？
+</code></pre>
+
+<h2 id="toc_0">解题思路：</h2>
+
+<p>普通的方法都会解，这里就不重复了。说下O(1)的解法。</p>
+
+<p>这里用到 一个很巧妙的算法。</p>
+
+<p><img src="media/15500475532566/15500475966040.jpg" alt="" style="width:557px;"/></p>
+
+<p>根据以上，可以得出，快速求解，就是将数字不断减去9，直到不能减为止即为正解。</p>
+
+<p>那么不断减去9的过程，可以化为--&gt; mod 9</p>
+
+<p>代码如下：</p>
+
+<pre><code class="language-text">class Solution {
+    public int addDigits(int num) {
+        if (num == 0){
+            return num;
+        }
+        num %= 9;
+        return num == 0 ? 9 : num;
+    }
+}
+</code></pre>
+
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                  
+                    <span class="date">2019/02/13 16:45 下午</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='LeetCode.html'>LeetCode</a></span>
+          				   
+                    
+
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15480002725541.html">
+                
+                  <h1>32. 最长有效括号</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<p><a href="https://leetcode-cn.com/problems/longest-valid-parentheses/description/">https://leetcode-cn.com/problems/longest-valid-parentheses/description/</a></p>
+
+<p>给定一个只包含  &#39;(&#39; 和  &#39;)&#39; 的字符串，找出最长的包含有效括号的子串的长度。</p>
+
+<p>示例 1:</p>
+
+<pre><code class="language-text">输入: &quot;(()&quot;
+输出: 2
+解释: 最长有效括号子串为 &quot;()&quot;
+示例 2:
+
+输入: &quot;)()())&quot;
+输出: 4
+解释: 最长有效括号子串为 &quot;()()&quot;
+</code></pre>
+
+<p>代码：</p>
+
+<pre><code class="language-text">public int longestValidParentheses(String s) {
+    int[] dp = new int[s.length()];
+    int max = 0;
+    for (int i = 1; i &lt; s.length(); i++){
+        if (s.charAt(i) == &#39;(&#39;){
+            dp[i] = 0;
+        }else{
+            if (dp[i - 1] != 0) {
+                int index = i - dp[i - 1] - 1;
+                if (index &gt;= 0 &amp;&amp; s.charAt(index) == &#39;(&#39;) {
+                    dp[i] = dp[i - 1] + 2;
+                    if (index - 1 &gt;= 0 ){
+                        dp[i] += dp[index - 1];
+                    }
+                }
+            }
+            if (s.charAt(i - 1) == &#39;(&#39;){
+                if (i &gt;= 2) {
+                    dp[i] = dp[i] &gt; dp[i - 2] + 2 ? dp[i] : dp[i - 2] + 2;
+                }else{
+                    dp[i] = 2;
+                }
+            }
+            if (max &lt; dp[i]){
+                max = dp[i];
+            }
+        }
+    }
+    return max;
+}
+</code></pre>
+
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                  
+                    <span class="date">2019/01/21 00:04 上午</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='LeetCode.html'>LeetCode</a></span>
+          				   
+                    
+
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15480003648444.html">
+                
+                  <h1>39. 组合总和</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<p><a href="https://leetcode-cn.com/problems/combination-sum/description/">https://leetcode-cn.com/problems/combination-sum/description/</a></p>
+
+<p>给定一个无重复元素的数组  candidates 和一个目标数  target ，找出  candidates 中所有可以使数字和为  target 的组合。</p>
+
+<p>candidates 中的数字可以无限制重复被选取。</p>
+
+<p>说明：</p>
+
+<p>所有数字（包括  target）都是正整数。<br/>
+解集不能包含重复的组合。 </p>
+
+<pre><code class="language-text">示例 1:
+
+输入: candidates = [2,3,6,7], target = 7,
+所求解集为:
+[
+  [7],
+  [2,2,3]
+]
+示例 2:
+
+输入: candidates = [2,3,5], target = 8,
+所求解集为:
+[
+  [2,2,2,2],
+  [2,3,3],
+  [3,5]
+]
+</code></pre>
+
+<p>题目分析：</p>
+
+<ol>
+<li>一看到这道题，就感觉要用递归来做，应该是回溯算法。百度证实无误。</li>
+<li>然后自己还没有生写过回溯。想了一会儿，结果不对，和正确解法做了一下比较，修改了一下自己的算法。标答是C++的，在java上需要修改一下，一些特别的地方要处理一下。</li>
+</ol>
+
+<p>直接上代码：</p>
+
+<pre><code class="language-text">/**
+ * 核心算法
+ * @param candidates 数组
+ * @param target 当前递归子问题需要计算的target
+ * @param start 开始查找的index
+ * @param result 当前递归的result数组
+ * @param ans 最后的答案
+ */
+private void findOne(int[] candidates, int target, int start, List&lt;Integer&gt; result, List&lt;List&lt;Integer&gt;&gt; ans){
+    if (target == 0){
+        List&lt;Integer&gt; list = new ArrayList&lt;&gt;(result); //这里需要新开一个数组，否则会一直复用这个对象，导致结果不对
+        ans.add(list);
+        return;
+    }else if(target &lt; candidates[start]){
+        return; //不符合的结果，不处理。
+    }else{
+        for (int i = start; i &lt; candidates.length; i++){
+            result.add(candidates[i]);
+            findOne(candidates, target - candidates[i], i, result, ans);
+            result.remove(result.size() - 1);
+            //这里有点像树的遍历，这里就是要一个节点和不要一个节点的分支。然后可以重复使用元素，所以递归子问题，仍然从i开始。
+        }
+    }
+}
+
+public List&lt;List&lt;Integer&gt;&gt; combinationSum(int[] candidates, int target) {
+    List&lt;List&lt;Integer&gt;&gt; ans = new ArrayList&lt;&gt;();
+    Arrays.sort(candidates); //题目没有说排好序的数组，所以这里要先拍个序
+    findOne(candidates, target, 0, new ArrayList&lt;&gt;(), ans);
+    return ans;
+}
+</code></pre>
+
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                  
+                    <span class="date">2019/01/21 00:06 上午</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='LeetCode.html'>LeetCode</a></span>
+          				   
+                    
+
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15523931184037.html">
+                
+                  <h1>448. 找到所有数组中消失的数字</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<h2 id="toc_0">题目描述</h2>
+
+<p>给定一个范围在  1 ≤ a[i] ≤ n ( n = 数组大小 ) 的 整型数组，数组中的元素一些出现了两次，另一些只出现一次。</p>
+
+<p>找到所有在 [1, n] 范围之间没有出现在数组中的数字。</p>
+
+<p>您能在不使用额外空间且时间复杂度为O(n)的情况下完成这个任务吗? 你可以假定返回的数组不算在额外空间内。</p>
+
+<p>示例:</p>
+
+<p>输入:<br/>
+[4,3,2,7,8,2,3,1]</p>
+
+<p>输出:<br/>
+[5,6]</p>
+
+<h2 id="toc_1">思路分析</h2>
+
+<p>关键点在于不用额外空间，时间复杂度为O（n）。这两点限制了使用排序算法，或者用额外空间来记录。</p>
+
+<p>那么，不能用额外空间，就只能用原有的数组空间了。这里有一个技巧就是用数组的下标也可以存储信息。因为数据的范围是在n之内，因此数组内出现的数字都是合法的下标。基于这个前提，本题有一个很巧妙的做法。详见代码。</p>
+
+<h2 id="toc_2">代码</h2>
+
+<pre><code class="language-text">public List&lt;Integer&gt; findDisappearedNumbers(int[] nums) {
+        List&lt;Integer&gt; result = new ArrayList&lt;&gt;();
+        for (int i = 0; i &lt; nums.length; i++){
+            //将数组中存放的值作为坐标，进行二次访问。目标是将值设置为相反数（保证是负数）。那么没有变化的位置就是缺失的值
+            nums[Math.abs(nums[i])-1] = - Math.abs(nums[Math.abs(nums[i])-1]);
+        }
+        for (int i = 0; i &lt; nums.length; i++){
+            if (nums[i] &gt; 0){
+                result.add(i);
+            }
+        }
+        return result;
+    }
+</code></pre>
+
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                  
+                    <span class="date">2019/03/12 20:18 下午</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='LeetCode.html'>LeetCode</a></span>
+          				   
+                    
+
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15486626415496.html">
+                
+                  <h1>55. 跳跃游戏</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<p>给定一个非负整数数组，你最初位于数组的第一个位置。</p>
+
+<p>数组中的每个元素代表你在该位置可以跳跃的最大长度。</p>
+
+<p>判断你是否能够到达最后一个位置。</p>
+
+<pre><code class="language-text">示例 1:
+
+输入: [2,3,1,1,4]
+输出: true
+解释: 从位置 0 到 1 跳 1 步, 然后跳 3 步到达最后一个位置。
+示例 2:
+
+输入: [3,2,1,0,4]
+输出: false
+解释: 无论怎样，你总会到达索引为 3 的位置。但该位置的最大跳跃长度是 0 ， 所以你永远不可能到达最后一个位置。
+</code></pre>
+
+<p>解题思路：</p>
+
+<p>本道题用贪心。贪心的策略很巧妙。第一次独立没有想出来。<br/>
+贪心的策略：</p>
+
+<ol>
+<li>每一步都选择最大的可能去接近结果。</li>
+<li>那么遍历一遍，如果最大的结果超过了最后一个位置。则说明最后一个位置是可达的，也就是返回true。</li>
+</ol>
+
+<p>贪心的巧妙在于，我们不在意到底是如何选择的，只在乎是否可达。</p>
+
+<p>代码：</p>
+
+<pre><code class="language-text"> public boolean canJump(int[] nums) {
+    int result = 0;
+    if (nums.length == 1){ //注意边界，最后一个台阶的值是没有意义的。因此只有一个台阶的时候，永远是true
+        return true;
+    }
+    for (int i = 0; i &lt; nums.length; i++){
+        if (i &gt; result || (nums[i] == 0 &amp;&amp; i == result)){
+            break;
+        }
+        result = Math.max(result, nums[i] + i);
+    }
+    return result &gt;= nums.length - 1;
+}
+</code></pre>
+
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                  
+                    <span class="date">2019/01/28 16:04 下午</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='LeetCode.html'>LeetCode</a></span>
+          				   
+                    
+
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15489927924408.html">
+                
+                  <h1>72. 编辑距离</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<h2 id="toc_0">题目</h2>
+
+<p>给定两个单词 word1 和 word2，计算出将 word1 转换成 word2 所使用的最少操作数 。</p>
+
+<p>你可以对一个单词进行如下三种操作：</p>
+
+<p>插入一个字符<br/>
+删除一个字符<br/>
+替换一个字符<br/>
+示例 1:</p>
+
+<p>输入: word1 = &quot;horse&quot;, word2 = &quot;ros&quot;<br/>
+输出: 3<br/>
+解释: <br/>
+horse -&gt; rorse (将 &#39;h&#39; 替换为 &#39;r&#39;)<br/>
+rorse -&gt; rose (删除 &#39;r&#39;)<br/>
+rose -&gt; ros (删除 &#39;e&#39;)<br/>
+示例 2:</p>
+
+<p>输入: word1 = &quot;intention&quot;, word2 = &quot;execution&quot;<br/>
+输出: 5<br/>
+解释: <br/>
+intention -&gt; inention (删除 &#39;t&#39;)<br/>
+inention -&gt; enention (将 &#39;i&#39; 替换为 &#39;e&#39;)<br/>
+enention -&gt; exention (将 &#39;n&#39; 替换为 &#39;x&#39;)<br/>
+exention -&gt; exection (将 &#39;n&#39; 替换为 &#39;c&#39;)<br/>
+exection -&gt; execution (插入 &#39;u&#39;)</p>
+
+<h2 id="toc_1">解题思路</h2>
+
+<ol>
+<li><p>先作弊了，看到要用dp。思考许久还是没有想法。<br/>
+解析一下自己的错误思路。<br/>
+看到有三种变换方式，有一点不知道该怎么处理。</p></li>
+<li><p>看了网上的解题报告，写下自己理解后的东西。</p>
+<p>首先，确认dp的含义<br/>
+word1记为s1， word2记为s2<br/>
+dp[i][j] = s1 从0...i， s2从0...j 两个字符串的编辑距离。所以dp的大小应该是dp[s1.length + 1][s2.length + 1].</p></li>
+</ol>
+
+<ul>
+<li><p>转换公式<br/>
+计算dp[i][j]有三种变化方式</p>
+<ol>
+<li>dp[i - 1][j], 由于对比dp[i][j]，s1少了一个，所以要insert一个，编辑距离 + 1</li>
+<li>dp[i][j - 1] 由于对比dp[i][j]，s1少了一个，所以要delete一个，编辑距离 + 1</li>
+<li>dp[i - 1][j - 1]，对比s1[i - 1] 和 s2[j - 1]的情况，如果相等，编辑距离不变，否则需要+1（替换）</li>
+</ol>
+<p>从上文可以看出，三种变换方式都有了。</p>
+<p>接下来处理边界条件</p>
+<p>dp[0][i] = i和dp[i][0] = i，分别代表增加i个，和删除i个。</p></li>
+</ul>
+
+<h2 id="toc_2">代码</h2>
+
+<pre><code class="language-text"> public int minDistance(String word1, String word2) {
+    int[][] dp = new int[word1.length() + 1][word2.length() + 1];
+    for (int i = 0; i &lt;= word1.length(); i++) {
+        dp[i][0] = i;
+    }
+    for (int j = 0; j &lt;= word2.length(); j++) {
+        dp[0][j] = j;
+    }
+    for (int i = 1; i &lt;= word1.length(); i++) {
+        for (int j = 1; j &lt;= word2.length(); j++) {
+            int a = Math.min(dp[i - 1][j] + 1, dp[i][j - 1] + 1);
+            int cost = word1.charAt(i - 1) == word2.charAt(j - 1) ? 0 : 1;
+            dp[i][j] = Math.min(a, dp[i - 1][j - 1] + cost);
+        }
+    }
+    return dp[word1.length()][word2.length()];
+}
+</code></pre>
+
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                  
+                    <span class="date">2019/02/01 11:46 上午</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='LeetCode.html'>LeetCode</a></span>
+          				   
+                    
+
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15686164898705.html">
+                
+                  <h1>JSON反序列化乱序的问题</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<h2 id="toc_0">What</h2>
+
+<p>将Object 转成JSON时，会出现key值的顺序与原顺序不一致的情况（新的顺序按照字母序重新排序）</p>
+
+<h2 id="toc_1">Why</h2>
+
+<p>原因在于HashMap，当用fastjson反序列化时，会使用HashMap。而HashMap底层会根据map中key的hashcode和equals重新排序。</p>
+
+<h2 id="toc_2">How</h2>
+
+<p>使用LinkedHashMap替换HashMap。</p>
+
+<pre><code class="language-text">JSONObject jsonObj = new JSONObject(true);  
+Map m= jsonObj.parseObject(json, LinkedHashMap.class);  
+</code></pre>
+
+<p>这个方法可以保证第一层的map按照原顺序呗反序列化。想要递归所有层都按照原顺序需要使用</p>
+
+<pre><code class="language-text">HashMap m=JSON.parseObject(json,LinkedHashMap.class,Feature.OrderedField)；
+</code></pre>
+
+<h2 id="toc_3">PS</h2>
+
+<p>Q: jackson 会乱序吗？<br/>
+A: 不会</p>
+
+<h2 id="toc_4">参考资料</h2>
+
+<p><a href="https://github.com/alibaba/fastjson/issues/954">https://github.com/alibaba/fastjson/issues/954</a><br/>
+<a href="https://blog.csdn.net/yj1499945/article/details/78260650">https://blog.csdn.net/yj1499945/article/details/78260650</a></p>
+
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                  
+                    <span class="date">2019/09/16 14:48 下午</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='JSON.html'>JSON</a></span>
+          				   
+                    
+
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15693104259267.html">
+                
+                  <h1>Jackson fasterxml和codehaus的区别</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<p>作为最出名的Json解析库之一，jackson有着两个完全不一样的包名版本。<code>com.fasterxml.jackson</code>&amp;&amp;<code>org.codehaus.jackson</code>。</p>
+
+<p>这两个版本有什么区别呢？</p>
+
+<p>他们是Jackson的两大分支、也是两个版本的不同包名。Jackson从2.0开始改用新的包名fasterxml；1.x版本的包名是codehaus。除了包名不同，他们的Maven artifact id也不同。1.x版本现在只提供bug-fix，而2.x版本还在不断开发和发布中。如果是新项目，建议直接用2x，即fasterxml jackson。</p>
+
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                  
+                    <span class="date">2019/09/24 15:33 下午</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='JSON.html'>JSON</a></span>
+          				   
+                    
+
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15588755745673.html">
+                
+                  <h1>Java中的代理模式</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<h2 id="toc_0">1. 静态代理和动态代理</h2>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;本章节参考了<a href="https://www.ibm.com/developerworks/cn/java/j-lo-proxy-pattern/">https://www.ibm.com/developerworks/cn/java/j-lo-proxy-pattern/</a></p>
+
+<h3 id="toc_1">1.1. 定义</h3>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;静态代理和动态代理指的是实现代理模式的方式。静态模式意思是所有的代码是静态写好的。而动态代理则相对，部分代码是动态生成的。在动态代理中还分为JDK动态代理和CGLib动态代理。</p>
+
+<h3 id="toc_2">1.2. 关键实现</h3>
+
+<h4 id="toc_3">1.2.1. 静态代理</h4>
+
+<p>静态代理是基于接口实现的，他要求真实类和代理类实现同样的接口。</p>
+
+<pre><code class="language-text">public interface IDBQuery {
+    String request();
+}
+public class DBQuery implements IDBQuery{
+    public DBQuery(){
+        try{
+            Thread.sleep(1000);//假设数据库连接等耗时操作
+        }catch(InterruptedException ex){
+            ex.printStackTrace();
+        }
+    }
+
+    @Override
+    public String request() {
+// TODO Auto-generated method stub
+        return &quot;request string&quot;;
+    }
+
+
+}
+public class DBQueryProxy implements IDBQuery{
+    private DBQuery real = null;
+
+    @Override
+    public String request() {
+// TODO Auto-generated method stub
+//在真正需要的时候才能创建真实对象，创建过程可能很慢
+        if(real==null){
+            real = new DBQuery();
+        }//在多线程环境下，这里返回一个虚假类，类似于 Future 模式
+        return real.request();
+    }
+
+}
+public class Main {
+    public static void main(String[] args){
+        IDBQuery q = new DBQueryProxy(); //使用代里
+        q.request(); //在真正使用时才创建真实对象
+    }
+}
+</code></pre>
+
+<h4 id="toc_4">1.2.2. JDK代理</h4>
+
+<p>当使用JDK代理时，一个最直观的变化就是代理类不需要和真实类实现同一个接口了。取而代之的是代理类实现了InvocationHandler，并Override了invoke方法。在方法里可以统一对实现方法做处理（方法调用前，方法调用后）。</p>
+
+<pre><code class="language-text">import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+
+
+public class DBQueryHandler implements InvocationHandler{
+    IDBQuery realQuery = null;//定义主题接口
+
+    @Override
+    public Object invoke(Object proxy, Method method, Object[] args)
+            throws Throwable {
+// TODO Auto-generated method stub
+        //如果第一次调用，生成真实主题
+        if(realQuery == null){
+            realQuery = new DBQuery();
+        }
+        //method.invoke(target, args); 执行调用的方法。
+        //返回真实主题完成实际的操作
+        return realQuery.request();
+    }
+    public static IDBQuery createProxy(){
+        IDBQuery proxy = (IDBQuery)Proxy.newProxyInstance(ClassLoader.getSystemClassLoader(), new Class[]{IDBQuery.class}, new DBQueryHandler()); // 注意，生成的代理类实例被强转为IDBQuery
+        return proxy;
+    }
+}
+</code></pre>
+
+<h4 id="toc_5">1.2.3. CGLib代理</h4>
+
+<p>CGLib一个直观的最大的特点就是真实类无需实现接口（当然实现了也没关系）。</p>
+
+<p>接口类</p>
+
+<pre><code class="language-text">public interface BookProxy {
+    public void addBook();
+}
+</code></pre>
+
+<p>实现类</p>
+
+<pre><code class="language-text">//该类并没有申明 BookProxy 接口
+public class BookProxyImpl {
+    public void addBook() { 
+        System.out.println(&quot;增加图书的普通方法...&quot;); 
+    } 
+}
+</code></pre>
+
+<p>代理类</p>
+
+<pre><code class="language-text">import java.lang.reflect.Method; 
+import net.sf.cglib.proxy.Enhancer; 
+import net.sf.cglib.proxy.MethodInterceptor; 
+import net.sf.cglib.proxy.MethodProxy;
+
+public class BookProxyLib implements MethodInterceptor {
+    private Object target;
+    /**
+     * 创建代理对象 
+     *
+     * @param target
+     * @return
+     */
+    public Object getInstance(Object target) {
+        this.target = target;
+        Enhancer enhancer = new Enhancer();
+        enhancer.setSuperclass(this.target.getClass());
+        // 回调方法 
+        enhancer.setCallback(this);
+        // 创建代理对象 
+        return enhancer.create();
+    }
+
+    @Override
+// 回调方法 
+    public Object intercept(Object obj, Method method, Object[] args,
+                            MethodProxy proxy) throws Throwable {
+        System.out.println(&quot;事物开始&quot;);
+        proxy.invokeSuper(obj, args);
+        System.out.println(&quot;事物结束&quot;);
+        return null;
+    }
+}
+</code></pre>
+
+<p>调用方法</p>
+
+<pre><code class="language-text">public class TestCglib { 
+    public static void main(String[] args) { 
+        BookProxyLib cglib=new BookProxyLib(); 
+        BookProxyImpl bookCglib=(BookProxyImpl)cglib.getInstance(new BookProxyImpl()); 
+        bookCglib.addBook();  //可以看到BookProxyLib并没有声明BookProxy接口，但是仍然可以调用addBook方法
+    } 
+}
+</code></pre>
+
+<h3 id="toc_6">1.3. 区别和共同点</h3>
+
+<p>静态代理是通过在代码中显式定义一个业务实现类一个代理，在代理类中对同名的业务方法进行包装，用户通过代理类调用被包装过的业务方法；</p>
+
+<p>JDK动态代理是通过接口中的方法名，在动态生成的代理类中调用业务实现类的同名方法；</p>
+
+<p>CGlib动态代理是通过继承业务类，生成的动态代理类是业务类的子类，通过重写业务方法进行代理；</p>
+
+<p><a href="https://blog.csdn.net/neosmith/article/details/51072840">https://blog.csdn.net/neosmith/article/details/51072840</a></p>
+
+<h2 id="toc_7">2. 实际应用场景举例</h2>
+
+<p>todo:没有理解cglib不用真实类实现接口的意义。因为真实类没有实现接口，但是暴露了public的方法。这和直接调用有啥区别？</p>
+
+<p>另外cglib的试用场景，真实类没有实现的接口意义何在？如果没有接口来规范统一的调用逻辑，例如一堆的实现类实现了A接口，因此必须实现A接口中定义的B方法。这样才有意义吧？</p>
+
+<p>查看spring源码，了解spring中，cglib的使用方法，来解答上述疑问。</p>
+
+<p>代理模式的意义</p>
+
+<ol>
+<li>有代理，便于解耦</li>
+<li>静态代理太麻烦，每个都要</li>
+<li>JDK代理受限于要实现接口</li>
+<li>CGLib不需要实现接口，看上去无法统一接口的方法，但是可能是用在一些common的方法，例如Object的方法。用在类创建时刻。</li>
+<li>另外让方法运行只是最基本的，代理模式的最大用途是管理原方法的运行前，后，时（切面，AOP）。</li>
+</ol>
+
+<h2 id="toc_8">3. Spring AOP和动态代理</h2>
+
+<h2 id="toc_9">4. OC中的动态代理模式浅谈</h2>
+
+<h2 id="toc_10">5. CGLib和JDK代理的性能对比</h2>
+
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                  
+                    <span class="date">2019/05/26 20:59 下午</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='Java.html'>Java</a></span>
+          				   
+                    
+
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15479962056718.html">
+                
+                  <h1>Java并发编程</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<p>&emsp;&emsp;本文对Java中的并发变成进行了简单的描述。是本人阅读《Java并发编程的艺术》一书的读书笔记。本文对重要的概念进行了记录。</p>
+
+<p>&emsp;&emsp;本文首先介绍了各种各样的和锁相关的概念。然后介绍了Java多线程的技术要点，最后介绍了一些经典使用案例。</p>
+
+
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                   <a href="15479962056718.html">Read more</a>&nbsp;&nbsp; 
+                    <span class="date">2019/01/20 22:56 下午</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='Java.html'>Java</a></span>
+          				   
+                    
+
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15842883217984.html">
+                
+                  <h1>Java序列化的那些事</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<h2 id="toc_0">1. 什么是序列化和反序列化</h2>
+
+<p>（1）Java序列化是指把Java对象转换为字节序列的过程，而Java反序列化是指把字节序列恢复为Java对象的过程；</p>
+
+<p>（2）<strong>序列化：</strong>对象序列化的最主要的用处就是在传递和保存对象的时候，保证对象的完整性和可传递性。序列化是把对象转换成有序字节流，以便在网络上传输或者保存在本地文件中。序列化后的字节流保存了Java对象的状态以及相关的描述信息。序列化机制的核心作用就是对象状态的保存与重建。</p>
+
+<p>（3）<strong>反序列化：</strong>客户端从文件中或网络上获得序列化后的对象字节流后，根据字节流中所保存的对象状态及描述信息，通过反序列化重建对象。</p>
+
+<p>（4）本质上讲，序列化就是把实体对象状态按照一定的格式写入到有序字节流，反序列化就是从有序字节流重建对象，恢复对象状态。</p>
+
+<h2 id="toc_1">2、为什么需要序列化与反序列化</h2>
+
+<p>我们知道，当两个进程进行远程通信时，可以相互发送各种类型的数据，包括文本、图片、音频、视频等， 而这些数据都会以二进制序列的形式在网络上传送。</p>
+
+<p>那么当两个Java进程进行通信时，能否实现进程间的对象传送呢？答案是可以的！如何做到呢？这就需要Java序列化与反序列化了！</p>
+
+<p>换句话说，一方面，发送方需要把这个Java对象转换为字节序列，然后在网络上传送；另一方面，接收方需要从字节序列中恢复出Java对象。</p>
+
+<p>当我们明晰了为什么需要Java序列化和反序列化后，我们很自然地会想Java序列化的好处。其好处一是实现了数据的持久化，通过序列化可以把数据永久地保存到硬盘上（通常存放在文件里），二是，利用序列化实现远程通信，即在网络上传送对象的字节序列。</p>
+
+<p>总的来说可以归结为以下几点：</p>
+
+<p>（1）永久性保存对象，保存对象的字节序列到本地文件或者数据库中；<br/>
+（2）通过序列化以字节流的形式使对象在网络中进行传递和接收；<br/>
+（3）通过序列化在进程间传递对象；</p>
+
+<h2 id="toc_2">3、实现Java对象序列化与反序列化的方法</h2>
+
+<p>假定一个User类，它的对象需要序列化，可以有如下三种方法：</p>
+
+<p>（1）若User类仅仅实现了Serializable接口，则可以按照以下方式进行序列化和反序列化</p>
+
+<p>ObjectOutputStream采用默认的序列化方式，对User对象的非transient的实例变量进行序列化。<br/>
+ObjcetInputStream采用默认的反序列化方式，对对User对象的非transient的实例变量进行反序列化。</p>
+
+<p>（2）若User类仅仅实现了Serializable接口，并且还定义了readObject(ObjectInputStream in)和writeObject(ObjectOutputSteam out)，则采用以下方式进行序列化与反序列化。</p>
+
+<p>ObjectOutputStream调用User对象的writeObject(ObjectOutputStream out)的方法进行序列化。<br/>
+ObjectInputStream会调用User对象的readObject(ObjectInputStream in)的方法进行反序列化。</p>
+
+<p>（3）若User类实现了Externalnalizable接口，且User类必须实现readExternal(ObjectInput in)和writeExternal(ObjectOutput out)方法，则按照以下方式进行序列化与反序列化。</p>
+
+<p>ObjectOutputStream调用User对象的writeExternal(ObjectOutput out))的方法进行序列化。<br/>
+ObjectInputStream会调用User对象的readExternal(ObjectInput in)的方法进行反序列化。</p>
+
+<h2 id="toc_3">4. serialVersionUID</h2>
+
+<p>序列化运行时使用一个称为 serialVersionUID 的版本号与每个可序列化类相关联，该序列号在反序列化过程中用于验证序列化对象的发送者和接收者是否为该对象加载了与序列化兼容的类。为它赋予明确的值。显式地定义serialVersionUID有两种用途：</p>
+
+<p>在某些场合，希望类的不同版本对序列化兼容，因此需要确保类的不同版本具有相同的serialVersionUID；</p>
+
+<p>在某些场合，不希望类的不同版本对序列化兼容，因此需要确保类的不同版本具有不同的serialVersionUID。</p>
+
+<h2 id="toc_4">参考资料</h2>
+
+<p>原文链接：<a href="https://blog.csdn.net/xlgen157387/article/details/79840134">https://blog.csdn.net/xlgen157387/article/details/79840134</a><br/>
+<a href="https://blog.csdn.net/u014750606/article/details/80040130">https://blog.csdn.net/u014750606/article/details/80040130</a></p>
+
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                  
+                    <span class="date">2020/03/16 00:05 上午</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='%E6%95%B0%E6%8D%AE%E5%BA%93.html'>数据库</a></span>
+          				   
+                    
+
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15479997745467.html">
+                
+                  <h1>MongoDB的启动和停止</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<h2 id="toc_0">1. 启动</h2>
+
+<ol>
+<li>用命令行，加各种的特殊参数</li>
+<li><p>用命令行，但是所有的参数都放在一个配置文件中。如</p>
+<pre><code class="language-text">mongod -f /etc/mongod.conf
+</code></pre></li>
+<li><p>用传统的service mongod start</p></li>
+</ol>
+
+<h3 id="toc_1">1.1. service mongod start</h3>
+
+<ul>
+<li>该命令本身没有任何问题。只需要注意配置启动的时候执行的语句就可以达到同样的效果。在实际使用的过程中，并不会频繁的变更需求和配置，因此用service来启动足以。</li>
+<li><p>另外如果用命令行启动，还存在权限问题。<br/>
+用mongod启动了以后，权限全部变为root。这时候再用service mongod start来启动就会有各种各样的权限问题。</p></li>
+<li><p>service start启动的脚本</p>
+<pre><code class="language-text">/usr/lib/systemd/system/mongod.service
+</code></pre></li>
+</ul>
+
+<pre><code class="language-text">[Unit]
+Description=MongoDB Database Server
+After=network.target
+Documentation=https://docs.mongodb.org/manual
+
+[Service]
+User=mongod
+Group=mongod
+Environment=&quot;OPTIONS=-f /etc/mongod.conf&quot;
+EnvironmentFile=-/etc/sysconfig/mongod
+ExecStart=/usr/bin/mongod $OPTIONS
+ExecStartPre=/usr/bin/mkdir -p /var/run/mongodb
+ExecStartPre=/usr/bin/chown mongod:mongod /var/run/mongodb
+ExecStartPre=/usr/bin/chmod 0755 /var/run/mongodb
+PermissionsStartOnly=true
+PIDFile=/var/run/mongodb/mongod.pid
+Type=forking
+# file size
+LimitFSIZE=infinity
+# cpu time
+LimitCPU=infinity
+# virtual memory size
+LimitAS=infinity
+# open files
+LimitNOFILE=64000
+# processes/threads
+LimitNPROC=64000
+# locked memory
+LimitMEMLOCK=infinity
+# total threads (user+kernel)
+TasksMax=infinity
+TasksAccounting=false
+# Recommended limits for for mongod as specified in
+# http://docs.mongodb.org/manual/reference/ulimit/#recommended-settings
+
+[Install]
+WantedBy=multi-user.target
+</code></pre>
+
+<h2 id="toc_2">2. 停止</h2>
+
+<p>强制关闭MongoDB（不建议使用）；<br/>
+service mongod stop<br/>
+或者，从MongoDB的admin中关闭（推荐用这种方法）：</p>
+
+<pre><code class="language-text">&gt;use admin
+switched to db admin
+&gt;db.shutdownServer()
+server should be down...
+</code></pre>
+
+<p>或者</p>
+
+<pre><code class="language-text">mongod --shutdown
+</code></pre>
+
+<p>使用shutdownServer关闭MongoDB，如有MongoDB主从服务器，则在服务关闭前同步主从服务器；强制关闭则不会；</p>
+
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                  
+                    <span class="date">2019/01/20 23:56 下午</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='MongoDB.html'>MongoDB</a></span>
+          				   
+                    
+
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15480007861723.html">
+                
+                  <h1>RAC中的宏定义魔法</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<p><a href="https://onevcat.com/2014/01/black-magic-in-macro/">https://onevcat.com/2014/01/black-magic-in-macro/</a></p>
+
+<h2 id="toc_0">1. #的作用</h2>
+
+<h2 id="toc_1">2. ##的作用</h2>
+
+<h2 id="toc_2">3. <strong>VA_ARGS</strong>的作用</h2>
+
+<h2 id="toc_3">4. RAC()</h2>
+
+<h3 id="toc_4">4.1 函数功能</h3>
+
+<p>RAC(),有两种调用方式，一个是两个参数，一个是三个参数的。函数的第一个参数代表着要绑定的对象，第二个参数要绑定的对象的属性，第三个参数代表当追踪的结果为nil时，应该赋予的值。</p>
+
+<p>这里就有一个很有趣的问题，ReactiveCocoa是如何做到用一个函数宏，自动识别参数个数，并调用正确的函数的呢？</p>
+
+
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                   <a href="15480007861723.html">Read more</a>&nbsp;&nbsp; 
+                    <span class="date">2019/01/21 00:13 上午</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='iOS.html'>iOS</a></span>
+          				   
+                    
+
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15216334372729.html">
+                
+                  <h1>Realm学习笔记</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<ul>
+<li>Useful文章</li>
+</ul>
+
+<p><a href="https://www.jianshu.com/p/6704afc62d6c">https://www.jianshu.com/p/6704afc62d6c</a></p>
+
+<p><a href="https://academy.realm.io/cn/posts/jp-simard-realm-core-database-engine/">Realm 核心数据库引擎探秘</a></p>
+
+<h2 id="toc_0">1. 模型定义</h2>
+
+<p>参照官网的demo，建立如下两个类：</p>
+
+<pre><code class="language-text">@interface Dog : RLMObject
+@property NSString *name;
+@property NSData   *picture;
+@property NSInteger age;
+@end
+@implementation Dog
+@end
+RLM_ARRAY_TYPE(Dog)
+@interface Person : RLMObject
+@property NSString             *name;
+@property RLMArray&lt;Dog *&gt;&lt;Dog&gt; *dogs;
+@end
+@implementation Person
+@end
+</code></pre>
+
+<pre><code class="language-text">tips
+
+1. 需要继承RLMObject
+2. 所有的属性都不需要写任何的描述符，原子性，strong, assign等
+3. Array类型需要用RLMArray
+4. 使用Array 需要定义 RLM_ARRAY_TYPE , 这个定义放在类前类后都可以。
+</code></pre>
+
+<h2 id="toc_1">2.CRUD</h2>
+
+<p>Realm采用了MVCC设计架构，因此读写操作是不互斥的。但是写操作最好在一个Seperate thread中执行，否则会降低效率。</p>
+
+<h2 id="toc_2">2.1 创建（Create）</h2>
+
+<pre><code class="language-text">// (1) Create a Dog object and then set its properties
+    Dog *myDog = [[Dog alloc] init];myDog.name = @&quot;Rex&quot;;myDog.age = 10;
+// (2) Create a Dog object from a dictionary
+    Dog *myOtherDog = [[Dog alloc] initWithValue:@{@&quot;name&quot; : @&quot;Pluto&quot;, @&quot;age&quot; : @3}];
+// (3) Create a Dog object from an array
+    Dog *myThirdDog = [[Dog alloc] initWithValue:@[@&quot;Pluto&quot;, @3]];
+</code></pre>
+
+<p>写入数据库</p>
+
+<pre><code class="language-text">    // Get the default Realm
+    RLMRealm *realm = [RLMRealm defaultRealm];
+    // You only need to do this once (per thread)
+    
+    // Add to Realm with transaction
+    [realm beginWriteTransaction];
+    [realm addObject:province];
+    [realm commitWriteTransaction];
+
+</code></pre>
+
+<h2 id="toc_3">2.2 查询（Retrieve）</h2>
+
+<pre><code class="language-text">// 使用断言字符串查询
+    RLMResults&lt;ProvinceEntity *&gt; *provinceArray = [ProvinceEntity objectsWhere:@&quot;shortName = &#39;江苏&#39;&quot;];
+    // 使用 NSPredicate 查询
+    NSPredicate *pred = [NSPredicate predicateWithFormat:@&quot;shortName = &#39;江苏&#39;&quot;];
+    provinceArray = [ProvinceEntity objectsWithPredicate:pred];
+
+</code></pre>
+
+<p>如果有多条件的话，可以用and，也可以分布查询，从查询结果中再做查询，支持链式查询：</p>
+
+<pre><code class="language-text">RLMResults&lt;Dog *&gt; *tanDogs = [Dog objectsWhere:@&quot;color = &#39;棕黄色&#39;&quot;];
+RLMResults&lt;Dog *&gt; *tanDogsWithBNames = [tanDogs objectsWhere:@&quot;name BEGINSWITH &#39;大&#39;&quot;];
+</code></pre>
+
+<p>RLMResults允许您指定一个排序标准，从而可以根据一个或多个属性进行排序。比如说，下列代码将上面例子中返回的狗狗根据名字升序进行排序：</p>
+
+<pre><code class="language-text">// 排序名字以“大”开头的棕黄色狗狗
+RLMResults&lt;Dog *&gt; *sortedDogs = [[Dog objectsWhere:@&quot;color = &#39;棕黄色&#39; AND name BEGINSWITH &#39;大&#39;&quot;] sortedResultsUsingProperty:@&quot;name&quot; ascending:YES];
+</code></pre>
+
+<h2 id="toc_4">2.3 更新（Update）</h2>
+
+<ul>
+<li>你可以找到具体的一条数据然后去更新：</li>
+</ul>
+
+<pre><code class="language-text">    RLMResults&lt;ProvinceEntity *&gt;* provinceArray=[ProvinceEntity allObjects];
+    [[RLMRealm defaultRealm] transactionWithBlock:^{
+        ProvinceEntity *province=[provinceArray firstObject];
+        province.shortName=@&quot;浙江&quot;;
+    }];
+</code></pre>
+
+<ul>
+<li>你也可以设置一个主键，根据主键去更新，更新需要拥有一个主键---Primary Keys：</li>
+</ul>
+
+<pre><code class="language-text">// Creating a book with the same primary key as a previously saved 
+bookBook *cheeseBook = [[Book alloc] init];
+cheeseBook.title = @&quot;Cheese recipes&quot;;
+cheeseBook.price = @9000;
+cheeseBook.id = @1;
+// Updating book with id = 1
+[realm beginWriteTransaction];
+[realm addOrUpdateObject:cheeseBook];
+[realm commitWriteTransaction];
+</code></pre>
+
+<h2 id="toc_5">2.4 删除(Delete)</h2>
+
+<ul>
+<li>单条记录删除</li>
+</ul>
+
+<pre><code class="language-text">// Delete an object with a transaction
+[realm beginWriteTransaction];
+[realm deleteObject:cheeseBook];
+[realm commitWriteTransaction];
+</code></pre>
+
+<ul>
+<li>多条记录删除</li>
+</ul>
+
+<pre><code class="language-text">    [[RLMRealm defaultRealm] transactionWithBlock:^{
+        [[RLMRealm defaultRealm] deleteObjects:result];
+    }];
+</code></pre>
+
+<ul>
+<li>全部删除：</li>
+</ul>
+
+<pre><code class="language-text">// Delete an object with a transaction
+    [[RLMRealm defaultRealm] transactionWithBlock:^{
+        [[RLMRealm defaultRealm] deleteAllObjects];
+    }];
+</code></pre>
+
+<h2 id="toc_6">3.进阶使用</h2>
+
+<ul>
+<li>非空字段(Required properties)</li>
+</ul>
+
+<p>By default, NSString *, NSData *, and NSDate * properties allow you to set them to nil. If you want to require that a value be present, override the +requiredProperties method on your RLMObject subclass.</p>
+
+<p>For example, with the following model definition, trying to set the person’s name to nil will throw an exception, but setting their birthday to nil is allowed:</p>
+
+<pre><code class="language-text">@interface Person : RLMObject
+@property NSString *name;
+@property NSDate *birthday;
+@end
+
+@implementation Person
++ (NSArray *)requiredProperties {
+    return @[@&quot;name&quot;];
+}
+@end
+</code></pre>
+
+<p>例外：RLMObject subclass properties always can be nil, and thus cannot be included in requiredProperties. and RLMArray does not support storing nil.</p>
+
+<ul>
+<li>主键</li>
+</ul>
+
+<p>Override +primaryKey to set the model’s primary key. Declaring a primary key allows objects to be looked up and updated efficiently and enforces uniqueness for each value. Once an object with a primary key is added to a Realm, the primary key cannot be changed.</p>
+
+<pre><code class="language-text">@interface Person : RLMObject
+@property NSInteger id;
+@property NSString *name;
+@end
+
+@implementation Person
++ (NSString *)primaryKey {
+    return @&quot;id&quot;;
+}
+@end
+</code></pre>
+
+<ul>
+<li>索引字段</li>
+</ul>
+
+<p>To index a property, override +indexedProperties. Like primary keys, indexes make writes slightly slower, but makes queries using comparison operators faster. (It also makes your Realm file slightly larger, to store the index.) It’s best to only add indexes when you’re optimizing the read performance for specific situations.</p>
+
+<pre><code class="language-text">@interface Book : RLMObject
+@property float price;
+@property NSString *title;
+@end
+
+@implementation Book
++ (NSArray *)indexedProperties {
+    return @[@&quot;title&quot;];
+}
+@end
+</code></pre>
+
+<ul>
+<li>忽略字段</li>
+</ul>
+
+<p>If you don’t want to save a field in your model to its Realm, override +ignoredProperties. Realm won’t interfere with the regular operation of these properties; they’ll be backed by ivars, and you can freely override their setters and getters.</p>
+
+<pre><code class="language-text">@interface Person : RLMObject
+@property NSInteger tmpID;
+@property (readonly) NSString *name; // read-only properties are automatically ignored
+@property NSString *firstName;
+@property NSString *lastName;
+@end
+
+@implementation Person
++ (NSArray *)ignoredProperties {
+    return @[@&quot;tmpID&quot;];
+}
+- (NSString *)name {
+    return [NSString stringWithFormat:@&quot;%@ %@&quot;, self.firstName, self.lastName];
+}
+@end
+</code></pre>
+
+<ul>
+<li>默认值</li>
+</ul>
+
+<p>Override +defaultPropertyValues to provide default values every time an object is created.</p>
+
+<pre><code class="language-text">@interface Book : RLMObject
+@property float price;
+@property NSString *title;
+@end
+
+@implementation Book
++ (NSDictionary *)defaultPropertyValues {
+    return @{@&quot;price&quot; : @0, @&quot;title&quot;: @&quot;&quot;};
+}
+@end
+</code></pre>
+
+<h2 id="toc_7">4. 特性</h2>
+
+<h2 id="toc_8">5. 疑问</h2>
+
+<p>为什么要这样直接继承不可以吗？是不支持吗？</p>
+
+<pre><code class="language-text">// Base Model
+@interface Animal : RLMObject
+@property NSInteger age;
+@end
+@implementation Animal
+@end
+
+// Models composed with Animal
+@interface Duck : RLMObject
+@property Animal *animal;
+@property NSString *name;
+@end
+@implementation Duck
+@end
+
+@interface Frog : RLMObject
+@property Animal *animal;
+@property NSDate *dateProp;
+@end
+@implementation Frog
+@end
+
+// Usage
+Duck *duck =  [[Duck alloc] initWithValue:@{@&quot;animal&quot; : @{@&quot;age&quot; : @(3)}, @&quot;name&quot; : @&quot;Gustav&quot; }];
+</code></pre>
+
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                  
+                    <span class="date">2018/03/21 19:57 下午</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='iOS.html'>iOS</a></span>
+          				   
+                    
+
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
 			<div class="article">
                 <a class="clearlink" href="15819118469978.html">
                 
@@ -555,121 +2464,50 @@ class FooBar {
               </div><!-- article -->
         
 			<div class="article">
-                <a class="clearlink" href="15814116703606.html">
+                <a class="clearlink" href="15840062967421.html">
                 
-                  <h1>1349. 参加考试的最大学生数</h1>
+                  <h1>从@Transactional，@Async 失效说起</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
-                        	<p>给你一个 <code>m * n</code> 的矩阵 seats 表示教室中的座位分布。如果座位是坏的（不可用），就用 &#39;#&#39; 表示；否则，用 &#39;.&#39; 表示。</p>
+                        	<h2 id="toc_0">1、问题描述</h2>
 
-<p>学生可以看到左侧、右侧、左上、右上这四个方向上紧邻他的学生的答卷，但是看不到直接坐在他前面或者后面的学生的答卷。请你计算并返回该考场可以容纳的一起参加考试且无法作弊的最大学生人数。</p>
+<p>当我们在同一个类中，调用一个被@Transactional,或@Async标注的方法时，这些注解是否会生效?</p>
 
-<p>学生必须坐在状况良好的座位上。<br/>
- </p>
+<p>结论是不会。</p>
 
-<p>示例 1：</p>
+<h2 id="toc_1">2、原因</h2>
 
-<p><img src="media/15814116703606/15814117367670.jpg" alt="" style="width:361px;"/></p>
+<p>Spring采用动态代理(AOP)实现对bean的管理和切片，它为我们的每个class生成一个代理对象。只有在代理对象之间进行调用时，可以触发切面逻辑。</p>
 
-<pre><code class="language-text">输入：seats = [[&quot;#&quot;,&quot;.&quot;,&quot;#&quot;,&quot;#&quot;,&quot;.&quot;,&quot;#&quot;],
-              [&quot;.&quot;,&quot;#&quot;,&quot;#&quot;,&quot;#&quot;,&quot;#&quot;,&quot;.&quot;],
-              [&quot;#&quot;,&quot;.&quot;,&quot;#&quot;,&quot;#&quot;,&quot;.&quot;,&quot;#&quot;]]
-输出：4
-解释：教师可以让 4 个学生坐在可用的座位上，这样他们就无法在考试中作弊。 
-</code></pre>
+<p>spring 在扫描bean的时候会扫描方法上是否包含@Async注解，如果包含，spring会为这个bean动态地生成一个子类（即代理类，proxy），代理类是继承原来那个bean的。此时，当这个有注解的方法被调用的时候，实际上是由代理类来调用的，代理类在调用时增加异步作用。然而，如果这个有注解的方法是被同一个类中的其他方法调用的，那么该方法的调用并没有通过代理类，而是直接通过原来的那个bean，所以就没有增加异步作用，我们看到的现象就是@Async注解无效。</p>
 
-<p>示例 2：</p>
+<p>当我们调用A的bean的a()方法的时候，也是被proxyA拦截，执行proxyA拦截，执行proxyA.a()（标记3），然而，由以上代码可知，这时候它调用的是objectA.a()，也就是由原来的bean来调用a()方法了，所以代码跑到了“标记1”。由此可见，“标记2”并没有被执行到，所以异步执行的效果也没有运行。</p>
 
-<pre><code class="language-text">输入：seats = [[&quot;.&quot;,&quot;#&quot;],
-              [&quot;#&quot;,&quot;#&quot;],
-              [&quot;#&quot;,&quot;.&quot;],
-              [&quot;#&quot;,&quot;#&quot;],
-              [&quot;.&quot;,&quot;#&quot;]]
-输出：3
-解释：让所有学生坐在可用的座位上。
-</code></pre>
+<p><strong>特别注意: 当Spring的事务在同一个类时，它的自我调用时事务将失效.</strong><br/>
+ <strong>@Async</strong></p>
 
-<p>示例 3：</p>
+<h2 id="toc_2">解决方案</h2>
 
-<pre><code class="language-text">输入：seats = [[&quot;#&quot;,&quot;.&quot;,&quot;.&quot;,&quot;.&quot;,&quot;#&quot;],
-              [&quot;.&quot;,&quot;#&quot;,&quot;.&quot;,&quot;#&quot;,&quot;.&quot;],
-              [&quot;.&quot;,&quot;.&quot;,&quot;#&quot;,&quot;.&quot;,&quot;.&quot;],
-              [&quot;.&quot;,&quot;#&quot;,&quot;.&quot;,&quot;#&quot;,&quot;.&quot;],
-              [&quot;#&quot;,&quot;.&quot;,&quot;.&quot;,&quot;.&quot;,&quot;#&quot;]]
-输出：10
-解释：让学生坐在第 1、3 和 5 列的可用座位上。
-</code></pre>
+<h3 id="toc_3">方案一</h3>
 
-<p>提示：</p>
+<p>在当前类中通过上下文获取自己的代理对象调用异步方法</p>
 
-<ul>
-<li>seats 只包含字符 &#39;.&#39; 和&#39;#&#39;</li>
-<li>m == seats.length</li>
-<li>n == seats[i].length</li>
-<li>1 &lt;= m &lt;= 8</li>
-<li>1 &lt;= n &lt;= 8</li>
-</ul>
+<p>直接@Autowired</p>
 
-<h2 id="toc_0">2. 结题思路</h2>
+<h3 id="toc_4">方案二</h3>
 
-<h3 id="toc_1">2.1. 思路过程</h3>
+<p>基于 AopContext 暴露代理对象</p>
 
-<ol>
-<li>当前行的状态只和前一行的状态有关。</li>
-<li>为了表示前一行的状态，加上题目矩阵规模小于8，可以使用状态压缩。</li>
-<li>一个简便方法，采用位运算快速进行移位，以及有效状态的判断。</li>
-</ol>
+<p>EnableAspectJAutoProxy（exposeProxy=true）<br/>
+AopContext.currentProxy()</p>
 
-<h3 id="toc_2">2.2. 细节考虑</h3>
+<p><a href="https://mp.weixin.qq.com/s/m7p7AP_zT1JEZrxwmVISVQ">https://mp.weixin.qq.com/s/m7p7AP_zT1JEZrxwmVISVQ</a></p>
 
-<ol>
-<li>位运算，通过左移，右移一位，可以快速判断，当前的状态是否合法。</li>
-<li>将合法的座位，映射为0。坏掉的座位，映射为1，与当前状态与（&amp;），可以快速判断当前状态是否合法</li>
-</ol>
+<h3 id="toc_5">方案三</h3>
 
-<h2 id="toc_3">3. 代码</h2>
-
-<pre><code class="language-text">public int maxStudents(char[][] seats) {
-    int m = seats.length;
-    int n = seats[0].length;
-    int[][] dp = new int[m + 1][1 &lt;&lt; n];
-    int[] tmp = new int[m];
-    int sum;
-    for (int i = 0; i &lt; m; i++) {
-        sum = 0;
-        for (char c : seats[i]) {
-            sum = sum &lt;&lt; 1;
-            if (c == &#39;#&#39;) {
-                sum += 1;
-            }
-        }
-        tmp[i] = sum;
-    }
-    for (int i = m - 1; i &gt;= 0; i--) {
-        for (int j = 0; j &lt; 1 &lt;&lt; n; j++) {
-            if ((j &amp; (j &lt;&lt; 1)) == 0 &amp;&amp; (j &amp; (j &gt;&gt; 1)) == 0 &amp;&amp; (j &amp; tmp[i]) == 0) {
-                for (int k = 0; k &lt; 1 &lt;&lt; n; k++) {
-                    if ((k &amp; (j &lt;&lt; 1)) == 0 &amp;&amp; (k &amp; (j &gt;&gt; 1)) == 0) {
-                        dp[i][j] = Math.max(dp[i][j], Integer.bitCount(j) + dp[i + 1][k]);
-                    }
-                }
-            }
-        }
-    }
-    int result = 0;
-    for (int i = 0; i &lt; 1 &lt;&lt; n; i++) {
-        result = Math.max(0, dp[0][i]);
-    }
-    return result;
-}
-</code></pre>
-
-<h2 id="toc_4">其他解法</h2>
-
-<p>mark一下，学习:<br/>
-<a href="https://leetcode-cn.com/problems/maximum-students-taking-exam/solution/er-fen-tu-zui-da-du-li-ji-by-lightcml/">https://leetcode-cn.com/problems/maximum-students-taking-exam/solution/er-fen-tu-zui-da-du-li-ji-by-lightcml/</a></p>
+<p>从外部类调用</p>
 
                         
                       </div>
@@ -678,10 +2516,339 @@ class FooBar {
                 <div class="read-more clearfix">
                   <div class="more-left left">
                   
-                    <span class="date">2020/02/11 17:01 下午</span>
+                    <span class="date">2020/03/12 17:44 下午</span>
                     <span>posted in&nbsp;</span> 
           				  
-          					    <span class="posted-in"><a href='LeetCode.html'>LeetCode</a></span>
+          					    <span class="posted-in"><a href='%E6%95%B0%E6%8D%AE%E5%BA%93.html'>数据库</a></span>
+          				   
+                    
+
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15542090064870.html">
+                
+                  <h1>从logger.isDebugEnabled()谈起</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<h2 id="toc_0">0. 问题</h2>
+
+<p>在很多框架中，我们看到在<code>logger.debug</code>处经常会这样写</p>
+
+<pre><code class="language-text">if (logger.isDebugEnabled()) {
+    logger.debug(message);
+}
+</code></pre>
+
+<p>我们知道<code>logger.debug()</code>,在日志级别不够的时候是不会输出日志的。那么这么写的目的何在？</p>
+
+<h2 id="toc_1">1. 分析</h2>
+
+<p>我们来看一个例子</p>
+
+<pre><code class="language-text">String error = &quot;debug日志&quot;;
+logger.debug(&quot;这是一个&quot; + error);
+</code></pre>
+
+<p>按照正常的逻辑，在执行logger.debug()之前需要先行计算括号里的内容。然后才会判断当前日志级别不符合不输出。这里就存在一个无用计算的过程。相比对直接执行语句对logger.isDebugEnabled()进行先判断，显然是一个更优的方案，避免了无用的计算过程。</p>
+
+<p>然而这个结论在占位符的使用下，有了一点不同。</p>
+
+<p>再来看一个例子</p>
+
+<h3 id="toc_2">1.1. logger.debug(&quot;这是一个{}&quot;, model);</h3>
+
+<pre><code class="language-text">public static class Model{
+    int age;
+
+    @Override
+    public String toString() {
+        System.out.println(&quot;toString called&quot;);
+        return &quot;model{&quot; +
+                &quot;age=&quot; + age +
+                &#39;}&#39;;
+    }
+}
+public static void main(String[] args) {
+    Model model = new Model();
+    model.age = 3;
+    
+    logger.debug(&quot;这是一个{}&quot;, model);
+}
+</code></pre>
+
+<p>同样的作用，但是当日志级别高于debug时，不会执行括号内部的字符串拼接。也就是如果使用占位符{}来组合输出日志，可以不用判断<code>logger.isDebugEnabled()</code></p>
+
+<h3 id="toc_3">1.2. logger.debug(&quot;test:{}&quot;, test());</h3>
+
+<p>Model的toString方法在用占位符{}的方式时，没有执行，那么如果是一个普通的方法呢？</p>
+
+<pre><code class="language-text">public static String test(){
+    System.out.println(&quot;test&quot;);
+    return &quot;test&quot;;
+}
+public static void main(String[] args) {
+    logger.debug(&quot;test:{}&quot;, test()); //日志级别info
+}
+</code></pre>
+
+<p>结果，logger.debug(&quot;test:{}&quot;, test());无输出，但是test()方法在控制台打印出了test。</p>
+
+<p>结论：有占位符的存在，但是如果字符串拼接调用了函数，仍然会先执行函数，这和日志级别无关。</p>
+
+<h3 id="toc_4">1.3. logger.debug(&quot;test2:{}, {}&quot;, model, test());</h3>
+
+<pre><code class="language-text">public static String test(){
+    System.out.println(&quot;print test&quot;);
+    return &quot;fdsf&quot;;
+}
+public static void main(String[] args) {
+    Model model = new Model();
+    model.age = 3;
+    logger.debug(&quot;test1:&quot; + model);
+    model.age = 5;
+    logger.debug(&quot;test2:{}, {}&quot;, model, test());
+}
+</code></pre>
+
+<p>结果，最后一句debug，model的toString方法没有执行，而test()方法打印出了&quot;print test&quot;。也就是在占位符的作用下，对象的toString()方法不会执行，而不同方法仍然会执行。</p>
+
+<h2 id="toc_5">2. 结论</h2>
+
+<p>通过<code>logger.isDebugEnabled()</code>进行先行判断，肯定是没有错的。虽然在占位符的帮助下，当日志级别高于debug时，对象的toString()方法不会执行，但是普通的方法仍然会执行。如果能够保证logger.debug()中的内容只涉及最简单的字符串拼接和toString()，那么可以简略<code>logger.isDebugEnabled()</code>，否则还是加上避免无用计算。</p>
+
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                  
+                    <span class="date">2019/04/02 20:43 下午</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='Java.html'>Java</a></span>
+          				   
+                    
+
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15867683690240.html">
+                
+                  <h1>从优化数据库查询速度谈起---MySQL优化相关知识梳理</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<h2 id="toc_0">0. 如何优化数据库查询速度？</h2>
+
+<p>优化数据库查询是一个老生常谈的问题。为了回答好这个问题，我们需要从以下几个方面来分析系统中的数据库查询问题。</p>
+
+<ol>
+<li>数据库的设计是否合理。基于系统读大于写的场景，可以使用反范式化设计，减少join表操作。</li>
+<li>数据库语句优化。使用的数据库语句是否合理。</li>
+<li>索引优化。</li>
+</ol>
+
+<h2 id="toc_1">1. 数据库的设计是否合理？</h2>
+
+<p>例如我们有一个设备信息表（t_device）：<br/>
+<img src="media/15865980824677/15866667079535.jpg" alt="" style="width:782px;"/><br/>
+一个设备区域信息表（t_zone）：</p>
+
+<p><img src="media/15865980824677/15866667281363.jpg" alt="" style="width:773px;"/></p>
+
+<p>一个使用场景是，系统需要频繁的查询设备的基础信息，并且希望同时查出设备所属区域的名字。<br/>
+为此，我们需要使用一个join操作来获得设备的区域名。</p>
+
+<p>普遍的情况下，数据库设计应遵循三范式（3NF）设计。但是我们的系统如果存在查询请求多于插入和更新请求的情况。则可以考虑采用反范式化设计。</p>
+
+<p>反范式化设计指的是违背第三范式设计。以上的设计符合第三范式设计的要求，即在device表中仅保存了zone_id，没有保存区域的名字，这使得我们需要通过join操作来获得区域信息。如果我们在t_device表中增加一个区域字段。</p>
+
+<p><img src="media/15865980824677/15866668977088.jpg" alt="" style="width:840px;"/></p>
+
+<p>显然，我们不需要额外join，仅需要查询设备的基本信息表（t_device）就可以获取到设备的区域名。</p>
+
+<h3 id="toc_2">1.1. 额外的问题</h3>
+
+<p>反范式化设计让我们减少了数据库的查询次数。达到提升的查询速度的目的。但是需要注意的是，经过改造后，设备的区域信息存放在了t_device, t_zone 两张表中。也就是如果需要更新设备的区域信息，我们需要同时修改这两张表中的数据。这也是反范式化设计核心理念，以空间换时间的体现。</p>
+
+<h2 id="toc_3">2. SQL语句优化</h2>
+
+<p>网上可以搜到很多SQL语句的实战文章，其中大部分和索引有关系。一个高频的关键字就是避免全表扫描。本章主要介绍和索引无关（即不管是否建立索引都会有问题）的避免全表扫描的常见Tip。</p>
+
+<p><strong>1. 字段值中包含null</strong></p>
+
+<p>避免字段值中有null，可以使用一个默认值来代替null的含义。</p>
+
+<p><strong>2. 避免使用函数</strong></p>
+
+<p>如果需要使用函数应该在代码中提前计算好，避免使用SQL的函数。特别是在where中使用。</p>
+
+<p><strong>3. 避免隐式转义</strong></p>
+
+<p>例如查询一个varchar的字段，查询子句写成了 where id=1。</p>
+
+<p><strong>4. in 和 not in 也要慎用</strong></p>
+
+<p>会导致全表扫描。</p>
+
+<h2 id="toc_4">3. 索引优化</h2>
+
+<p>索引是加速SQL查询的最主要手段。索引的相关概念有：</p>
+
+<ol>
+<li>主键索引</li>
+<li>唯一索引</li>
+<li>普通索引</li>
+<li>联合索引</li>
+<li>聚簇索引</li>
+</ol>
+
+<p>接下来让我们一个一个了解。</p>
+
+<h3 id="toc_5">3.1. 主键索引</h3>
+
+<p>主键顾名思义是主键所在的索引。在MySQL中，如果采用InnoDB引擎，则必须有一个主键索引。如果用户没有定义系统会自动选择第一个不包含NULL的唯一索引作为主键索引，如果还是没有，系统会帮忙生成一个。InnoDB会选择内置6字节长的ROWID作为隐含的聚集索引(ROWID随着行记录的写入而主键递增)。</p>
+
+<h4 id="toc_6">3.2.为什么InnoDB一定要有主键索引？</h4>
+
+<p>这是由InnoDB的底层数据结构B+树决定的。具体的资料网上有很多，这里就不复制黏贴了。</p>
+
+<p>传送门：</p>
+
+<p><a href="https://blog.csdn.net/wukong_666/article/details/54982712">MySQL中InnoDB表为什么要建议用自增列做主键</a></p>
+
+<p><a href="https://blog.csdn.net/weixin_41699562/article/details/104139458">为什么InnoDB表必须有主键，并且推荐使用整型的自增主键？</a></p>
+
+<p>引申知识点（MySQL中的B+树）</p>
+
+<h3 id="toc_7">3.2. 唯一索引&amp;普通索引</h3>
+
+<p>唯一索引指的是建立索引的字段是唯一的。普通索引则没有这个限制。</p>
+
+<h3 id="toc_8">3.3. 联合索引</h3>
+
+<p>联合索引指的是由多个字段建立的索引。例如<br/>
+<img src="media/15865980824677/15866784612894.jpg" alt="" style="width:782px;"/></p>
+
+<p>我们可以同时对device_ip, device_type 建立索引。建立联合索引后的效果等同于建立了两条索引，一条是device_ip索引，一条是device_ip, device_type索引。</p>
+
+<h3 id="toc_9">3.4. 聚簇索引（聚集索引）</h3>
+
+<p>聚簇索引并不是一种单独的索引类型，而是一种数据存储方式。具体的细节依赖于其实现方式，但InnoDB的聚簇索引实际上在同一个结构中保存了B-Tree索引和数据行。当表有聚簇索引时，他的数据行实际上存放在索引的叶子页（leaf page）中。术语 “聚簇”表示数据行和相邻的键值紧凑地存储在一起（这并非总成立）。</p>
+
+<h3 id="toc_10">3.6. 索引优化</h3>
+
+<p><strong>1. 开启慢查询记录</strong></p>
+
+<p>了解了索引的相关知识，接下来就该开始定位系统中有问题的查询了。通过开启慢查询记录，我们可以获取到一段时间内的慢查询的执行记录。 </p>
+
+<p><a href="https://blog.csdn.net/sunyuhua_keyboard/article/details/81204020">mysql 开启慢查询及其用mysqldumpslow做日志分析</a></p>
+
+<p><strong>2. explain执行计划</strong></p>
+
+<p>索引失效的几种情况</p>
+
+<ol>
+<li>like 以%开头，索引无效；当like前缀没有%，后缀有%时，索引有效。
+<img src="media/15854015547488/15854906222541.jpg" alt="" style="width:856px;"/>
+PS:<br/>
+当真的需要两边都使用%来模糊查询时，只有当这个作为模糊查询的条件字段（例子中的name）以及所想要查询出来的数据字段（例子中的 id &amp; name &amp; age）都在索引列上时，才能真正使用索引，否则，索引失效全表扫描（比如多了一个 salary 字段）。我想，这应该就是 ‘覆盖索引（索引覆盖）’ 的本质吧。同时，这也能很好的证实 “尽量避免SELECT * 而是一一罗列出所需要查询的字段” 的道理吧，因为，搞不好 SELECT * 就多了一个字段，就导致了全表扫描。
+<img src="media/15854015547488/15854927788037.jpg" alt="" style="width:916px;"/>
+参考资料：<a href="https://www.bbsmax.com/A/mo5kk1rK5w/">https://www.bbsmax.com/A/mo5kk1rK5w/</a></li>
+<li><p>or语句前后没有同时使用索引。当or左右查询字段只有一个是索引，该索引失效，只有当or左右查询字段均为索引时，才会生效<br/>
+<img src="media/15854015547488/15854906401887.jpg" alt="" style="width:853px;"/></p></li>
+<li><p>组合索引，不是使用第一列索引，索引失效，即不满足最左匹配原则。<br/>
+<img src="media/15854015547488/15854906703863.jpg" alt="" style="width:844px;"/></p></li>
+<li><p>数据类型出现隐式转化。如varchar不加单引号的话可能会自动转换为int型，使索引无效，产生全表扫描。<br/>
+<img src="media/15854015547488/15854906865513.jpg" alt="" style="width:855px;"/></p></li>
+<li><p>在索引列上使用 IS NULL 或 IS NOT NULL操作。索引是不索引空值的，所以这样的操作不能使用索引，可以用其他的办法处理，例如：数字类型，判断大于0，字符串类型设置一个默认值，判断是否等于默认值即可。<br/>
+<img src="media/15854015547488/15854907015080.jpg" alt="" style="width:847px;"/></p></li>
+<li><p>在索引字段上使用not，&lt;&gt;，!=。不等于操作符是永远不会用到索引的，因此对它的处理只会产生全表扫描。 优化方法： key&lt;&gt;0 改为 key&gt;0 or key&lt;0。<br/>
+<img src="media/15854015547488/15854907155047.jpg" alt="" style="width:851px;"/></p></li>
+<li><p>对索引字段进行计算操作、字段上使用函数。（索引为 emp(ename,empno,sal)）<br/>
+<img src="media/15854015547488/15854907331002.jpg" alt="" style="width:845px;"/></p></li>
+<li><p>当全表扫描速度比索引速度快时，mysql会使用全表扫描，此时索引失效。</p></li>
+</ol>
+
+<p><strong>3. 优化目标</strong></p>
+
+<p>根据explian中ref的字段，情况从好到坏顺序是<br/>
+system &gt; const &gt; eq_ref &gt; ref &gt; fulltext &gt; ref_or_null &gt; index_merge &gt; unique_subquery &gt; index_subquery &gt; range &gt; index &gt; ALL</p>
+
+<p>比较常见的是const eq_ref ref range index all<br/>
+通常需要将语句优化到index以上。</p>
+
+<h2 id="toc_11">4. 引申知识</h2>
+
+<h3 id="toc_12">4.1. 回表查询</h3>
+
+<p>通常发生在select * 的查询下。在这种情况下，即使我们定义了很好的索引，where子句已经找到了他需要的数据。由于我们要查询*，也就是所有的数据。而这些数据没有存在索引表中，所以我们需要返回到聚集索引根据主键在查找一次才可以获取所需的信息。</p>
+
+<p>应该要注意到，不只是select * 会触发回表操作，只要select的字段没有建立索引就会触发回表操作。<br/>
+与回表查询相对应的是覆盖索引。</p>
+
+<h3 id="toc_13">4.2. 覆盖索引</h3>
+
+<p>索引覆盖是一种避免回表查询的优化策略。具体的做法就是将要查询的数据作为索引列建立普通索引（可以是单列索引，也可以一个索引语句定义所有要查询的列，即联合索引），这样的话就可以直接返回索引中的的数据，不需要再通过聚集索引去定位行记录，避免了回表的情况发生。</p>
+
+<p>如果一个索引覆盖（包含）了所有需要查询的字段的值，这个索引就是覆盖索引。因为索引中已经包含了要查询的字段的值，因此查询的时候直接返回索引中的字段值就可以了，不需要再到表中查询，避免了对主键索引的二次查询，也就提高了查询的效率。</p>
+
+<p>要注意的是，不是所有类型的索引都可以成为覆盖索引的。因为覆盖索引必须要存储索引的列值，而哈希索引、空间索引和全文索引等都不存储索引列值，索引MySQL只能使用B-Tree索引做覆盖索引。</p>
+
+<h3 id="toc_14">4.3. 索引下推</h3>
+
+<p>索引下推是一种数据库内的自我优化手段。有了索引下推优化，可以在有like条件查询的情况下，减少回表次数。</p>
+
+<p>例如有这样一个语句:</p>
+
+<pre><code class="language-text">select * from user_table where username like &#39;张%&#39; and age &gt; 10
+</code></pre>
+
+<p>语句有两种执行可能：</p>
+
+<p>根据（username,age）联合索引查询所有满足名称以“张”开头的索引，然后回表查询出相应的全行数据，然后再筛选出满足年龄小于等于10的用户数据<br/>
+根据（username,age）联合索引查询所有满足名称以“张”开头的索引，然后直接再筛选出年龄小于等于10的索引，之后再回表查询全行数据。</p>
+
+<p>明显的，第二种方式需要回表查询的全行数据比较少，这就是mysql的索引下推。</p>
+
+<h3 id="toc_15">4.4. B+ Tree的优势</h3>
+
+<p>//TODO:</p>
+
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                  
+                    <span class="date">2020/04/13 16:59 下午</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='%E6%95%B0%E6%8D%AE%E5%BA%93.html'>数据库</a></span>
           				   
                     
 
@@ -829,18 +2996,110 @@ CarInfo info = objectMapper.readValue(data, CarInfo.class);
               </div><!-- article -->
         
 			<div class="article">
-                <a class="clearlink" href="15693104259267.html">
+                <a class="clearlink" href="15839813234420.html">
                 
-                  <h1>Jackson fasterxml和codehaus的区别</h1>
+                  <h1>作者：大神架构师</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
-                        	<p>作为最出名的Json解析库之一，jackson有着两个完全不一样的包名版本。<code>com.fasterxml.jackson</code>&amp;&amp;<code>org.codehaus.jackson</code>。</p>
+                        	<p>链接：<a href="https://zhuanlan.zhihu.com/p/112481040">https://zhuanlan.zhihu.com/p/112481040</a><br/>
+来源：知乎<br/>
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。</p>
 
-<p>这两个版本有什么区别呢？</p>
+<p>JAVA基础<br/><br/>
+1.JAVA中的几种基本数据类型是什么，各自占用多少字节。<br/><br/>
+int 4,char 1,float 4,double 8,boolean 1,byte 1，short 2, long 8<br/>
+2.String类能被继承吗，为什么。 <br/>
+不能, 因为有final修饰符<br/>
+3.String，Stringbuffer，StringBuilder的区别。<br/>
+StringBuffer是线程安全的，StringBuilder是不安全的。StringBuilder可使用append函数，来组装string，不会额外创建控件，string每次赋值都是重新new一个。<br/>
+4.ArrayList和LinkedList有什么区别。<br/><br/>
+ArrayList是数组，LinkedList是链表<br/>
+5.讲讲类的实例化顺序，比如父类静态数据，构造函数，字段，子类静态数据，构造函数，字段，当new的时候，他们的执行顺序。</p>
 
-<p>他们是Jackson的两大分支、也是两个版本的不同包名。Jackson从2.0开始改用新的包名fasterxml；1.x版本的包名是codehaus。除了包名不同，他们的Maven artifact id也不同。1.x版本现在只提供bug-fix，而2.x版本还在不断开发和发布中。如果是新项目，建议直接用2x，即fasterxml jackson。</p>
+<pre><code class="language-text">**父类静态变量、 
+父类静态代码块、 
+子类静态变量、 
+子类静态代码块、 
+父类非静态变量（父类实例成员变量）、 
+父类构造函数、 
+子类非静态变量（子类实例成员变量）、 
+子类构造函数。 
+**
+</code></pre>
+
+<p>6.用过哪些Map类，都有什么区别，HashMap是线程安全的吗,并发下使用的Map是什么，他们内部原理分别是什么，比如存储方式，hashcode，扩容，默认容量等。<br/><br/>
+HashMap。<br/>
+不安全<br/>
+并发使用ConncurentHashMap<br/>
+扩容，每次扩容一杯，默认因子0.75<br/>
+小于8的时候采用的是链表，大于8改为红黑树。小于6会退化。</p>
+
+<p>7.JAVA8的ConcurrentHashMap为什么放弃了分段锁，有什么问题吗，如果你来设计，你如何设计。<br/><br/>
+改为了synchronized和cas实现，Java认为分段锁的方案，锁太多了，冲突严重，而且put的时候，竞争的情况并不多。</p>
+
+<p>通过  JDK 的源码和官方文档看来， 他们认为的弃用分段锁的原因由以下几点：<br/>
+加入多个分段锁浪费内存空间。<br/>
+生产环境中， map 在放入时竞争同一个锁的概率非常小，分段锁反而会造成更新等操作的长时间等待。<br/>
+为了提高 GC 的效率</p>
+
+<p>8.有没有有顺序的Map实现类，如果有，他们是怎么保证有序的。<br/><br/>
+有，不记得了。<br/>
+9.抽象类和接口的区别，类可以继承多个类么，接口可以继承多个接口么,类可以实现多个接口么。<br/><br/>
+不可以，不可以，可以。<br/>
+10.继承和聚合的区别在哪。   http://<br/>
+11.IO模型有哪些，讲讲你理解的nio ，他和bio，aio的区别是啥，谈谈reactor模型。   12.反射的原理，反射创建类实例的三种方式是什么。<br/><br/>
+13.反射中，Class.forName和ClassLoader区别 。<br/>
+Class.forName 需要字符串，ClassLoader是传入class对象。forName只能匹配一个？如果存在多个重名的？<br/><br/>
+14.描述动态代理的几种实现方式，分别说出相应的优缺点。<br/><br/>
+JDK动态代理，CGLib<br/>
+15.动态代理与cglib实现的区别。<br/><br/>
+16.为什么CGlib方式可以对接口实现代理。<br/><br/>
+17.final的用途。<br/><br/>
+18.写出三种单例模式实现 。<br/><br/>
+19.如何在父类中为子类自动完成所有的hashcode和equals实现？这么做有何优劣。<br/><br/>
+20.请结合OO设计理念，谈谈访问修饰符public、private、protected、default在应用设计中的作用。<br/><br/>
+21.深拷贝和浅拷贝区别。<br/><br/>
+22.数组和链表数据结构描述，各自的时间复杂度。<br/><br/>
+23.error和exception的区别，CheckedException，RuntimeException的区别。   24.请列出5个运行时异常。<br/><br/>
+25.在自己的代码中，如果创建一个java.lang.String类，这个类是否可以被类加载器加载？为什么。<br/><br/>
+26.说一说你对java.lang.Object对象中hashCode和equals方法的理解。在什么场景下需要重新实现这两个方法。<br/><br/>
+27.在jdk1.5中，引入了泛型，泛型的存在是用来解决什么问题。<br/><br/>
+28.这样的a.hashcode() 有什么用，与a.equals(b)有什么关系。<br/><br/>
+29.有没有可能2个不相等的对象有相同的hashcode。<br/><br/>
+30.Java中的HashSet内部是如何工作的。<br/><br/>
+31.什么是序列化，怎么序列化，为什么序列化，反序列化会遇到什么问题，如何解决。   32.java8的新特性。</p>
+
+<p>JVM知识<br/><br/>
+1.什么情况下会发生栈内存溢出。<br/><br/>
+2.JVM的内存结构，Eden和Survivor比例。<br/><br/>
+3.JVM内存为什么要分成新生代，老年代，持久代。新生代中为什么要分为Eden和Survivor。   4.JVM中一次完整的GC流程是怎样的，对象如何晋升到老年代，说说你知道的几种主要的JVM参数。<br/><br/>
+5.你知道哪几种垃圾收集器，各自的优缺点，重点讲下cms和G1，包括原理，流程，优缺点。   6.垃圾回收算法的实现原理。<br/><br/>
+7.当出现了内存溢出，你怎么排错。<br/><br/>
+8.JVM内存模型的相关知识了解多少，比如重排序，内存屏障，happen-before，主内存，工作内存等。<br/><br/>
+9.简单说说你了解的类加载器，可以打破双亲委派么，怎么打破。<br/><br/>
+10.讲讲JAVA的反射机制。<br/><br/>
+11.你们线上应用的JVM参数有哪些。<br/><br/>
+12.g1和cms区别,吞吐量优先和响应优先的垃圾收集器选择。<br/><br/>
+13.怎么打出线程栈信息。   14请解释如下jvm参数的含义：-server -Xms512m -Xmx512m -Xss1024K-XX:PermSize=256m -XX:MaxPermSize=512m -XX:MaxTenuringThreshold=20XX:CMSInitiatingOccupancyFraction=80 -XX:+UseCMSInitiatingOccupancyOnly。</p>
+
+<p>开源框架知识<br/><br/>
+1.简单讲讲tomcat结构，以及其类加载器流程，线程模型等。<br/><br/>
+2.tomcat如何调优，涉及哪些参数 。<br/><br/>
+3.讲讲Spring加载流程。<br/><br/>
+4.Spring AOP的实现原理。<br/><br/>
+5.讲讲Spring事务的传播属性。<br/><br/>
+6.Spring如何管理事务的。<br/><br/>
+取消自动提交</p>
+
+<p>7.Spring怎么配置事务（具体说出一些关键的xml 元素）。<br/><br/>
+8.说说你对Spring的理解，非单例注入的原理？它的生命周期？循环注入的原理，aop的实现原理，说说aop中的几个术语，它们是怎么相互工作的。<br/><br/>
+9.Springmvc 中DispatcherServlet初始化过程。<br/><br/>
+10.netty的线程模型，netty如何基于reactor模型上实现的。   11.为什么选择netty。   12.什么是TCP粘包，拆包。解决方式是什么。<br/><br/>
+13.netty的fashwheeltimer的用法，实现原理，是否出现过调用不够准时，怎么解决。   14.netty的心跳处理在弱网下怎么办。<br/><br/>
+15.netty的通讯协议是什么样的。<br/><br/>
+16.springmvc用到的注解，作用是什么，原理。   17.springboot启动机制。 操作系统   1.Linux系统下你关注过哪些内核参数，说说你知道的。   2.Linux下IO模型有几种，各自的含义是什么。   3.epoll和poll有什么区别。   4.平时用到哪些Linux命令。   5.用一行命令查看文件的最后五行。   6.用一行命令输出正在运行的java进程。   7.介绍下你理解的操作系统中线程切换过程。   8.进程和线程的区别。   9.top 命令之后有哪些内容，有什么作用。   10.线上CPU爆高，请问你如何找到问题所在。多线程   1.多线程的几种实现方式，什么是线程安全。   2.volatile的原理，作用，能代替锁么。   3.画一个线程的生命周期状态图。   4.sleep和wait的区别。   5.sleep和sleep(0)的区别。   6.Lock与Synchronized的区别 。   7.synchronized的原理是什么，一般用在什么地方(比如加在静态方法和非静态方法的区别，静态方法和非静态方法同时执行的时候会有影响吗)，解释以下名词：重排序，自旋锁，偏向锁，轻量级锁，可重入锁，公平锁，非公平锁，乐观锁，悲观锁。   8.用过哪些原子类，他们的原理是什么。   9.JUC下研究过哪些并发工具，讲讲原理。   10.用过线程池吗，如果用过，请说明原理，并说说newCache和newFixed有什么区别，构造函数的各个参数的含义是什么，比如coreSize，maxsize等。   11.线程池的关闭方式有几种，各自的区别是什么。   12.假如有一个第三方接口，有很多个线程去调用获取数据，现在规定每秒钟最多有10个线程同时调用它，如何做到。   13.spring的controller是单例还是多例，怎么保证并发的安全。   14.用三个线程按顺序循环打印abc三个字母，比如abcabcabc。   15.ThreadLocal用过么，用途是什么，原理是什么，用的时候要注意什么。   16.如果让你实现一个并发安全的链表，你会怎么做。   17.有哪些无锁数据结构，他们实现的原理是什么。   18.讲讲java同步机制的wait和notify。   19.CAS机制是什么，如何解决ABA问题。   20.多线程如果线程挂住了怎么办。   21.countdowlatch和cyclicbarrier的内部原理和用法，以及相互之间的差别(比如countdownlatch的await方法和是怎么实现的)。   22.对AbstractQueuedSynchronizer了解多少，讲讲加锁和解锁的流程，独占锁和公平所加锁有什么不同。   23.使用synchronized修饰静态方法和非静态方法有什么区别。   24.简述ConcurrentLinkedQueue和LinkedBlockingQueue的用处和不同之处。   25.导致线程死锁的原因？怎么解除线程死锁。   26.非常多个线程（可能是不同机器），相互之间需要等待协调，才能完成某种工作，问怎么设计这种协调方案。   27.用过读写锁吗，原理是什么，一般在什么场景下用。   28.开启多个线程，如果保证顺序执行，有哪几种实现方式，或者如何保证多个线程都执行完再拿到结果。   29.延迟队列的实现方式，delayQueue和时间轮算法的异同。 TCP与HTTP   1.http1.0和http1.1有什么区别。   2.TCP三次握手和四次挥手的流程，为什么断开连接要4次,如果握手只有两次，会出现什么。   3.TIME_WAIT和CLOSE_WAIT的区别。   4.说说你知道的几种HTTP响应码，比如200, 302, 404。   5.当你用浏览器打开一个链接（如：<a href="http://www.javastack.cn%EF%BC%89%E7%9A%84%E6%97%B6%E5%80%99%EF%BC%8C%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%81%9A%E4%BA%86%E5%93%AA%E4%BA%9B%E5%B7%A5%E4%BD%9C%E6%AD%A5%E9%AA%A4%E3%80%82">http://www.javastack.cn）的时候，计算机做了哪些工作步骤。</a>   6.TCP/IP如何保证可靠性，说说TCP头的结构。   7.如何避免浏览器缓存。   8.如何理解HTTP协议的无状态性。   9.简述Http请求get和post的区别以及数据包格式。   10.HTTP有哪些method   11.简述HTTP请求的报文格式。   12.HTTP的长连接是什么意思。   13.HTTPS的加密方式是什么，讲讲整个加密解密流程。   14.Http和https的三次握手有什么区别。   15.什么是分块传送。   16.Session和cookie的区别。 架构设计与分布式   1.用java自己实现一个LRU。   2.分布式集群下如何做到唯一序列号。   3.设计一个秒杀系统，30分钟没付款就自动关闭交易。   4.如何使用redis和zookeeper实现分布式锁？有什么区别优缺点，会有什么问题，分别适用什么场景。（延伸：如果知道redlock，讲讲他的算法实现，争议在哪里）   5.如果有人恶意创建非法连接，怎么解决。   6.分布式事务的原理，优缺点，如何使用分布式事务，2pc 3pc 的区别，解决了哪些问题，还有哪些问题没解决，如何解决，你自己项目里涉及到分布式事务是怎么处理的。   7.什么是一致性hash。   8.什么是restful，讲讲你理解的restful。   9.如何设计一个良好的API。   10.如何设计建立和保持100w的长连接。   11.解释什么是MESI协议(缓存一致性)。   12.说说你知道的几种HASH算法，简单的也可以。   13.什么是paxos算法， 什么是zab协议。   14.一个在线文档系统，文档可以被编辑，如何防止多人同时对同一份文档进行编辑更新。   15.线上系统突然变得异常缓慢，你如何查找问题。   16.说说你平时用到的设计模式。   17.Dubbo的原理，有看过源码么，数据怎么流转的，怎么实现集群，负载均衡，服务注册和发现，重试转发，快速失败的策略是怎样的 。   18.一次RPC请求的流程是什么。   19.自己实现过rpc么，原理可以简单讲讲。Rpc要解决什么问题。   20.异步模式的用途和意义。   21.编程中自己都怎么考虑一些设计原则的，比如开闭原则，以及在工作中的应用。   22.设计一个社交网站中的“私信”功能，要求高并发、可扩展等等。 画一下架构图。   23.MVC模式，即常见的MVC框架。   24.聊下曾经参与设计的服务器架构并画图，谈谈遇到的问题，怎么解决的。   25.应用服务器怎么监控性能，各种方式的区别。   26.如何设计一套高并发支付方案，架构如何设计。   27.如何实现负载均衡，有哪些算法可以实现。   28.Zookeeper的用途，选举的原理是什么。   29.Zookeeper watch机制原理。   30.Mybatis的底层实现原理。   31.请思考一个方案，实现分布式环境下的countDownLatch。   32.后台系统怎么防止请求重复提交。   33.描述一个服务从发布到被消费的详细过程。   34.讲讲你理解的服务治理。   35.如何做到接口的幂等性。   36.如何做限流策略，令牌桶和漏斗算法的使用场景。   37.什么叫数据一致性，你怎么理解数据一致性。   38.分布式服务调用方，不依赖服务提供方的话，怎么处理服务方挂掉后，大量无效资源请求的浪费，如果只是服务提供方吞吐不高的时候该怎么做，如果服务挂了，那么一会重启，该怎么做到最小的资源浪费，流量半开的实现机制是什么。   39.dubbo的泛化调用怎么实现的，如果是你，你会怎么做。   40.远程调用会有超时现象，如果做到优雅的控制，JDK自带的超时机制有哪些，怎么实现的。算法   1.10亿个数字里里面找最小的10个。   2.有1亿个数字，其中有2个是重复的，快速找到它，时间和空间要最优。   3.2亿个随机生成的无序整数,找出中间大小的值。   4.给一个不知道长度的（可能很大）输入字符串，设计一种方案，将重复的字符排重。   5.遍历二叉树。   6.有3n+1个数字，其中3n个中是重复的，只有1个是不重复的，怎么找出来。   7.写一个字符串（如：<a href="http://www.javastack.cn%EF%BC%89%E5%8F%8D%E8%BD%AC%E5%87%BD%E6%95%B0%E3%80%82">http://www.javastack.cn）反转函数。</a>   8.常用的排序算法，快排，归并、冒泡。 快排的最优时间复杂度，最差复杂度。冒泡排序的优化方案。   9.二分查找的时间复杂度，优势。   10.一个已经构建好的TreeSet，怎么完成倒排序。   11.什么是B+树，B-树，列出实际的使用场景。   12.一个单向链表，删除倒数第N个数据。   13.200个有序的数组，每个数组里面100个元素，找出top20的元素。   14.单向链表，查找中间的那个元素。数据库知识   1.数据库隔离级别有哪些，各自的含义是什么，MYSQL默认的隔离级别是是什么。   2.什么是幻读。   3.MYSQL有哪些存储引擎，各自优缺点。   4.高并发下，如何做到安全的修改同一行数据。   5.乐观锁和悲观锁是什么，INNODB的标准行级锁有哪2种，解释其含义。   6.SQL优化的一般步骤是什么，怎么看执行计划，如何理解其中各个字段的含义。   7.数据库会死锁吗，举一个死锁的例子，mysql怎么解决死锁。   8.MYsql的索引原理，索引的类型有哪些，如何创建合理的索引，索引如何优化。   9.聚集索引和非聚集索引的区别。   10.select for update 是什么含义，会锁表还是锁行或是其他。   11.为什么要用Btree实现，它是怎么分裂的，什么时候分裂，为什么是平衡的。   12.数据库的ACID是什么。   13.某个表有近千万数据，CRUD比较慢，如何优化。   14.Mysql怎么优化table scan的。   15.如何写sql能够有效的使用到复合索引。   16.mysql中in 和exists 区别。   17.数据库自增主键可能的问题。   18.MVCC的含义，如何实现的。   19.你做过的项目里遇到分库分表了吗，怎么做的，有用到中间件么，比如sharding jdbc等,他们的原理知道么。   20.MYSQL的主从延迟怎么解决。消息队列   1.消息队列的使用场景。   2.消息的重发，补充策略。   3.如何保证消息的有序性。   4.用过哪些MQ，和其他mq比较有什么优缺点，MQ的连接是线程安全的吗，你们公司的MQ服务架构怎样的。   5.MQ系统的数据如何保证不丢失。   6.rabbitmq如何实现集群高可用。   7.kafka吞吐量高的原因。   8.kafka 和其他消息队列的区别，kafka 主从同步怎么实现。   9.利用mq怎么实现最终一致性。   10.使用kafka有没有遇到什么问题，怎么解决的。   11.MQ有可能发生重复消费，如何避免，如何做到幂等。   12.MQ的消息延迟了怎么处理，消息可以设置过期时间么，过期了你们一般怎么处理。缓存   1.常见的缓存策略有哪些，如何做到缓存(比如redis)与DB里的数据一致性，你们项目中用到了什么缓存系统，如何设计的。   2.如何防止缓存击穿和雪崩。   3.缓存数据过期后的更新如何设计。   4.redis的list结构相关的操作。   5.Redis的数据结构都有哪些。   6.Redis的使用要注意什么，讲讲持久化方式，内存设置，集群的应用和优劣势，淘汰策略等。   7.redis2和redis3的区别，redis3内部通讯机制。   8.当前redis集群有哪些玩法，各自优缺点，场景。   9.Memcache的原理，哪些数据适合放在缓存中。   10.redis和memcached 的内存管理的区别。   11.Redis的并发竞争问题如何解决，了解Redis事务的CAS操作吗。   12.Redis的选举算法和流程是怎样的。   13.redis的持久化的机制，aof和rdb的区别。   14.redis的集群怎么同步的数据的。   15.知道哪些redis的优化操作。   16.Reids的主从复制机制原理。   17.Redis的线程模型是什么。   18.请思考一个方案，设计一个可以控制缓存总体大小的自动适应的本地缓存。   19.如何看待缓存的使用（本地缓存，集中式缓存），简述本地缓存和集中式缓存和优缺点。   20.本地缓存在并发使用时的注意事项。搜索   1.elasticsearch了解多少，说说你们公司es的集群架构，索引数据大小，分片有多少，以及一些调优手段 。elasticsearch的倒排索引是什么。   2.elasticsearch 索引数据多了怎么办，如何调优，部署。   3.elasticsearch是如何实现master选举的。   4.详细描述一下Elasticsearch索引文档的过程。   5.详细描述一下Elasticsearch搜索的过程。   6.Elasticsearch在部署时，对Linux的设置有哪些优化方法？   7.lucence内部结构是什么。</p>
 
                         
                       </div>
@@ -849,521 +3108,10 @@ CarInfo info = objectMapper.readValue(data, CarInfo.class);
                 <div class="read-more clearfix">
                   <div class="more-left left">
                   
-                    <span class="date">2019/09/24 15:33 下午</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='JSON.html'>JSON</a></span>
-          				   
-                    
-
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
-
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-			<div class="article">
-                <a class="clearlink" href="15686164898705.html">
-                
-                  <h1>JSON反序列化乱序的问题</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<h2 id="toc_0">What</h2>
-
-<p>将Object 转成JSON时，会出现key值的顺序与原顺序不一致的情况（新的顺序按照字母序重新排序）</p>
-
-<h2 id="toc_1">Why</h2>
-
-<p>原因在于HashMap，当用fastjson反序列化时，会使用HashMap。而HashMap底层会根据map中key的hashcode和equals重新排序。</p>
-
-<h2 id="toc_2">How</h2>
-
-<p>使用LinkedHashMap替换HashMap。</p>
-
-<pre><code class="language-text">JSONObject jsonObj = new JSONObject(true);  
-Map m= jsonObj.parseObject(json, LinkedHashMap.class);  
-</code></pre>
-
-<p>这个方法可以保证第一层的map按照原顺序呗反序列化。想要递归所有层都按照原顺序需要使用</p>
-
-<pre><code class="language-text">HashMap m=JSON.parseObject(json,LinkedHashMap.class,Feature.OrderedField)；
-</code></pre>
-
-<h2 id="toc_3">PS</h2>
-
-<p>Q: jackson 会乱序吗？<br/>
-A: 不会</p>
-
-<h2 id="toc_4">参考资料</h2>
-
-<p><a href="https://github.com/alibaba/fastjson/issues/954">https://github.com/alibaba/fastjson/issues/954</a><br/>
-<a href="https://blog.csdn.net/yj1499945/article/details/78260650">https://blog.csdn.net/yj1499945/article/details/78260650</a></p>
-
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                  
-                    <span class="date">2019/09/16 14:48 下午</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='JSON.html'>JSON</a></span>
-          				   
-                    
-
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
-
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-			<div class="article">
-                <a class="clearlink" href="15588755745673.html">
-                
-                  <h1>Java中的代理模式</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<h2 id="toc_0">1. 静态代理和动态代理</h2>
-
-<p>&nbsp;&nbsp;&nbsp;&nbsp;本章节参考了<a href="https://www.ibm.com/developerworks/cn/java/j-lo-proxy-pattern/">https://www.ibm.com/developerworks/cn/java/j-lo-proxy-pattern/</a></p>
-
-<h3 id="toc_1">1.1. 定义</h3>
-
-<p>&nbsp;&nbsp;&nbsp;&nbsp;静态代理和动态代理指的是实现代理模式的方式。静态模式意思是所有的代码是静态写好的。而动态代理则相对，部分代码是动态生成的。在动态代理中还分为JDK动态代理和CGLib动态代理。</p>
-
-<h3 id="toc_2">1.2. 关键实现</h3>
-
-<h4 id="toc_3">1.2.1. 静态代理</h4>
-
-<p>静态代理是基于接口实现的，他要求真实类和代理类实现同样的接口。</p>
-
-<pre><code class="language-text">public interface IDBQuery {
-    String request();
-}
-public class DBQuery implements IDBQuery{
-    public DBQuery(){
-        try{
-            Thread.sleep(1000);//假设数据库连接等耗时操作
-        }catch(InterruptedException ex){
-            ex.printStackTrace();
-        }
-    }
-
-    @Override
-    public String request() {
-// TODO Auto-generated method stub
-        return &quot;request string&quot;;
-    }
-
-
-}
-public class DBQueryProxy implements IDBQuery{
-    private DBQuery real = null;
-
-    @Override
-    public String request() {
-// TODO Auto-generated method stub
-//在真正需要的时候才能创建真实对象，创建过程可能很慢
-        if(real==null){
-            real = new DBQuery();
-        }//在多线程环境下，这里返回一个虚假类，类似于 Future 模式
-        return real.request();
-    }
-
-}
-public class Main {
-    public static void main(String[] args){
-        IDBQuery q = new DBQueryProxy(); //使用代里
-        q.request(); //在真正使用时才创建真实对象
-    }
-}
-</code></pre>
-
-<h4 id="toc_4">1.2.2. JDK代理</h4>
-
-<p>当使用JDK代理时，一个最直观的变化就是代理类不需要和真实类实现同一个接口了。取而代之的是代理类实现了InvocationHandler，并Override了invoke方法。在方法里可以统一对实现方法做处理（方法调用前，方法调用后）。</p>
-
-<pre><code class="language-text">import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-
-
-public class DBQueryHandler implements InvocationHandler{
-    IDBQuery realQuery = null;//定义主题接口
-
-    @Override
-    public Object invoke(Object proxy, Method method, Object[] args)
-            throws Throwable {
-// TODO Auto-generated method stub
-        //如果第一次调用，生成真实主题
-        if(realQuery == null){
-            realQuery = new DBQuery();
-        }
-        //method.invoke(target, args); 执行调用的方法。
-        //返回真实主题完成实际的操作
-        return realQuery.request();
-    }
-    public static IDBQuery createProxy(){
-        IDBQuery proxy = (IDBQuery)Proxy.newProxyInstance(ClassLoader.getSystemClassLoader(), new Class[]{IDBQuery.class}, new DBQueryHandler()); // 注意，生成的代理类实例被强转为IDBQuery
-        return proxy;
-    }
-}
-</code></pre>
-
-<h4 id="toc_5">1.2.3. CGLib代理</h4>
-
-<p>CGLib一个直观的最大的特点就是真实类无需实现接口（当然实现了也没关系）。</p>
-
-<p>接口类</p>
-
-<pre><code class="language-text">public interface BookProxy {
-    public void addBook();
-}
-</code></pre>
-
-<p>实现类</p>
-
-<pre><code class="language-text">//该类并没有申明 BookProxy 接口
-public class BookProxyImpl {
-    public void addBook() { 
-        System.out.println(&quot;增加图书的普通方法...&quot;); 
-    } 
-}
-</code></pre>
-
-<p>代理类</p>
-
-<pre><code class="language-text">import java.lang.reflect.Method; 
-import net.sf.cglib.proxy.Enhancer; 
-import net.sf.cglib.proxy.MethodInterceptor; 
-import net.sf.cglib.proxy.MethodProxy;
-
-public class BookProxyLib implements MethodInterceptor {
-    private Object target;
-    /**
-     * 创建代理对象 
-     *
-     * @param target
-     * @return
-     */
-    public Object getInstance(Object target) {
-        this.target = target;
-        Enhancer enhancer = new Enhancer();
-        enhancer.setSuperclass(this.target.getClass());
-        // 回调方法 
-        enhancer.setCallback(this);
-        // 创建代理对象 
-        return enhancer.create();
-    }
-
-    @Override
-// 回调方法 
-    public Object intercept(Object obj, Method method, Object[] args,
-                            MethodProxy proxy) throws Throwable {
-        System.out.println(&quot;事物开始&quot;);
-        proxy.invokeSuper(obj, args);
-        System.out.println(&quot;事物结束&quot;);
-        return null;
-    }
-}
-</code></pre>
-
-<p>调用方法</p>
-
-<pre><code class="language-text">public class TestCglib { 
-    public static void main(String[] args) { 
-        BookProxyLib cglib=new BookProxyLib(); 
-        BookProxyImpl bookCglib=(BookProxyImpl)cglib.getInstance(new BookProxyImpl()); 
-        bookCglib.addBook();  //可以看到BookProxyLib并没有声明BookProxy接口，但是仍然可以调用addBook方法
-    } 
-}
-</code></pre>
-
-<h3 id="toc_6">1.3. 区别和共同点</h3>
-
-<p>静态代理是通过在代码中显式定义一个业务实现类一个代理，在代理类中对同名的业务方法进行包装，用户通过代理类调用被包装过的业务方法；</p>
-
-<p>JDK动态代理是通过接口中的方法名，在动态生成的代理类中调用业务实现类的同名方法；</p>
-
-<p>CGlib动态代理是通过继承业务类，生成的动态代理类是业务类的子类，通过重写业务方法进行代理；</p>
-
-<p><a href="https://blog.csdn.net/neosmith/article/details/51072840">https://blog.csdn.net/neosmith/article/details/51072840</a></p>
-
-<h2 id="toc_7">2. 实际应用场景举例</h2>
-
-<p>todo:没有理解cglib不用真实类实现接口的意义。因为真实类没有实现接口，但是暴露了public的方法。这和直接调用有啥区别？</p>
-
-<p>另外cglib的试用场景，真实类没有实现的接口意义何在？如果没有接口来规范统一的调用逻辑，例如一堆的实现类实现了A接口，因此必须实现A接口中定义的B方法。这样才有意义吧？</p>
-
-<p>查看spring源码，了解spring中，cglib的使用方法，来解答上述疑问。</p>
-
-<p>代理模式的意义</p>
-
-<ol>
-<li>有代理，便于解耦</li>
-<li>静态代理太麻烦，每个都要</li>
-<li>JDK代理受限于要实现接口</li>
-<li>CGLib不需要实现接口，看上去无法统一接口的方法，但是可能是用在一些common的方法，例如Object的方法。用在类创建时刻。</li>
-<li>另外让方法运行只是最基本的，代理模式的最大用途是管理原方法的运行前，后，时（切面，AOP）。</li>
-</ol>
-
-<h2 id="toc_8">3. Spring AOP和动态代理</h2>
-
-<h2 id="toc_9">4. OC中的动态代理模式浅谈</h2>
-
-<h2 id="toc_10">5. CGLib和JDK代理的性能对比</h2>
-
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                  
-                    <span class="date">2019/05/26 20:59 下午</span>
+                    <span class="date">2020/03/12 10:48 上午</span>
                     <span>posted in&nbsp;</span> 
           				  
           					    <span class="posted-in"><a href='Java.html'>Java</a></span>
-          				   
-                    
-
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
-
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-			<div class="article">
-                <a class="clearlink" href="15554659463337.html">
-                
-                  <h1>深入springboot原理——一步步分析springboot启动机制（starter机制）</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                  
-                    <span class="date">2019/04/17 09:52 上午</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='Springboot.html'>Springboot</a></span>
-          				   
-                    
-
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
-
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-			<div class="article">
-                <a class="clearlink" href="15542090064870.html">
-                
-                  <h1>从logger.isDebugEnabled()谈起</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<h2 id="toc_0">0. 问题</h2>
-
-<p>在很多框架中，我们看到在<code>logger.debug</code>处经常会这样写</p>
-
-<pre><code class="language-text">if (logger.isDebugEnabled()) {
-    logger.debug(message);
-}
-</code></pre>
-
-<p>我们知道<code>logger.debug()</code>,在日志级别不够的时候是不会输出日志的。那么这么写的目的何在？</p>
-
-<h2 id="toc_1">1. 分析</h2>
-
-<p>我们来看一个例子</p>
-
-<pre><code class="language-text">String error = &quot;debug日志&quot;;
-logger.debug(&quot;这是一个&quot; + error);
-</code></pre>
-
-<p>按照正常的逻辑，在执行logger.debug()之前需要先行计算括号里的内容。然后才会判断当前日志级别不符合不输出。这里就存在一个无用计算的过程。相比对直接执行语句对logger.isDebugEnabled()进行先判断，显然是一个更优的方案，避免了无用的计算过程。</p>
-
-<p>然而这个结论在占位符的使用下，有了一点不同。</p>
-
-<p>再来看一个例子</p>
-
-<h3 id="toc_2">1.1. logger.debug(&quot;这是一个{}&quot;, model);</h3>
-
-<pre><code class="language-text">public static class Model{
-    int age;
-
-    @Override
-    public String toString() {
-        System.out.println(&quot;toString called&quot;);
-        return &quot;model{&quot; +
-                &quot;age=&quot; + age +
-                &#39;}&#39;;
-    }
-}
-public static void main(String[] args) {
-    Model model = new Model();
-    model.age = 3;
-    
-    logger.debug(&quot;这是一个{}&quot;, model);
-}
-</code></pre>
-
-<p>同样的作用，但是当日志级别高于debug时，不会执行括号内部的字符串拼接。也就是如果使用占位符{}来组合输出日志，可以不用判断<code>logger.isDebugEnabled()</code></p>
-
-<h3 id="toc_3">1.2. logger.debug(&quot;test:{}&quot;, test());</h3>
-
-<p>Model的toString方法在用占位符{}的方式时，没有执行，那么如果是一个普通的方法呢？</p>
-
-<pre><code class="language-text">public static String test(){
-    System.out.println(&quot;test&quot;);
-    return &quot;test&quot;;
-}
-public static void main(String[] args) {
-    logger.debug(&quot;test:{}&quot;, test()); //日志级别info
-}
-</code></pre>
-
-<p>结果，logger.debug(&quot;test:{}&quot;, test());无输出，但是test()方法在控制台打印出了test。</p>
-
-<p>结论：有占位符的存在，但是如果字符串拼接调用了函数，仍然会先执行函数，这和日志级别无关。</p>
-
-<h3 id="toc_4">1.3. logger.debug(&quot;test2:{}, {}&quot;, model, test());</h3>
-
-<pre><code class="language-text">public static String test(){
-    System.out.println(&quot;print test&quot;);
-    return &quot;fdsf&quot;;
-}
-public static void main(String[] args) {
-    Model model = new Model();
-    model.age = 3;
-    logger.debug(&quot;test1:&quot; + model);
-    model.age = 5;
-    logger.debug(&quot;test2:{}, {}&quot;, model, test());
-}
-</code></pre>
-
-<p>结果，最后一句debug，model的toString方法没有执行，而test()方法打印出了&quot;print test&quot;。也就是在占位符的作用下，对象的toString()方法不会执行，而不同方法仍然会执行。</p>
-
-<h2 id="toc_5">2. 结论</h2>
-
-<p>通过<code>logger.isDebugEnabled()</code>进行先行判断，肯定是没有错的。虽然在占位符的帮助下，当日志级别高于debug时，对象的toString()方法不会执行，但是普通的方法仍然会执行。如果能够保证logger.debug()中的内容只涉及最简单的字符串拼接和toString()，那么可以简略<code>logger.isDebugEnabled()</code>，否则还是加上避免无用计算。</p>
-
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                  
-                    <span class="date">2019/04/02 20:43 下午</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='Java.html'>Java</a></span>
-          				   
-                    
-
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
-
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-			<div class="article">
-                <a class="clearlink" href="15523931184037.html">
-                
-                  <h1>448. 找到所有数组中消失的数字</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<h2 id="toc_0">题目描述</h2>
-
-<p>给定一个范围在  1 ≤ a[i] ≤ n ( n = 数组大小 ) 的 整型数组，数组中的元素一些出现了两次，另一些只出现一次。</p>
-
-<p>找到所有在 [1, n] 范围之间没有出现在数组中的数字。</p>
-
-<p>您能在不使用额外空间且时间复杂度为O(n)的情况下完成这个任务吗? 你可以假定返回的数组不算在额外空间内。</p>
-
-<p>示例:</p>
-
-<p>输入:<br/>
-[4,3,2,7,8,2,3,1]</p>
-
-<p>输出:<br/>
-[5,6]</p>
-
-<h2 id="toc_1">思路分析</h2>
-
-<p>关键点在于不用额外空间，时间复杂度为O（n）。这两点限制了使用排序算法，或者用额外空间来记录。</p>
-
-<p>那么，不能用额外空间，就只能用原有的数组空间了。这里有一个技巧就是用数组的下标也可以存储信息。因为数据的范围是在n之内，因此数组内出现的数字都是合法的下标。基于这个前提，本题有一个很巧妙的做法。详见代码。</p>
-
-<h2 id="toc_2">代码</h2>
-
-<pre><code class="language-text">public List&lt;Integer&gt; findDisappearedNumbers(int[] nums) {
-        List&lt;Integer&gt; result = new ArrayList&lt;&gt;();
-        for (int i = 0; i &lt; nums.length; i++){
-            //将数组中存放的值作为坐标，进行二次访问。目标是将值设置为相反数（保证是负数）。那么没有变化的位置就是缺失的值
-            nums[Math.abs(nums[i])-1] = - Math.abs(nums[Math.abs(nums[i])-1]);
-        }
-        for (int i = 0; i &lt; nums.length; i++){
-            if (nums[i] &gt; 0){
-                result.add(i);
-            }
-        }
-        return result;
-    }
-</code></pre>
-
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                  
-                    <span class="date">2019/03/12 20:18 下午</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='LeetCode.html'>LeetCode</a></span>
           				   
                     
 
@@ -1427,49 +3175,14 @@ public static void main(String[] args) {
               </div><!-- article -->
         
 			<div class="article">
-                <a class="clearlink" href="15500475532566.html">
+                <a class="clearlink" href="15839811744876.html">
                 
-                  <h1>258. 各位相加</h1>
+                  <h1>用注解，自动扩展启动。</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
-                        	<pre><code class="language-text">
-给定一个非负整数  num，反复将各个位上的数字相加，直到结果为一位数。
-
-示例:
-
-输入: 38
-输出: 2 
-解释: 各位相加的过程为：3 + 8 = 11, 1 + 1 = 2。 由于 2 是一位数，所以返回 2。
-进阶:
-你可以不使用循环或者递归，且在 O(1) 时间复杂度内解决这个问题吗？
-</code></pre>
-
-<h2 id="toc_0">解题思路：</h2>
-
-<p>普通的方法都会解，这里就不重复了。说下O(1)的解法。</p>
-
-<p>这里用到 一个很巧妙的算法。</p>
-
-<p><img src="media/15500475532566/15500475966040.jpg" alt="" style="width:557px;"/></p>
-
-<p>根据以上，可以得出，快速求解，就是将数字不断减去9，直到不能减为止即为正解。</p>
-
-<p>那么不断减去9的过程，可以化为--&gt; mod 9</p>
-
-<p>代码如下：</p>
-
-<pre><code class="language-text">class Solution {
-    public int addDigits(int num) {
-        if (num == 0){
-            return num;
-        }
-        num %= 9;
-        return num == 0 ? 9 : num;
-    }
-}
-</code></pre>
+                        	<p><a href="https://blog.csdn.net/zzti_erlie/article/details/102988486?depth_1-utm_source=distribute.pc_relevant.none-task&amp;utm_source=distribute.pc_relevant.none-task">https://blog.csdn.net/zzti_erlie/article/details/102988486?depth_1-utm_source=distribute.pc_relevant.none-task&amp;utm_source=distribute.pc_relevant.none-task</a></p>
 
                         
                       </div>
@@ -1478,1221 +3191,10 @@ public static void main(String[] args) {
                 <div class="read-more clearfix">
                   <div class="more-left left">
                   
-                    <span class="date">2019/02/13 16:45 下午</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='LeetCode.html'>LeetCode</a></span>
-          				   
-                    
-
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
-
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-			<div class="article">
-                <a class="clearlink" href="15500441189502.html">
-                
-                  <h1>189. 旋转数组</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<pre><code class="language-text">给定一个数组，将数组中的元素向右移动 k 个位置，其中 k 是非负数。
-
-示例 1:
-
-输入: [1,2,3,4,5,6,7] 和 k = 3
-输出: [5,6,7,1,2,3,4]
-解释:
-向右旋转 1 步: [7,1,2,3,4,5,6]
-向右旋转 2 步: [6,7,1,2,3,4,5]
-向右旋转 3 步: [5,6,7,1,2,3,4]
-示例 2:
-
-输入: [-1,-100,3,99] 和 k = 2
-输出: [3,99,-1,-100]
-解释: 
-向右旋转 1 步: [99,-1,-100,3]
-向右旋转 2 步: [3,99,-1,-100]
-说明:
-
-尽可能想出更多的解决方案，至少有三种不同的方法可以解决这个问题。
-要求使用空间复杂度为 O(1) 的原地算法。
-</code></pre>
-
-<h2 id="toc_0">解题思路：</h2>
-
-<p>&emsp;&emsp;关键在于O(1)的算法。如果是O(n)的话，方法就太多了。这里就不说了。主要说一下O(1)的做法。</p>
-
-<p>&emsp;&emsp;采用翻转字符的方法，思路是先把前n-k个数字翻转一下，再把后k个数字翻转一下，最后再把整个数组翻转一下：</p>
-
-<p>1 2 3 4 5 6 7 <br/>
-4 3 2 1 5 6 7 <br/>
-4 3 2 1 7 6 5<br/>
-5 6 7 1 2 3 4</p>
-
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                  
-                    <span class="date">2019/02/13 15:48 下午</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='LeetCode.html'>LeetCode</a></span>
-          				   
-                    
-
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
-
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-			<div class="article">
-                <a class="clearlink" href="15500440104341.html">
-                
-                  <h1>169. 求众数</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<p><a href="https://leetcode-cn.com/problems/majority-element/description/">https://leetcode-cn.com/problems/majority-element/description/</a></p>
-
-<pre><code class="language-text">
-给定一个大小为 n 的数组，找到其中的众数。众数是指在数组中出现次数大于  ⌊ n/2 ⌋ 的元素。
-
-你可以假设数组是非空的，并且给定的数组总是存在众数。
-
-示例 1:
-
-输入: [3,2,3]
-输出: 3
-示例 2:
-
-输入: [2,2,1,1,1,2,2]
-输出: 2
-</code></pre>
-
-<h2 id="toc_0">解题思路：</h2>
-
-<p>&emsp;&emsp;我的思路是，排序，然后逐一比对。直到找到众数为止。但是直觉告诉我应该有更优雅的方式。</p>
-
-<p>&emsp;&emsp;这是一道求众数的问题，有很多种解法，其中我感觉比较好的有两种，一种是用哈希表，这种方法需要O(n)的时间和空间，另一种是用一种叫摩尔投票法 Moore Voting，需要O(n)的时间和O(1)的空间，比前一种方法更好。这种投票法先将第一个数字假设为众数，然后把计数器设为1，比较下一个数和此数是否相等，若相等则计数器加一，反之减一。然后看此时计数器的值，若为零，则将当前值设为候选众数。以此类推直到遍历完整个数组，当前候选众数即为该数组的众数。不仔细弄懂摩尔投票法的精髓的话，过一阵子还是会忘记的，首先要明确的是这个叼炸天的方法是有前提的，就是数组中一定要有众数的存在才能使用，下面我们来看本算法的思路，这是一种先假设候选者，然后再进行验证的算法。我们现将数组中的第一个数假设为众数，然后进行统计其出现的次数，如果遇到同样的数，则计数器自增1，否则计数器自减1，如果计数器减到了0，则更换当前数字为候选者。这是一个很巧妙的设定，也是本算法的精髓所在，为啥遇到不同的要计数器减1呢，为啥减到0了又要更换候选者呢？首先是有那个强大的前提存在，一定会有一个出现超过半数的数字存在，那么如果计数器减到0了话，说明目前不是候选者数字的个数已经跟候选者的出现个数相同了，那么这个候选者已经很weak，不一定能出现超过半数，我们选择更换当前的候选者。那有可能你会有疑问，那万一后面又大量的出现了之前的候选者怎么办，不需要担心，如果之前的候选者在后面大量出现的话，其又会重新变为候选者，直到最终验证成为正确的众数，佩服算法的提出者啊。</p>
-
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                  
-                    <span class="date">2019/02/13 15:46 下午</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='LeetCode.html'>LeetCode</a></span>
-          				   
-                    
-
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
-
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-			<div class="article">
-                <a class="clearlink" href="15490112223994.html">
-                
-                  <h1>122. 买卖股票的最佳时机 II</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<p><a href="https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock-ii/description/">https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock-ii/description/</a></p>
-
-<p>给定一个数组，它的第 i 个元素是一支给定股票第 i 天的价格。</p>
-
-<p>设计一个算法来计算你所能获取的最大利润。你可以尽可能地完成更多的交易（多次买卖一支股票）。</p>
-
-<p>注意：你不能同时参与多笔交易（你必须在再次购买前出售掉之前的股票）。</p>
-
-<pre><code class="language-text">示例 1:
-
-输入: [7,1,5,3,6,4]
-输出: 7
-解释: 在第 2 天（股票价格 = 1）的时候买入，在第 3 天（股票价格 = 5）的时候卖出, 这笔交易所能获得利润 = 5-1 = 4 。
-     随后，在第 4 天（股票价格 = 3）的时候买入，在第 5 天（股票价格 = 6）的时候卖出, 这笔交易所能获得利润 = 6-3 = 3 。
-示例 2:
-
-输入: [1,2,3,4,5]
-输出: 4
-解释: 在第 1 天（股票价格 = 1）的时候买入，在第 5 天 （股票价格 = 5）的时候卖出, 这笔交易所能获得利润 = 5-1 = 4 。
-     注意你不能在第 1 天和第 2 天接连购买股票，之后再将它们卖出。
-     因为这样属于同时参与了多笔交易，你必须在再次购买前出售掉之前的股票。
-示例 3:
-
-输入: [7,6,4,3,1]
-输出: 0
-解释: 在这种情况下, 没有交易完成, 所以最大利润为 0。
-</code></pre>
-
-<h2 id="toc_0">解题思路：</h2>
-
-<p>dp题。尝试写出状态转移方程。</p>
-
-<p>设s[i]，第i天股票的价格</p>
-
-<p>1) dp[i], 到第i天，最优的股票收益。</p>
-
-<pre><code class="language-text">dp[i] = max {max{ s[i] - s[j] + dp[j - 1]} j = 1...i - 1,
-</code></pre>
-
-<p>dp[i - 1]代表不卖，以及s[i] &lt; s[j]的情况,算法复杂度O(n2)</p>
-
-<h2 id="toc_1">代码：</h2>
-
-<pre><code class="language-text">public int maxProfit(int[] prices) {
-    if (prices.length == 0){
-        return 0;
-    }
-    int[] dp = new int[prices.length];
-    for (int i = 1 ; i &lt; prices.length; i++){
-        int max = dp[i - 1];
-        for (int j = 0; j &lt; i; j++){
-            int temp = prices[i] - prices[j];
-            temp = temp &lt; 0 ? 0 : temp;
-            if (j &gt; 0) {
-                if (temp &gt; 0) {
-                    temp += dp[j - 1];
-                } else {
-                    temp = dp[j - 1];
-                }
-            }
-            if (temp &gt; max){
-                max = temp;
-            }
-        }
-        dp[i] = max;
-    }
-    return dp[prices.length - 1];
-}
-</code></pre>
-
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                  
-                    <span class="date">2019/02/01 16:53 下午</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='LeetCode.html'>LeetCode</a></span>
-          				   
-                    
-
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
-
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-			<div class="article">
-                <a class="clearlink" href="15490058580119.html">
-                
-                  <h1>102. 二叉树的层次遍历</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<p><a href="https://leetcode-cn.com/problems/binary-tree-level-order-traversal/description/">https://leetcode-cn.com/problems/binary-tree-level-order-traversal/description/</a></p>
-
-<h2 id="toc_0">题目</h2>
-
-<p>给定一个二叉树，返回其按层次遍历的节点值。 （即逐层地，从左到右访问所有节点）。</p>
-
-<p>例如:</p>
-
-<pre><code class="language-text">给定二叉树:  [3,9,20,null,null,15,7],
-
-
-    3
-   / \
-  9  20
-    /  \
-   15   7
-   
-
-返回其层次遍历结果：
-
-[
-  [3],
-  [9,20],
-  [15,7]
-]
-</code></pre>
-
-<h2 id="toc_1">解题思路：</h2>
-
-<p>层次遍历，没啥好说的，就是本题需要将层次区分开来。因此传统的方法，需要做一些修订。用一个队列保存当前层次的所有节点。</p>
-
-<p>每一轮遍历的时候，依次出队所有的节点，存入结果，并遍历出队的所有节点，如果有子节点则存入队列，等待下一轮遍历。</p>
-
-<p>也就是有两层的遍历，用一个临时的队列，保存中间结果</p>
-
-<h2 id="toc_2">代码：</h2>
-
-<pre><code class="language-text">public List&lt;List&lt;Integer&gt;&gt; levelOrder(TreeNode root) {
-    Queue&lt;TreeNode&gt; queue = new ArrayDeque&lt;&gt;();
-    if (root != null) {
-        queue.add(root);
-    }
-    List&lt;List&lt;Integer&gt;&gt; result = new ArrayList&lt;&gt;();
-    while(!queue.isEmpty()){
-        List&lt;Integer&gt; ans = new ArrayList&lt;&gt;();
-        Queue&lt;TreeNode&gt; tempQueue = new ArrayDeque&lt;&gt;(queue);
-        while (!tempQueue.isEmpty()){
-            TreeNode node = tempQueue.poll();
-            ans.add(node.val);
-        }
-        tempQueue = new ArrayDeque&lt;&gt;(queue);
-        queue.clear();
-        while(!tempQueue.isEmpty()){
-            TreeNode node = tempQueue.poll();
-            if (node.left != null) {
-                queue.add(node.left);
-            }
-            if (node.right != null) {
-                queue.add(node.right);
-            }
-        }
-        result.add(ans);
-    }
-    return result;
-}
-</code></pre>
-
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                  
-                    <span class="date">2019/02/01 15:24 下午</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='LeetCode.html'>LeetCode</a></span>
-          				   
-                    
-
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
-
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-			<div class="article">
-                <a class="clearlink" href="15489927924408.html">
-                
-                  <h1>72. 编辑距离</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<h2 id="toc_0">题目</h2>
-
-<p>给定两个单词 word1 和 word2，计算出将 word1 转换成 word2 所使用的最少操作数 。</p>
-
-<p>你可以对一个单词进行如下三种操作：</p>
-
-<p>插入一个字符<br/>
-删除一个字符<br/>
-替换一个字符<br/>
-示例 1:</p>
-
-<p>输入: word1 = &quot;horse&quot;, word2 = &quot;ros&quot;<br/>
-输出: 3<br/>
-解释: <br/>
-horse -&gt; rorse (将 &#39;h&#39; 替换为 &#39;r&#39;)<br/>
-rorse -&gt; rose (删除 &#39;r&#39;)<br/>
-rose -&gt; ros (删除 &#39;e&#39;)<br/>
-示例 2:</p>
-
-<p>输入: word1 = &quot;intention&quot;, word2 = &quot;execution&quot;<br/>
-输出: 5<br/>
-解释: <br/>
-intention -&gt; inention (删除 &#39;t&#39;)<br/>
-inention -&gt; enention (将 &#39;i&#39; 替换为 &#39;e&#39;)<br/>
-enention -&gt; exention (将 &#39;n&#39; 替换为 &#39;x&#39;)<br/>
-exention -&gt; exection (将 &#39;n&#39; 替换为 &#39;c&#39;)<br/>
-exection -&gt; execution (插入 &#39;u&#39;)</p>
-
-<h2 id="toc_1">解题思路</h2>
-
-<ol>
-<li><p>先作弊了，看到要用dp。思考许久还是没有想法。<br/>
-解析一下自己的错误思路。<br/>
-看到有三种变换方式，有一点不知道该怎么处理。</p></li>
-<li><p>看了网上的解题报告，写下自己理解后的东西。</p>
-<p>首先，确认dp的含义<br/>
-word1记为s1， word2记为s2<br/>
-dp[i][j] = s1 从0...i， s2从0...j 两个字符串的编辑距离。所以dp的大小应该是dp[s1.length + 1][s2.length + 1].</p></li>
-</ol>
-
-<ul>
-<li><p>转换公式<br/>
-计算dp[i][j]有三种变化方式</p>
-<ol>
-<li>dp[i - 1][j], 由于对比dp[i][j]，s1少了一个，所以要insert一个，编辑距离 + 1</li>
-<li>dp[i][j - 1] 由于对比dp[i][j]，s1少了一个，所以要delete一个，编辑距离 + 1</li>
-<li>dp[i - 1][j - 1]，对比s1[i - 1] 和 s2[j - 1]的情况，如果相等，编辑距离不变，否则需要+1（替换）</li>
-</ol>
-<p>从上文可以看出，三种变换方式都有了。</p>
-<p>接下来处理边界条件</p>
-<p>dp[0][i] = i和dp[i][0] = i，分别代表增加i个，和删除i个。</p></li>
-</ul>
-
-<h2 id="toc_2">代码</h2>
-
-<pre><code class="language-text"> public int minDistance(String word1, String word2) {
-    int[][] dp = new int[word1.length() + 1][word2.length() + 1];
-    for (int i = 0; i &lt;= word1.length(); i++) {
-        dp[i][0] = i;
-    }
-    for (int j = 0; j &lt;= word2.length(); j++) {
-        dp[0][j] = j;
-    }
-    for (int i = 1; i &lt;= word1.length(); i++) {
-        for (int j = 1; j &lt;= word2.length(); j++) {
-            int a = Math.min(dp[i - 1][j] + 1, dp[i][j - 1] + 1);
-            int cost = word1.charAt(i - 1) == word2.charAt(j - 1) ? 0 : 1;
-            dp[i][j] = Math.min(a, dp[i - 1][j - 1] + cost);
-        }
-    }
-    return dp[word1.length()][word2.length()];
-}
-</code></pre>
-
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                  
-                    <span class="date">2019/02/01 11:46 上午</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='LeetCode.html'>LeetCode</a></span>
-          				   
-                    
-
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
-
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-			<div class="article">
-                <a class="clearlink" href="15486626415496.html">
-                
-                  <h1>55. 跳跃游戏</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<p>给定一个非负整数数组，你最初位于数组的第一个位置。</p>
-
-<p>数组中的每个元素代表你在该位置可以跳跃的最大长度。</p>
-
-<p>判断你是否能够到达最后一个位置。</p>
-
-<pre><code class="language-text">示例 1:
-
-输入: [2,3,1,1,4]
-输出: true
-解释: 从位置 0 到 1 跳 1 步, 然后跳 3 步到达最后一个位置。
-示例 2:
-
-输入: [3,2,1,0,4]
-输出: false
-解释: 无论怎样，你总会到达索引为 3 的位置。但该位置的最大跳跃长度是 0 ， 所以你永远不可能到达最后一个位置。
-</code></pre>
-
-<p>解题思路：</p>
-
-<p>本道题用贪心。贪心的策略很巧妙。第一次独立没有想出来。<br/>
-贪心的策略：</p>
-
-<ol>
-<li>每一步都选择最大的可能去接近结果。</li>
-<li>那么遍历一遍，如果最大的结果超过了最后一个位置。则说明最后一个位置是可达的，也就是返回true。</li>
-</ol>
-
-<p>贪心的巧妙在于，我们不在意到底是如何选择的，只在乎是否可达。</p>
-
-<p>代码：</p>
-
-<pre><code class="language-text"> public boolean canJump(int[] nums) {
-    int result = 0;
-    if (nums.length == 1){ //注意边界，最后一个台阶的值是没有意义的。因此只有一个台阶的时候，永远是true
-        return true;
-    }
-    for (int i = 0; i &lt; nums.length; i++){
-        if (i &gt; result || (nums[i] == 0 &amp;&amp; i == result)){
-            break;
-        }
-        result = Math.max(result, nums[i] + i);
-    }
-    return result &gt;= nums.length - 1;
-}
-</code></pre>
-
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                  
-                    <span class="date">2019/01/28 16:04 下午</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='LeetCode.html'>LeetCode</a></span>
-          				   
-                    
-
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
-
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-			<div class="article">
-                <a class="clearlink" href="15480007861723.html">
-                
-                  <h1>RAC中的宏定义魔法</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<p><a href="https://onevcat.com/2014/01/black-magic-in-macro/">https://onevcat.com/2014/01/black-magic-in-macro/</a></p>
-
-<h2 id="toc_0">1. #的作用</h2>
-
-<h2 id="toc_1">2. ##的作用</h2>
-
-<h2 id="toc_2">3. <strong>VA_ARGS</strong>的作用</h2>
-
-<h2 id="toc_3">4. RAC()</h2>
-
-<h3 id="toc_4">4.1 函数功能</h3>
-
-<p>RAC(),有两种调用方式，一个是两个参数，一个是三个参数的。函数的第一个参数代表着要绑定的对象，第二个参数要绑定的对象的属性，第三个参数代表当追踪的结果为nil时，应该赋予的值。</p>
-
-<p>这里就有一个很有趣的问题，ReactiveCocoa是如何做到用一个函数宏，自动识别参数个数，并调用正确的函数的呢？</p>
-
-
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                   <a href="15480007861723.html">Read more</a>&nbsp;&nbsp; 
-                    <span class="date">2019/01/21 00:13 上午</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='iOS.html'>iOS</a></span>
-          				   
-                    
-
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
-
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-			<div class="article">
-                <a class="clearlink" href="15480003648444.html">
-                
-                  <h1>39. 组合总和</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<p><a href="https://leetcode-cn.com/problems/combination-sum/description/">https://leetcode-cn.com/problems/combination-sum/description/</a></p>
-
-<p>给定一个无重复元素的数组  candidates 和一个目标数  target ，找出  candidates 中所有可以使数字和为  target 的组合。</p>
-
-<p>candidates 中的数字可以无限制重复被选取。</p>
-
-<p>说明：</p>
-
-<p>所有数字（包括  target）都是正整数。<br/>
-解集不能包含重复的组合。 </p>
-
-<pre><code class="language-text">示例 1:
-
-输入: candidates = [2,3,6,7], target = 7,
-所求解集为:
-[
-  [7],
-  [2,2,3]
-]
-示例 2:
-
-输入: candidates = [2,3,5], target = 8,
-所求解集为:
-[
-  [2,2,2,2],
-  [2,3,3],
-  [3,5]
-]
-</code></pre>
-
-<p>题目分析：</p>
-
-<ol>
-<li>一看到这道题，就感觉要用递归来做，应该是回溯算法。百度证实无误。</li>
-<li>然后自己还没有生写过回溯。想了一会儿，结果不对，和正确解法做了一下比较，修改了一下自己的算法。标答是C++的，在java上需要修改一下，一些特别的地方要处理一下。</li>
-</ol>
-
-<p>直接上代码：</p>
-
-<pre><code class="language-text">/**
- * 核心算法
- * @param candidates 数组
- * @param target 当前递归子问题需要计算的target
- * @param start 开始查找的index
- * @param result 当前递归的result数组
- * @param ans 最后的答案
- */
-private void findOne(int[] candidates, int target, int start, List&lt;Integer&gt; result, List&lt;List&lt;Integer&gt;&gt; ans){
-    if (target == 0){
-        List&lt;Integer&gt; list = new ArrayList&lt;&gt;(result); //这里需要新开一个数组，否则会一直复用这个对象，导致结果不对
-        ans.add(list);
-        return;
-    }else if(target &lt; candidates[start]){
-        return; //不符合的结果，不处理。
-    }else{
-        for (int i = start; i &lt; candidates.length; i++){
-            result.add(candidates[i]);
-            findOne(candidates, target - candidates[i], i, result, ans);
-            result.remove(result.size() - 1);
-            //这里有点像树的遍历，这里就是要一个节点和不要一个节点的分支。然后可以重复使用元素，所以递归子问题，仍然从i开始。
-        }
-    }
-}
-
-public List&lt;List&lt;Integer&gt;&gt; combinationSum(int[] candidates, int target) {
-    List&lt;List&lt;Integer&gt;&gt; ans = new ArrayList&lt;&gt;();
-    Arrays.sort(candidates); //题目没有说排好序的数组，所以这里要先拍个序
-    findOne(candidates, target, 0, new ArrayList&lt;&gt;(), ans);
-    return ans;
-}
-</code></pre>
-
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                  
-                    <span class="date">2019/01/21 00:06 上午</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='LeetCode.html'>LeetCode</a></span>
-          				   
-                    
-
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
-
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-			<div class="article">
-                <a class="clearlink" href="15480002725541.html">
-                
-                  <h1>32. 最长有效括号</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<p><a href="https://leetcode-cn.com/problems/longest-valid-parentheses/description/">https://leetcode-cn.com/problems/longest-valid-parentheses/description/</a></p>
-
-<p>给定一个只包含  &#39;(&#39; 和  &#39;)&#39; 的字符串，找出最长的包含有效括号的子串的长度。</p>
-
-<p>示例 1:</p>
-
-<pre><code class="language-text">输入: &quot;(()&quot;
-输出: 2
-解释: 最长有效括号子串为 &quot;()&quot;
-示例 2:
-
-输入: &quot;)()())&quot;
-输出: 4
-解释: 最长有效括号子串为 &quot;()()&quot;
-</code></pre>
-
-<p>代码：</p>
-
-<pre><code class="language-text">public int longestValidParentheses(String s) {
-    int[] dp = new int[s.length()];
-    int max = 0;
-    for (int i = 1; i &lt; s.length(); i++){
-        if (s.charAt(i) == &#39;(&#39;){
-            dp[i] = 0;
-        }else{
-            if (dp[i - 1] != 0) {
-                int index = i - dp[i - 1] - 1;
-                if (index &gt;= 0 &amp;&amp; s.charAt(index) == &#39;(&#39;) {
-                    dp[i] = dp[i - 1] + 2;
-                    if (index - 1 &gt;= 0 ){
-                        dp[i] += dp[index - 1];
-                    }
-                }
-            }
-            if (s.charAt(i - 1) == &#39;(&#39;){
-                if (i &gt;= 2) {
-                    dp[i] = dp[i] &gt; dp[i - 2] + 2 ? dp[i] : dp[i - 2] + 2;
-                }else{
-                    dp[i] = 2;
-                }
-            }
-            if (max &lt; dp[i]){
-                max = dp[i];
-            }
-        }
-    }
-    return max;
-}
-</code></pre>
-
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                  
-                    <span class="date">2019/01/21 00:04 上午</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='LeetCode.html'>LeetCode</a></span>
-          				   
-                    
-
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
-
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-			<div class="article">
-                <a class="clearlink" href="15479997745467.html">
-                
-                  <h1>MongoDB的启动和停止</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<h2 id="toc_0">1. 启动</h2>
-
-<ol>
-<li>用命令行，加各种的特殊参数</li>
-<li><p>用命令行，但是所有的参数都放在一个配置文件中。如</p>
-<pre><code class="language-text">mongod -f /etc/mongod.conf
-</code></pre></li>
-<li><p>用传统的service mongod start</p></li>
-</ol>
-
-<h3 id="toc_1">1.1. service mongod start</h3>
-
-<ul>
-<li>该命令本身没有任何问题。只需要注意配置启动的时候执行的语句就可以达到同样的效果。在实际使用的过程中，并不会频繁的变更需求和配置，因此用service来启动足以。</li>
-<li><p>另外如果用命令行启动，还存在权限问题。<br/>
-用mongod启动了以后，权限全部变为root。这时候再用service mongod start来启动就会有各种各样的权限问题。</p></li>
-<li><p>service start启动的脚本</p>
-<pre><code class="language-text">/usr/lib/systemd/system/mongod.service
-</code></pre></li>
-</ul>
-
-<pre><code class="language-text">[Unit]
-Description=MongoDB Database Server
-After=network.target
-Documentation=https://docs.mongodb.org/manual
-
-[Service]
-User=mongod
-Group=mongod
-Environment=&quot;OPTIONS=-f /etc/mongod.conf&quot;
-EnvironmentFile=-/etc/sysconfig/mongod
-ExecStart=/usr/bin/mongod $OPTIONS
-ExecStartPre=/usr/bin/mkdir -p /var/run/mongodb
-ExecStartPre=/usr/bin/chown mongod:mongod /var/run/mongodb
-ExecStartPre=/usr/bin/chmod 0755 /var/run/mongodb
-PermissionsStartOnly=true
-PIDFile=/var/run/mongodb/mongod.pid
-Type=forking
-# file size
-LimitFSIZE=infinity
-# cpu time
-LimitCPU=infinity
-# virtual memory size
-LimitAS=infinity
-# open files
-LimitNOFILE=64000
-# processes/threads
-LimitNPROC=64000
-# locked memory
-LimitMEMLOCK=infinity
-# total threads (user+kernel)
-TasksMax=infinity
-TasksAccounting=false
-# Recommended limits for for mongod as specified in
-# http://docs.mongodb.org/manual/reference/ulimit/#recommended-settings
-
-[Install]
-WantedBy=multi-user.target
-</code></pre>
-
-<h2 id="toc_2">2. 停止</h2>
-
-<p>强制关闭MongoDB（不建议使用）；<br/>
-service mongod stop<br/>
-或者，从MongoDB的admin中关闭（推荐用这种方法）：</p>
-
-<pre><code class="language-text">&gt;use admin
-switched to db admin
-&gt;db.shutdownServer()
-server should be down...
-</code></pre>
-
-<p>或者</p>
-
-<pre><code class="language-text">mongod --shutdown
-</code></pre>
-
-<p>使用shutdownServer关闭MongoDB，如有MongoDB主从服务器，则在服务关闭前同步主从服务器；强制关闭则不会；</p>
-
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                  
-                    <span class="date">2019/01/20 23:56 下午</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='MongoDB.html'>MongoDB</a></span>
-          				   
-                    
-
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
-
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-			<div class="article">
-                <a class="clearlink" href="15479962056718.html">
-                
-                  <h1>Java并发编程</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<p>&emsp;&emsp;本文对Java中的并发变成进行了简单的描述。是本人阅读《Java并发编程的艺术》一书的读书笔记。本文对重要的概念进行了记录。</p>
-
-<p>&emsp;&emsp;本文首先介绍了各种各样的和锁相关的概念。然后介绍了Java多线程的技术要点，最后介绍了一些经典使用案例。</p>
-
-
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                   <a href="15479962056718.html">Read more</a>&nbsp;&nbsp; 
-                    <span class="date">2019/01/20 22:56 下午</span>
+                    <span class="date">2020/03/12 10:46 上午</span>
                     <span>posted in&nbsp;</span> 
           				  
           					    <span class="posted-in"><a href='Java.html'>Java</a></span>
-          				   
-                    
-
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
-
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-			<div class="article">
-                <a class="clearlink" href="15216334372729.html">
-                
-                  <h1>Realm学习笔记</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<ul>
-<li>Useful文章</li>
-</ul>
-
-<p><a href="https://www.jianshu.com/p/6704afc62d6c">https://www.jianshu.com/p/6704afc62d6c</a></p>
-
-<p><a href="https://academy.realm.io/cn/posts/jp-simard-realm-core-database-engine/">Realm 核心数据库引擎探秘</a></p>
-
-<h2 id="toc_0">1. 模型定义</h2>
-
-<p>参照官网的demo，建立如下两个类：</p>
-
-<pre><code class="language-text">@interface Dog : RLMObject
-@property NSString *name;
-@property NSData   *picture;
-@property NSInteger age;
-@end
-@implementation Dog
-@end
-RLM_ARRAY_TYPE(Dog)
-@interface Person : RLMObject
-@property NSString             *name;
-@property RLMArray&lt;Dog *&gt;&lt;Dog&gt; *dogs;
-@end
-@implementation Person
-@end
-</code></pre>
-
-<pre><code class="language-text">tips
-
-1. 需要继承RLMObject
-2. 所有的属性都不需要写任何的描述符，原子性，strong, assign等
-3. Array类型需要用RLMArray
-4. 使用Array 需要定义 RLM_ARRAY_TYPE , 这个定义放在类前类后都可以。
-</code></pre>
-
-<h2 id="toc_1">2.CRUD</h2>
-
-<p>Realm采用了MVCC设计架构，因此读写操作是不互斥的。但是写操作最好在一个Seperate thread中执行，否则会降低效率。</p>
-
-<h2 id="toc_2">2.1 创建（Create）</h2>
-
-<pre><code class="language-text">// (1) Create a Dog object and then set its properties
-    Dog *myDog = [[Dog alloc] init];myDog.name = @&quot;Rex&quot;;myDog.age = 10;
-// (2) Create a Dog object from a dictionary
-    Dog *myOtherDog = [[Dog alloc] initWithValue:@{@&quot;name&quot; : @&quot;Pluto&quot;, @&quot;age&quot; : @3}];
-// (3) Create a Dog object from an array
-    Dog *myThirdDog = [[Dog alloc] initWithValue:@[@&quot;Pluto&quot;, @3]];
-</code></pre>
-
-<p>写入数据库</p>
-
-<pre><code class="language-text">    // Get the default Realm
-    RLMRealm *realm = [RLMRealm defaultRealm];
-    // You only need to do this once (per thread)
-    
-    // Add to Realm with transaction
-    [realm beginWriteTransaction];
-    [realm addObject:province];
-    [realm commitWriteTransaction];
-
-</code></pre>
-
-<h2 id="toc_3">2.2 查询（Retrieve）</h2>
-
-<pre><code class="language-text">// 使用断言字符串查询
-    RLMResults&lt;ProvinceEntity *&gt; *provinceArray = [ProvinceEntity objectsWhere:@&quot;shortName = &#39;江苏&#39;&quot;];
-    // 使用 NSPredicate 查询
-    NSPredicate *pred = [NSPredicate predicateWithFormat:@&quot;shortName = &#39;江苏&#39;&quot;];
-    provinceArray = [ProvinceEntity objectsWithPredicate:pred];
-
-</code></pre>
-
-<p>如果有多条件的话，可以用and，也可以分布查询，从查询结果中再做查询，支持链式查询：</p>
-
-<pre><code class="language-text">RLMResults&lt;Dog *&gt; *tanDogs = [Dog objectsWhere:@&quot;color = &#39;棕黄色&#39;&quot;];
-RLMResults&lt;Dog *&gt; *tanDogsWithBNames = [tanDogs objectsWhere:@&quot;name BEGINSWITH &#39;大&#39;&quot;];
-</code></pre>
-
-<p>RLMResults允许您指定一个排序标准，从而可以根据一个或多个属性进行排序。比如说，下列代码将上面例子中返回的狗狗根据名字升序进行排序：</p>
-
-<pre><code class="language-text">// 排序名字以“大”开头的棕黄色狗狗
-RLMResults&lt;Dog *&gt; *sortedDogs = [[Dog objectsWhere:@&quot;color = &#39;棕黄色&#39; AND name BEGINSWITH &#39;大&#39;&quot;] sortedResultsUsingProperty:@&quot;name&quot; ascending:YES];
-</code></pre>
-
-<h2 id="toc_4">2.3 更新（Update）</h2>
-
-<ul>
-<li>你可以找到具体的一条数据然后去更新：</li>
-</ul>
-
-<pre><code class="language-text">    RLMResults&lt;ProvinceEntity *&gt;* provinceArray=[ProvinceEntity allObjects];
-    [[RLMRealm defaultRealm] transactionWithBlock:^{
-        ProvinceEntity *province=[provinceArray firstObject];
-        province.shortName=@&quot;浙江&quot;;
-    }];
-</code></pre>
-
-<ul>
-<li>你也可以设置一个主键，根据主键去更新，更新需要拥有一个主键---Primary Keys：</li>
-</ul>
-
-<pre><code class="language-text">// Creating a book with the same primary key as a previously saved 
-bookBook *cheeseBook = [[Book alloc] init];
-cheeseBook.title = @&quot;Cheese recipes&quot;;
-cheeseBook.price = @9000;
-cheeseBook.id = @1;
-// Updating book with id = 1
-[realm beginWriteTransaction];
-[realm addOrUpdateObject:cheeseBook];
-[realm commitWriteTransaction];
-</code></pre>
-
-<h2 id="toc_5">2.4 删除(Delete)</h2>
-
-<ul>
-<li>单条记录删除</li>
-</ul>
-
-<pre><code class="language-text">// Delete an object with a transaction
-[realm beginWriteTransaction];
-[realm deleteObject:cheeseBook];
-[realm commitWriteTransaction];
-</code></pre>
-
-<ul>
-<li>多条记录删除</li>
-</ul>
-
-<pre><code class="language-text">    [[RLMRealm defaultRealm] transactionWithBlock:^{
-        [[RLMRealm defaultRealm] deleteObjects:result];
-    }];
-</code></pre>
-
-<ul>
-<li>全部删除：</li>
-</ul>
-
-<pre><code class="language-text">// Delete an object with a transaction
-    [[RLMRealm defaultRealm] transactionWithBlock:^{
-        [[RLMRealm defaultRealm] deleteAllObjects];
-    }];
-</code></pre>
-
-<h2 id="toc_6">3.进阶使用</h2>
-
-<ul>
-<li>非空字段(Required properties)</li>
-</ul>
-
-<p>By default, NSString *, NSData *, and NSDate * properties allow you to set them to nil. If you want to require that a value be present, override the +requiredProperties method on your RLMObject subclass.</p>
-
-<p>For example, with the following model definition, trying to set the person’s name to nil will throw an exception, but setting their birthday to nil is allowed:</p>
-
-<pre><code class="language-text">@interface Person : RLMObject
-@property NSString *name;
-@property NSDate *birthday;
-@end
-
-@implementation Person
-+ (NSArray *)requiredProperties {
-    return @[@&quot;name&quot;];
-}
-@end
-</code></pre>
-
-<p>例外：RLMObject subclass properties always can be nil, and thus cannot be included in requiredProperties. and RLMArray does not support storing nil.</p>
-
-<ul>
-<li>主键</li>
-</ul>
-
-<p>Override +primaryKey to set the model’s primary key. Declaring a primary key allows objects to be looked up and updated efficiently and enforces uniqueness for each value. Once an object with a primary key is added to a Realm, the primary key cannot be changed.</p>
-
-<pre><code class="language-text">@interface Person : RLMObject
-@property NSInteger id;
-@property NSString *name;
-@end
-
-@implementation Person
-+ (NSString *)primaryKey {
-    return @&quot;id&quot;;
-}
-@end
-</code></pre>
-
-<ul>
-<li>索引字段</li>
-</ul>
-
-<p>To index a property, override +indexedProperties. Like primary keys, indexes make writes slightly slower, but makes queries using comparison operators faster. (It also makes your Realm file slightly larger, to store the index.) It’s best to only add indexes when you’re optimizing the read performance for specific situations.</p>
-
-<pre><code class="language-text">@interface Book : RLMObject
-@property float price;
-@property NSString *title;
-@end
-
-@implementation Book
-+ (NSArray *)indexedProperties {
-    return @[@&quot;title&quot;];
-}
-@end
-</code></pre>
-
-<ul>
-<li>忽略字段</li>
-</ul>
-
-<p>If you don’t want to save a field in your model to its Realm, override +ignoredProperties. Realm won’t interfere with the regular operation of these properties; they’ll be backed by ivars, and you can freely override their setters and getters.</p>
-
-<pre><code class="language-text">@interface Person : RLMObject
-@property NSInteger tmpID;
-@property (readonly) NSString *name; // read-only properties are automatically ignored
-@property NSString *firstName;
-@property NSString *lastName;
-@end
-
-@implementation Person
-+ (NSArray *)ignoredProperties {
-    return @[@&quot;tmpID&quot;];
-}
-- (NSString *)name {
-    return [NSString stringWithFormat:@&quot;%@ %@&quot;, self.firstName, self.lastName];
-}
-@end
-</code></pre>
-
-<ul>
-<li>默认值</li>
-</ul>
-
-<p>Override +defaultPropertyValues to provide default values every time an object is created.</p>
-
-<pre><code class="language-text">@interface Book : RLMObject
-@property float price;
-@property NSString *title;
-@end
-
-@implementation Book
-+ (NSDictionary *)defaultPropertyValues {
-    return @{@&quot;price&quot; : @0, @&quot;title&quot;: @&quot;&quot;};
-}
-@end
-</code></pre>
-
-<h2 id="toc_7">4. 特性</h2>
-
-<h2 id="toc_8">5. 疑问</h2>
-
-<p>为什么要这样直接继承不可以吗？是不支持吗？</p>
-
-<pre><code class="language-text">// Base Model
-@interface Animal : RLMObject
-@property NSInteger age;
-@end
-@implementation Animal
-@end
-
-// Models composed with Animal
-@interface Duck : RLMObject
-@property Animal *animal;
-@property NSString *name;
-@end
-@implementation Duck
-@end
-
-@interface Frog : RLMObject
-@property Animal *animal;
-@property NSDate *dateProp;
-@end
-@implementation Frog
-@end
-
-// Usage
-Duck *duck =  [[Duck alloc] initWithValue:@{@&quot;animal&quot; : @{@&quot;age&quot; : @(3)}, @&quot;name&quot; : @&quot;Gustav&quot; }];
-</code></pre>
-
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                  
-                    <span class="date">2018/03/21 19:57 下午</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='iOS.html'>iOS</a></span>
           				   
                     
 
@@ -2770,8 +3272,6 @@ Duck *duck =  [[Duck alloc] initWithValue:@{@&quot;animal&quot; : @{@&quot;age&q
             <a href="LeetCode.html"><strong>LeetCode</strong></a>
         
             <a href="%E6%95%B0%E6%8D%AE%E5%BA%93.html"><strong>数据库</strong></a>
-        
-            <a href="Springboot.html"><strong>Springboot</strong></a>
          
         </p>
 
@@ -2788,7 +3288,13 @@ Duck *duck =  [[Duck alloc] initWithValue:@{@&quot;animal&quot; : @{@&quot;age&q
 	      
 		      
 			      <li class="post">
-			        <a href="15819118469978.html">一道LeetCode线程题引出Java线程协作的经典案例</a>
+			        <a href="15490058580119.html">102. 二叉树的层次遍历</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="15490112223994.html">122. 买卖股票的最佳时机 II</a>
 			      </li>
 		     
 		  
@@ -2800,19 +3306,13 @@ Duck *duck =  [[Duck alloc] initWithValue:@{@&quot;animal&quot; : @{@&quot;age&q
 		  
 		      
 			      <li class="post">
-			        <a href="15693167161716.html">从使用fastjson替换springboot框架默认的json解析工具说起</a>
+			        <a href="15500440104341.html">169. 求众数</a>
 			      </li>
 		     
 		  
 		      
 			      <li class="post">
-			        <a href="15693104259267.html">Jackson fasterxml和codehaus的区别</a>
-			      </li>
-		     
-		  
-		      
-			      <li class="post">
-			        <a href="15686164898705.html">JSON反序列化乱序的问题</a>
+			        <a href="15500441189502.html">189. 旋转数组</a>
 			      </li>
 		     
 		  

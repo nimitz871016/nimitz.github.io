@@ -1,0 +1,660 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+    
+  作者：大神架构师 - 沧海一粟No.1
+  
+  </title>
+  
+  
+  <link href="atom.xml" rel="alternate" title="沧海一粟No.1" type="application/atom+xml">
+    <link rel="stylesheet" href="asset/css/foundation.min.css" />
+    <link rel="stylesheet" href="asset/css/docs.css" />
+    <script src="asset/js/vendor/modernizr.js"></script>
+    <script src="asset/js/vendor/jquery.js"></script>
+ 
+<script type="text/javascript">
+  function before_search(){
+    var searchVal = 'site:nimitz871016.github.io ' + document.getElementById('search_input').value;
+    document.getElementById('search_q').value = searchVal;
+    return true;
+  }
+</script>
+  </head>
+  <body class="antialiased hide-extras">
+    
+    <div class="marketing off-canvas-wrap" data-offcanvas>
+      <div class="inner-wrap">
+
+
+<nav class="top-bar docs-bar hide-for-small" data-topbar>
+
+
+  <section class="top-bar-section">
+  <div class="row">
+      <div style="position: relative;width:100%;"><div style="position: absolute; width:100%;">
+        <ul id="main-menu" class="left">
+        
+        <li id=""><a target="_self" href="index.html">Home</a></li>
+        
+        <li id=""><a target="_self" href="archives.html">Archives</a></li>
+        
+        <li id=""><a target="_self" href="about.html">About</a></li>
+        
+        </ul>
+
+        <ul class="right" id="search-wrap">
+          <li>
+<form target="_blank" onsubmit="return before_search();" action="https://google.com/search" method="get">
+    <input type="hidden" id="search_q" name="q" value="" />
+    <input tabindex="1" type="search" id="search_input"  placeholder="Search"/>
+</form>
+</li>
+          </ul>
+      </div></div>
+  </div>
+  </section>
+
+</nav>
+
+        <nav class="tab-bar show-for-small">
+  <a href="javascript:void(0)" class="left-off-canvas-toggle menu-icon">
+    <span> &nbsp; 沧海一粟No.1</span>
+  </a>
+</nav>
+
+<aside class="left-off-canvas-menu">
+      <ul class="off-canvas-list">
+        
+        <li><a target="_self" href="index.html">Home</a></li>
+        
+        <li><a target="_self" href="archives.html">Archives</a></li>
+        
+        <li><a target="_self" href="about.html">About</a></li>
+        
+
+    <li><label>Categories</label></li>
+
+        
+            <li><a href="Java.html">Java</a></li>
+        
+            <li><a href="MongoDB.html">MongoDB</a></li>
+        
+            <li><a href="iOS.html">iOS</a></li>
+        
+            <li><a href="LeetCode.html">LeetCode</a></li>
+        
+            <li><a href="%E6%95%B0%E6%8D%AE%E5%BA%93.html">数据库</a></li>
+         
+
+      </ul>
+    </aside>
+
+<a class="exit-off-canvas" href="#"></a>
+
+
+        <section id="main-content" role="main" class="scroll-container">
+        
+       
+
+ <script type="text/javascript">
+  $(function(){
+    $('#menu_item_index').addClass('is_active');
+  });
+</script>
+<div class="row">
+  <div class="large-8 medium-8 columns">
+      <div class="markdown-body article-wrap">
+       <div class="article">
+          
+          <h1>作者：大神架构师</h1>
+     
+        <div class="read-more clearfix">
+          <span class="date">2020/03/12 10:48 上午</span>
+
+          <span>posted in&nbsp;</span> 
+          
+              <span class="posted-in"><a href='Java.html'>Java</a></span>
+           
+         
+          <span class="comments">
+            
+
+            
+          </span>
+
+        </div>
+      </div><!-- article -->
+
+      <div class="article-content">
+      <p>链接：<a href="https://zhuanlan.zhihu.com/p/112481040">https://zhuanlan.zhihu.com/p/112481040</a><br/>
+来源：知乎<br/>
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。</p>
+
+<p>JAVA基础<br/><br/>
+1.JAVA中的几种基本数据类型是什么，各自占用多少字节。<br/><br/>
+int 4,char 1,float 4,double 8,boolean 1,byte 1，short 2, long 8<br/>
+2.String类能被继承吗，为什么。 <br/>
+不能, 因为有final修饰符<br/>
+3.String，Stringbuffer，StringBuilder的区别。<br/>
+StringBuffer是线程安全的，StringBuilder是不安全的。StringBuilder可使用append函数，来组装string，不会额外创建控件，string每次赋值都是重新new一个。<br/>
+4.ArrayList和LinkedList有什么区别。<br/><br/>
+ArrayList是数组，LinkedList是链表<br/>
+5.讲讲类的实例化顺序，比如父类静态数据，构造函数，字段，子类静态数据，构造函数，字段，当new的时候，他们的执行顺序。</p>
+
+<pre><code class="language-text">**父类静态变量、 
+父类静态代码块、 
+子类静态变量、 
+子类静态代码块、 
+父类非静态变量（父类实例成员变量）、 
+父类构造函数、 
+子类非静态变量（子类实例成员变量）、 
+子类构造函数。 
+**
+</code></pre>
+
+<p>6.用过哪些Map类，都有什么区别，HashMap是线程安全的吗,并发下使用的Map是什么，他们内部原理分别是什么，比如存储方式，hashcode，扩容，默认容量等。<br/><br/>
+HashMap。<br/>
+不安全<br/>
+并发使用ConncurentHashMap<br/>
+扩容，每次扩容一杯，默认因子0.75<br/>
+小于8的时候采用的是链表，大于8改为红黑树。小于6会退化。</p>
+
+<p>7.JAVA8的ConcurrentHashMap为什么放弃了分段锁，有什么问题吗，如果你来设计，你如何设计。<br/><br/>
+改为了synchronized和cas实现，Java认为分段锁的方案，锁太多了，冲突严重，而且put的时候，竞争的情况并不多。</p>
+
+<p>通过  JDK 的源码和官方文档看来， 他们认为的弃用分段锁的原因由以下几点：<br/>
+加入多个分段锁浪费内存空间。<br/>
+生产环境中， map 在放入时竞争同一个锁的概率非常小，分段锁反而会造成更新等操作的长时间等待。<br/>
+为了提高 GC 的效率</p>
+
+<p>8.有没有有顺序的Map实现类，如果有，他们是怎么保证有序的。<br/><br/>
+有，不记得了。<br/>
+9.抽象类和接口的区别，类可以继承多个类么，接口可以继承多个接口么,类可以实现多个接口么。<br/><br/>
+不可以，不可以，可以。<br/>
+10.继承和聚合的区别在哪。   http://<br/>
+11.IO模型有哪些，讲讲你理解的nio ，他和bio，aio的区别是啥，谈谈reactor模型。   12.反射的原理，反射创建类实例的三种方式是什么。<br/><br/>
+13.反射中，Class.forName和ClassLoader区别 。<br/>
+Class.forName 需要字符串，ClassLoader是传入class对象。forName只能匹配一个？如果存在多个重名的？<br/><br/>
+14.描述动态代理的几种实现方式，分别说出相应的优缺点。<br/><br/>
+JDK动态代理，CGLib<br/>
+15.动态代理与cglib实现的区别。<br/><br/>
+16.为什么CGlib方式可以对接口实现代理。<br/><br/>
+17.final的用途。<br/><br/>
+18.写出三种单例模式实现 。<br/><br/>
+19.如何在父类中为子类自动完成所有的hashcode和equals实现？这么做有何优劣。<br/><br/>
+20.请结合OO设计理念，谈谈访问修饰符public、private、protected、default在应用设计中的作用。<br/><br/>
+21.深拷贝和浅拷贝区别。<br/><br/>
+22.数组和链表数据结构描述，各自的时间复杂度。<br/><br/>
+23.error和exception的区别，CheckedException，RuntimeException的区别。   24.请列出5个运行时异常。<br/><br/>
+25.在自己的代码中，如果创建一个java.lang.String类，这个类是否可以被类加载器加载？为什么。<br/><br/>
+26.说一说你对java.lang.Object对象中hashCode和equals方法的理解。在什么场景下需要重新实现这两个方法。<br/><br/>
+27.在jdk1.5中，引入了泛型，泛型的存在是用来解决什么问题。<br/><br/>
+28.这样的a.hashcode() 有什么用，与a.equals(b)有什么关系。<br/><br/>
+29.有没有可能2个不相等的对象有相同的hashcode。<br/><br/>
+30.Java中的HashSet内部是如何工作的。<br/><br/>
+31.什么是序列化，怎么序列化，为什么序列化，反序列化会遇到什么问题，如何解决。   32.java8的新特性。</p>
+
+<p>JVM知识<br/><br/>
+1.什么情况下会发生栈内存溢出。<br/><br/>
+2.JVM的内存结构，Eden和Survivor比例。<br/><br/>
+3.JVM内存为什么要分成新生代，老年代，持久代。新生代中为什么要分为Eden和Survivor。   4.JVM中一次完整的GC流程是怎样的，对象如何晋升到老年代，说说你知道的几种主要的JVM参数。<br/><br/>
+5.你知道哪几种垃圾收集器，各自的优缺点，重点讲下cms和G1，包括原理，流程，优缺点。   6.垃圾回收算法的实现原理。<br/><br/>
+7.当出现了内存溢出，你怎么排错。<br/><br/>
+8.JVM内存模型的相关知识了解多少，比如重排序，内存屏障，happen-before，主内存，工作内存等。<br/><br/>
+9.简单说说你了解的类加载器，可以打破双亲委派么，怎么打破。<br/><br/>
+10.讲讲JAVA的反射机制。<br/><br/>
+11.你们线上应用的JVM参数有哪些。<br/><br/>
+12.g1和cms区别,吞吐量优先和响应优先的垃圾收集器选择。<br/><br/>
+13.怎么打出线程栈信息。   14请解释如下jvm参数的含义：-server -Xms512m -Xmx512m -Xss1024K-XX:PermSize=256m -XX:MaxPermSize=512m -XX:MaxTenuringThreshold=20XX:CMSInitiatingOccupancyFraction=80 -XX:+UseCMSInitiatingOccupancyOnly。</p>
+
+<p>开源框架知识<br/><br/>
+1.简单讲讲tomcat结构，以及其类加载器流程，线程模型等。<br/><br/>
+2.tomcat如何调优，涉及哪些参数 。<br/><br/>
+3.讲讲Spring加载流程。<br/><br/>
+4.Spring AOP的实现原理。<br/><br/>
+5.讲讲Spring事务的传播属性。<br/><br/>
+6.Spring如何管理事务的。<br/><br/>
+取消自动提交</p>
+
+<p>7.Spring怎么配置事务（具体说出一些关键的xml 元素）。<br/><br/>
+8.说说你对Spring的理解，非单例注入的原理？它的生命周期？循环注入的原理，aop的实现原理，说说aop中的几个术语，它们是怎么相互工作的。<br/><br/>
+9.Springmvc 中DispatcherServlet初始化过程。<br/><br/>
+10.netty的线程模型，netty如何基于reactor模型上实现的。   11.为什么选择netty。   12.什么是TCP粘包，拆包。解决方式是什么。<br/><br/>
+13.netty的fashwheeltimer的用法，实现原理，是否出现过调用不够准时，怎么解决。   14.netty的心跳处理在弱网下怎么办。<br/><br/>
+15.netty的通讯协议是什么样的。<br/><br/>
+16.springmvc用到的注解，作用是什么，原理。   17.springboot启动机制。 操作系统   1.Linux系统下你关注过哪些内核参数，说说你知道的。   2.Linux下IO模型有几种，各自的含义是什么。   3.epoll和poll有什么区别。   4.平时用到哪些Linux命令。   5.用一行命令查看文件的最后五行。   6.用一行命令输出正在运行的java进程。   7.介绍下你理解的操作系统中线程切换过程。   8.进程和线程的区别。   9.top 命令之后有哪些内容，有什么作用。   10.线上CPU爆高，请问你如何找到问题所在。多线程   1.多线程的几种实现方式，什么是线程安全。   2.volatile的原理，作用，能代替锁么。   3.画一个线程的生命周期状态图。   4.sleep和wait的区别。   5.sleep和sleep(0)的区别。   6.Lock与Synchronized的区别 。   7.synchronized的原理是什么，一般用在什么地方(比如加在静态方法和非静态方法的区别，静态方法和非静态方法同时执行的时候会有影响吗)，解释以下名词：重排序，自旋锁，偏向锁，轻量级锁，可重入锁，公平锁，非公平锁，乐观锁，悲观锁。   8.用过哪些原子类，他们的原理是什么。   9.JUC下研究过哪些并发工具，讲讲原理。   10.用过线程池吗，如果用过，请说明原理，并说说newCache和newFixed有什么区别，构造函数的各个参数的含义是什么，比如coreSize，maxsize等。   11.线程池的关闭方式有几种，各自的区别是什么。   12.假如有一个第三方接口，有很多个线程去调用获取数据，现在规定每秒钟最多有10个线程同时调用它，如何做到。   13.spring的controller是单例还是多例，怎么保证并发的安全。   14.用三个线程按顺序循环打印abc三个字母，比如abcabcabc。   15.ThreadLocal用过么，用途是什么，原理是什么，用的时候要注意什么。   16.如果让你实现一个并发安全的链表，你会怎么做。   17.有哪些无锁数据结构，他们实现的原理是什么。   18.讲讲java同步机制的wait和notify。   19.CAS机制是什么，如何解决ABA问题。   20.多线程如果线程挂住了怎么办。   21.countdowlatch和cyclicbarrier的内部原理和用法，以及相互之间的差别(比如countdownlatch的await方法和是怎么实现的)。   22.对AbstractQueuedSynchronizer了解多少，讲讲加锁和解锁的流程，独占锁和公平所加锁有什么不同。   23.使用synchronized修饰静态方法和非静态方法有什么区别。   24.简述ConcurrentLinkedQueue和LinkedBlockingQueue的用处和不同之处。   25.导致线程死锁的原因？怎么解除线程死锁。   26.非常多个线程（可能是不同机器），相互之间需要等待协调，才能完成某种工作，问怎么设计这种协调方案。   27.用过读写锁吗，原理是什么，一般在什么场景下用。   28.开启多个线程，如果保证顺序执行，有哪几种实现方式，或者如何保证多个线程都执行完再拿到结果。   29.延迟队列的实现方式，delayQueue和时间轮算法的异同。 TCP与HTTP   1.http1.0和http1.1有什么区别。   2.TCP三次握手和四次挥手的流程，为什么断开连接要4次,如果握手只有两次，会出现什么。   3.TIME_WAIT和CLOSE_WAIT的区别。   4.说说你知道的几种HTTP响应码，比如200, 302, 404。   5.当你用浏览器打开一个链接（如：<a href="http://www.javastack.cn%EF%BC%89%E7%9A%84%E6%97%B6%E5%80%99%EF%BC%8C%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%81%9A%E4%BA%86%E5%93%AA%E4%BA%9B%E5%B7%A5%E4%BD%9C%E6%AD%A5%E9%AA%A4%E3%80%82">http://www.javastack.cn）的时候，计算机做了哪些工作步骤。</a>   6.TCP/IP如何保证可靠性，说说TCP头的结构。   7.如何避免浏览器缓存。   8.如何理解HTTP协议的无状态性。   9.简述Http请求get和post的区别以及数据包格式。   10.HTTP有哪些method   11.简述HTTP请求的报文格式。   12.HTTP的长连接是什么意思。   13.HTTPS的加密方式是什么，讲讲整个加密解密流程。   14.Http和https的三次握手有什么区别。   15.什么是分块传送。   16.Session和cookie的区别。 架构设计与分布式   1.用java自己实现一个LRU。   2.分布式集群下如何做到唯一序列号。   3.设计一个秒杀系统，30分钟没付款就自动关闭交易。   4.如何使用redis和zookeeper实现分布式锁？有什么区别优缺点，会有什么问题，分别适用什么场景。（延伸：如果知道redlock，讲讲他的算法实现，争议在哪里）   5.如果有人恶意创建非法连接，怎么解决。   6.分布式事务的原理，优缺点，如何使用分布式事务，2pc 3pc 的区别，解决了哪些问题，还有哪些问题没解决，如何解决，你自己项目里涉及到分布式事务是怎么处理的。   7.什么是一致性hash。   8.什么是restful，讲讲你理解的restful。   9.如何设计一个良好的API。   10.如何设计建立和保持100w的长连接。   11.解释什么是MESI协议(缓存一致性)。   12.说说你知道的几种HASH算法，简单的也可以。   13.什么是paxos算法， 什么是zab协议。   14.一个在线文档系统，文档可以被编辑，如何防止多人同时对同一份文档进行编辑更新。   15.线上系统突然变得异常缓慢，你如何查找问题。   16.说说你平时用到的设计模式。   17.Dubbo的原理，有看过源码么，数据怎么流转的，怎么实现集群，负载均衡，服务注册和发现，重试转发，快速失败的策略是怎样的 。   18.一次RPC请求的流程是什么。   19.自己实现过rpc么，原理可以简单讲讲。Rpc要解决什么问题。   20.异步模式的用途和意义。   21.编程中自己都怎么考虑一些设计原则的，比如开闭原则，以及在工作中的应用。   22.设计一个社交网站中的“私信”功能，要求高并发、可扩展等等。 画一下架构图。   23.MVC模式，即常见的MVC框架。   24.聊下曾经参与设计的服务器架构并画图，谈谈遇到的问题，怎么解决的。   25.应用服务器怎么监控性能，各种方式的区别。   26.如何设计一套高并发支付方案，架构如何设计。   27.如何实现负载均衡，有哪些算法可以实现。   28.Zookeeper的用途，选举的原理是什么。   29.Zookeeper watch机制原理。   30.Mybatis的底层实现原理。   31.请思考一个方案，实现分布式环境下的countDownLatch。   32.后台系统怎么防止请求重复提交。   33.描述一个服务从发布到被消费的详细过程。   34.讲讲你理解的服务治理。   35.如何做到接口的幂等性。   36.如何做限流策略，令牌桶和漏斗算法的使用场景。   37.什么叫数据一致性，你怎么理解数据一致性。   38.分布式服务调用方，不依赖服务提供方的话，怎么处理服务方挂掉后，大量无效资源请求的浪费，如果只是服务提供方吞吐不高的时候该怎么做，如果服务挂了，那么一会重启，该怎么做到最小的资源浪费，流量半开的实现机制是什么。   39.dubbo的泛化调用怎么实现的，如果是你，你会怎么做。   40.远程调用会有超时现象，如果做到优雅的控制，JDK自带的超时机制有哪些，怎么实现的。算法   1.10亿个数字里里面找最小的10个。   2.有1亿个数字，其中有2个是重复的，快速找到它，时间和空间要最优。   3.2亿个随机生成的无序整数,找出中间大小的值。   4.给一个不知道长度的（可能很大）输入字符串，设计一种方案，将重复的字符排重。   5.遍历二叉树。   6.有3n+1个数字，其中3n个中是重复的，只有1个是不重复的，怎么找出来。   7.写一个字符串（如：<a href="http://www.javastack.cn%EF%BC%89%E5%8F%8D%E8%BD%AC%E5%87%BD%E6%95%B0%E3%80%82">http://www.javastack.cn）反转函数。</a>   8.常用的排序算法，快排，归并、冒泡。 快排的最优时间复杂度，最差复杂度。冒泡排序的优化方案。   9.二分查找的时间复杂度，优势。   10.一个已经构建好的TreeSet，怎么完成倒排序。   11.什么是B+树，B-树，列出实际的使用场景。   12.一个单向链表，删除倒数第N个数据。   13.200个有序的数组，每个数组里面100个元素，找出top20的元素。   14.单向链表，查找中间的那个元素。数据库知识   1.数据库隔离级别有哪些，各自的含义是什么，MYSQL默认的隔离级别是是什么。   2.什么是幻读。   3.MYSQL有哪些存储引擎，各自优缺点。   4.高并发下，如何做到安全的修改同一行数据。   5.乐观锁和悲观锁是什么，INNODB的标准行级锁有哪2种，解释其含义。   6.SQL优化的一般步骤是什么，怎么看执行计划，如何理解其中各个字段的含义。   7.数据库会死锁吗，举一个死锁的例子，mysql怎么解决死锁。   8.MYsql的索引原理，索引的类型有哪些，如何创建合理的索引，索引如何优化。   9.聚集索引和非聚集索引的区别。   10.select for update 是什么含义，会锁表还是锁行或是其他。   11.为什么要用Btree实现，它是怎么分裂的，什么时候分裂，为什么是平衡的。   12.数据库的ACID是什么。   13.某个表有近千万数据，CRUD比较慢，如何优化。   14.Mysql怎么优化table scan的。   15.如何写sql能够有效的使用到复合索引。   16.mysql中in 和exists 区别。   17.数据库自增主键可能的问题。   18.MVCC的含义，如何实现的。   19.你做过的项目里遇到分库分表了吗，怎么做的，有用到中间件么，比如sharding jdbc等,他们的原理知道么。   20.MYSQL的主从延迟怎么解决。消息队列   1.消息队列的使用场景。   2.消息的重发，补充策略。   3.如何保证消息的有序性。   4.用过哪些MQ，和其他mq比较有什么优缺点，MQ的连接是线程安全的吗，你们公司的MQ服务架构怎样的。   5.MQ系统的数据如何保证不丢失。   6.rabbitmq如何实现集群高可用。   7.kafka吞吐量高的原因。   8.kafka 和其他消息队列的区别，kafka 主从同步怎么实现。   9.利用mq怎么实现最终一致性。   10.使用kafka有没有遇到什么问题，怎么解决的。   11.MQ有可能发生重复消费，如何避免，如何做到幂等。   12.MQ的消息延迟了怎么处理，消息可以设置过期时间么，过期了你们一般怎么处理。缓存   1.常见的缓存策略有哪些，如何做到缓存(比如redis)与DB里的数据一致性，你们项目中用到了什么缓存系统，如何设计的。   2.如何防止缓存击穿和雪崩。   3.缓存数据过期后的更新如何设计。   4.redis的list结构相关的操作。   5.Redis的数据结构都有哪些。   6.Redis的使用要注意什么，讲讲持久化方式，内存设置，集群的应用和优劣势，淘汰策略等。   7.redis2和redis3的区别，redis3内部通讯机制。   8.当前redis集群有哪些玩法，各自优缺点，场景。   9.Memcache的原理，哪些数据适合放在缓存中。   10.redis和memcached 的内存管理的区别。   11.Redis的并发竞争问题如何解决，了解Redis事务的CAS操作吗。   12.Redis的选举算法和流程是怎样的。   13.redis的持久化的机制，aof和rdb的区别。   14.redis的集群怎么同步的数据的。   15.知道哪些redis的优化操作。   16.Reids的主从复制机制原理。   17.Redis的线程模型是什么。   18.请思考一个方案，设计一个可以控制缓存总体大小的自动适应的本地缓存。   19.如何看待缓存的使用（本地缓存，集中式缓存），简述本地缓存和集中式缓存和优缺点。   20.本地缓存在并发使用时的注意事项。搜索   1.elasticsearch了解多少，说说你们公司es的集群架构，索引数据大小，分片有多少，以及一些调优手段 。elasticsearch的倒排索引是什么。   2.elasticsearch 索引数据多了怎么办，如何调优，部署。   3.elasticsearch是如何实现master选举的。   4.详细描述一下Elasticsearch索引文档的过程。   5.详细描述一下Elasticsearch搜索的过程。   6.Elasticsearch在部署时，对Linux的设置有哪些优化方法？   7.lucence内部结构是什么。</p>
+
+
+    
+
+      </div>
+
+      <div class="row">
+        <div class="large-6 columns">
+        <p class="text-left" style="padding:15px 0px;">
+      
+          <a href="15693167161716.html" 
+          title="Previous Post: 从使用fastjson替换springboot框架默认的json解析工具说起">&laquo; 从使用fastjson替换springboot框架默认的json解析工具说起</a>
+      
+        </p>
+        </div>
+        <div class="large-6 columns">
+      <p class="text-right" style="padding:15px 0px;">
+      
+          <a  href="15500645018755.html" 
+          title="Next Post: 数据库分库分表技术">数据库分库分表技术 &raquo;</a>
+      
+      </p>
+        </div>
+      </div>
+      <div class="comments-wrap">
+        <div class="share-comments">
+          <div id="disqus_thread"></div>
+<script>
+
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+/*
+var disqus_config = function () {
+this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+*/
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://nimitz-007.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+          
+
+          
+        </div>
+      </div>
+    </div><!-- article-wrap -->
+  </div><!-- large 8 -->
+
+
+
+
+ <div class="large-4 medium-4 columns">
+  <div class="hide-for-small">
+    <div id="sidebar" class="sidebar">
+          <div id="site-info" class="site-info">
+            
+                <div class="site-a-logo"><img src="asset/img/icon.jpg" /></div>
+            
+                <h1>沧海一粟No.1</h1>
+                <div class="site-des">如果选择了远方，便只顾风雨兼程</div>
+                <div class="social">
+
+
+
+
+
+
+
+
+
+<a target="_blank" class="github" target="_blank" href="https://github.com/nimitz871016" title="GitHub">GitHub</a>
+<a target="_blank" class="email" href="mailto:nimitz_007@163.com" title="Email">Email</a>
+  <a target="_blank" class="rss" href="atom.xml" title="RSS">RSS</a>
+                
+              	 </div>
+          	</div>
+
+             
+
+              <div id="site-categories" class="side-item ">
+                <div class="side-header">
+                  <h2>Categories</h2>
+                </div>
+                <div class="side-content">
+
+      	<p class="cat-list">
+        
+            <a href="Java.html"><strong>Java</strong></a>
+        
+            <a href="MongoDB.html"><strong>MongoDB</strong></a>
+        
+            <a href="iOS.html"><strong>iOS</strong></a>
+        
+            <a href="LeetCode.html"><strong>LeetCode</strong></a>
+        
+            <a href="%E6%95%B0%E6%8D%AE%E5%BA%93.html"><strong>数据库</strong></a>
+         
+        </p>
+
+
+                </div>
+              </div>
+
+              <div id="site-categories" class="side-item">
+                <div class="side-header">
+                  <h2>Recent Posts</h2>
+                </div>
+                <div class="side-content">
+                <ul class="posts-list">
+	      
+		      
+			      <li class="post">
+			        <a href="15490058580119.html">102. 二叉树的层次遍历</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="15490112223994.html">122. 买卖股票的最佳时机 II</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="15814116703606.html">1349. 参加考试的最大学生数</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="15500440104341.html">169. 求众数</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="15500441189502.html">189. 旋转数组</a>
+			      </li>
+		     
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		   
+		  		</ul>
+                </div>
+              </div>
+        </div><!-- sidebar -->
+      </div><!-- hide for small -->
+</div><!-- large 4 -->
+
+</div><!-- row -->
+
+ <div class="page-bottom clearfix">
+  <div class="row">
+   <p class="copyright">Copyright &copy; 2015
+Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a>,&nbsp; 
+Theme used <a target="_blank" href="http://github.com">GitHub CSS</a>.</p>
+  </div>
+</div>
+
+        </section>
+      </div>
+    </div>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script src="asset/prism.js"></script>
+
+
+<style type="text/css">
+figure{margin: 0;padding: 0;}
+figcaption{text-align:center;}
+
+/* PrismJS 1.14.0
+ http://prismjs.com/download.html#themes=prism&languages=markup+css+clike+javascript */
+/**
+ * prism.js default theme for JavaScript, CSS and HTML
+ * Based on dabblet (http://dabblet.com)
+ * @author Lea Verou
+ */
+
+code[class*="language-"],
+pre[class*="language-"] {
+    color: black;
+    background: none;
+    text-shadow: 0 1px white;
+    font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+    text-align: left;
+    white-space: pre;
+    word-spacing: normal;
+    word-break: normal;
+    word-wrap: normal;
+    line-height: 1.5;
+    
+    -moz-tab-size: 4;
+    -o-tab-size: 4;
+    tab-size: 4;
+    
+    -webkit-hyphens: none;
+    -moz-hyphens: none;
+    -ms-hyphens: none;
+    hyphens: none;
+}
+
+pre[class*="language-"]::-moz-selection, pre[class*="language-"] ::-moz-selection,
+code[class*="language-"]::-moz-selection, code[class*="language-"] ::-moz-selection {
+    text-shadow: none;
+    background:#b3d4fc;
+}
+
+pre[class*="language-"]::selection, pre[class*="language-"] ::selection,
+code[class*="language-"]::selection, code[class*="language-"] ::selection {
+    text-shadow: none;
+    background: #b3d4fc;
+}
+
+@media print {
+    code[class*="language-"],
+    pre[class*="language-"] {
+        text-shadow: none;
+    }
+}
+
+/* Code blocks */
+pre[class*="language-"] {
+    padding: 1em;
+    margin: .5em 0;
+    overflow: auto;
+}
+
+:not(pre) > code[class*="language-"],
+pre[class*="language-"] {
+    background: #F7F7F7;
+}
+
+/* Inline code */
+:not(pre) > code[class*="language-"] {
+    padding: .1em;
+    border-radius: .3em;
+    white-space: normal;
+}
+
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+    color: slategray;
+}
+
+.token.punctuation {
+    color: #999;
+}
+
+.namespace {
+    opacity: .7;
+}
+
+.token.property,
+.token.tag,
+.token.boolean,
+.token.number,
+.token.constant,
+.token.symbol,
+.token.deleted {
+    color: #905;
+}
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin,
+.token.inserted {
+    color: #690;
+}
+
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string {
+    color: #9a6e3a;
+    background: hsla(0, 0%, 100%, .5);
+}
+
+.token.atrule,
+.token.attr-value,
+.token.keyword {
+    color: #07a;
+}
+
+.token.function,
+.token.class-name {
+    color: #DD4A68;
+}
+
+.token.regex,
+.token.important,
+.token.variable {
+    color: #e90;
+}
+
+.token.important,
+.token.bold {
+    font-weight: bold;
+}
+.token.italic {
+    font-style: italic;
+}
+
+.token.entity {
+    cursor: help;
+}
+
+
+pre[class*="language-"].line-numbers {
+    position: relative;
+    padding-left: 3.8em;
+    counter-reset: linenumber;
+}
+
+pre[class*="language-"].line-numbers > code {
+    position: relative;
+    white-space: inherit;
+}
+
+.line-numbers .line-numbers-rows {
+    position: absolute;
+    pointer-events: none;
+    top: 0;
+    font-size: 100%;
+    left: -3.8em;
+    width: 3em; /* works for line-numbers below 1000 lines */
+    letter-spacing: -1px;
+    border-right: 1px solid #999;
+
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
+}
+
+    .line-numbers-rows > span {
+        pointer-events: none;
+        display: block;
+        counter-increment: linenumber;
+    }
+
+        .line-numbers-rows > span:before {
+            content: counter(linenumber);
+            color: #999;
+            display: block;
+            padding-right: 0.8em;
+            text-align: right;
+        }
+
+</style>
+
+  
+    
+
+    <script src="asset/js/foundation.min.js"></script>
+    <script>
+      $(document).foundation();
+      function fixSidebarHeight(){
+        var w1 = $('.markdown-body').height();
+          var w2 = $('#sidebar').height();
+          if (w1 > w2) { $('#sidebar').height(w1); };
+      }
+      $(function(){
+        fixSidebarHeight();
+      })
+      $(window).load(function(){
+          fixSidebarHeight();
+      });
+     
+    </script>
+
+
+
+  </body>
+</html>

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>
     
-  数据库 - 沧海一粟No.1
+  从优化数据库查询速度谈起---MySQL优化相关知识梳理 - 沧海一粟No.1
   
   </title>
   
@@ -101,185 +101,36 @@
        
 
  <script type="text/javascript">
-	$(function(){
-		$('#menu_item_index').addClass('is_active');
-	});
+  $(function(){
+    $('#menu_item_index').addClass('is_active');
+  });
 </script>
 <div class="row">
-	<div class="large-8 medium-8 columns">
-		<div class="markdown-body home-categories">
-		
-			<div class="article">
-                <a class="clearlink" href="15842883217984.html">
-                
-                  <h1>Java序列化的那些事</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<h2 id="toc_0">1. 什么是序列化和反序列化</h2>
+  <div class="large-8 medium-8 columns">
+      <div class="markdown-body article-wrap">
+       <div class="article">
+          
+          <h1>从优化数据库查询速度谈起---MySQL优化相关知识梳理</h1>
+     
+        <div class="read-more clearfix">
+          <span class="date">2020/04/13 16:59 下午</span>
 
-<p>（1）Java序列化是指把Java对象转换为字节序列的过程，而Java反序列化是指把字节序列恢复为Java对象的过程；</p>
+          <span>posted in&nbsp;</span> 
+          
+              <span class="posted-in"><a href='%E6%95%B0%E6%8D%AE%E5%BA%93.html'>数据库</a></span>
+           
+         
+          <span class="comments">
+            
 
-<p>（2）<strong>序列化：</strong>对象序列化的最主要的用处就是在传递和保存对象的时候，保证对象的完整性和可传递性。序列化是把对象转换成有序字节流，以便在网络上传输或者保存在本地文件中。序列化后的字节流保存了Java对象的状态以及相关的描述信息。序列化机制的核心作用就是对象状态的保存与重建。</p>
+            
+          </span>
 
-<p>（3）<strong>反序列化：</strong>客户端从文件中或网络上获得序列化后的对象字节流后，根据字节流中所保存的对象状态及描述信息，通过反序列化重建对象。</p>
+        </div>
+      </div><!-- article -->
 
-<p>（4）本质上讲，序列化就是把实体对象状态按照一定的格式写入到有序字节流，反序列化就是从有序字节流重建对象，恢复对象状态。</p>
-
-<h2 id="toc_1">2、为什么需要序列化与反序列化</h2>
-
-<p>我们知道，当两个进程进行远程通信时，可以相互发送各种类型的数据，包括文本、图片、音频、视频等， 而这些数据都会以二进制序列的形式在网络上传送。</p>
-
-<p>那么当两个Java进程进行通信时，能否实现进程间的对象传送呢？答案是可以的！如何做到呢？这就需要Java序列化与反序列化了！</p>
-
-<p>换句话说，一方面，发送方需要把这个Java对象转换为字节序列，然后在网络上传送；另一方面，接收方需要从字节序列中恢复出Java对象。</p>
-
-<p>当我们明晰了为什么需要Java序列化和反序列化后，我们很自然地会想Java序列化的好处。其好处一是实现了数据的持久化，通过序列化可以把数据永久地保存到硬盘上（通常存放在文件里），二是，利用序列化实现远程通信，即在网络上传送对象的字节序列。</p>
-
-<p>总的来说可以归结为以下几点：</p>
-
-<p>（1）永久性保存对象，保存对象的字节序列到本地文件或者数据库中；<br/>
-（2）通过序列化以字节流的形式使对象在网络中进行传递和接收；<br/>
-（3）通过序列化在进程间传递对象；</p>
-
-<h2 id="toc_2">3、实现Java对象序列化与反序列化的方法</h2>
-
-<p>假定一个User类，它的对象需要序列化，可以有如下三种方法：</p>
-
-<p>（1）若User类仅仅实现了Serializable接口，则可以按照以下方式进行序列化和反序列化</p>
-
-<p>ObjectOutputStream采用默认的序列化方式，对User对象的非transient的实例变量进行序列化。<br/>
-ObjcetInputStream采用默认的反序列化方式，对对User对象的非transient的实例变量进行反序列化。</p>
-
-<p>（2）若User类仅仅实现了Serializable接口，并且还定义了readObject(ObjectInputStream in)和writeObject(ObjectOutputSteam out)，则采用以下方式进行序列化与反序列化。</p>
-
-<p>ObjectOutputStream调用User对象的writeObject(ObjectOutputStream out)的方法进行序列化。<br/>
-ObjectInputStream会调用User对象的readObject(ObjectInputStream in)的方法进行反序列化。</p>
-
-<p>（3）若User类实现了Externalnalizable接口，且User类必须实现readExternal(ObjectInput in)和writeExternal(ObjectOutput out)方法，则按照以下方式进行序列化与反序列化。</p>
-
-<p>ObjectOutputStream调用User对象的writeExternal(ObjectOutput out))的方法进行序列化。<br/>
-ObjectInputStream会调用User对象的readExternal(ObjectInput in)的方法进行反序列化。</p>
-
-<h2 id="toc_3">4. serialVersionUID</h2>
-
-<p>序列化运行时使用一个称为 serialVersionUID 的版本号与每个可序列化类相关联，该序列号在反序列化过程中用于验证序列化对象的发送者和接收者是否为该对象加载了与序列化兼容的类。为它赋予明确的值。显式地定义serialVersionUID有两种用途：</p>
-
-<p>在某些场合，希望类的不同版本对序列化兼容，因此需要确保类的不同版本具有相同的serialVersionUID；</p>
-
-<p>在某些场合，不希望类的不同版本对序列化兼容，因此需要确保类的不同版本具有不同的serialVersionUID。</p>
-
-<h2 id="toc_4">参考资料</h2>
-
-<p>原文链接：<a href="https://blog.csdn.net/xlgen157387/article/details/79840134">https://blog.csdn.net/xlgen157387/article/details/79840134</a><br/>
-<a href="https://blog.csdn.net/u014750606/article/details/80040130">https://blog.csdn.net/u014750606/article/details/80040130</a></p>
-
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                  
-                    <span class="date">2020/03/16 00:05 上午</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='%E6%95%B0%E6%8D%AE%E5%BA%93.html'>数据库</a></span>
-          				   
-                    
-
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
-
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-			<div class="article">
-                <a class="clearlink" href="15840062967421.html">
-                
-                  <h1>从@Transactional，@Async 失效说起</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<h2 id="toc_0">1、问题描述</h2>
-
-<p>当我们在同一个类中，调用一个被@Transactional,或@Async标注的方法时，这些注解是否会生效?</p>
-
-<p>结论是不会。</p>
-
-<h2 id="toc_1">2、原因</h2>
-
-<p>Spring采用动态代理(AOP)实现对bean的管理和切片，它为我们的每个class生成一个代理对象。只有在代理对象之间进行调用时，可以触发切面逻辑。</p>
-
-<p>spring 在扫描bean的时候会扫描方法上是否包含@Async注解，如果包含，spring会为这个bean动态地生成一个子类（即代理类，proxy），代理类是继承原来那个bean的。此时，当这个有注解的方法被调用的时候，实际上是由代理类来调用的，代理类在调用时增加异步作用。然而，如果这个有注解的方法是被同一个类中的其他方法调用的，那么该方法的调用并没有通过代理类，而是直接通过原来的那个bean，所以就没有增加异步作用，我们看到的现象就是@Async注解无效。</p>
-
-<p>当我们调用A的bean的a()方法的时候，也是被proxyA拦截，执行proxyA拦截，执行proxyA.a()（标记3），然而，由以上代码可知，这时候它调用的是objectA.a()，也就是由原来的bean来调用a()方法了，所以代码跑到了“标记1”。由此可见，“标记2”并没有被执行到，所以异步执行的效果也没有运行。</p>
-
-<p><strong>特别注意: 当Spring的事务在同一个类时，它的自我调用时事务将失效.</strong><br/>
- <strong>@Async</strong></p>
-
-<h2 id="toc_2">解决方案</h2>
-
-<h3 id="toc_3">方案一</h3>
-
-<p>在当前类中通过上下文获取自己的代理对象调用异步方法</p>
-
-<p>直接@Autowired</p>
-
-<h3 id="toc_4">方案二</h3>
-
-<p>基于 AopContext 暴露代理对象</p>
-
-<p>EnableAspectJAutoProxy（exposeProxy=true）<br/>
-AopContext.currentProxy()</p>
-
-<p><a href="https://mp.weixin.qq.com/s/m7p7AP_zT1JEZrxwmVISVQ">https://mp.weixin.qq.com/s/m7p7AP_zT1JEZrxwmVISVQ</a></p>
-
-<h3 id="toc_5">方案三</h3>
-
-<p>从外部类调用</p>
-
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                  
-                    <span class="date">2020/03/12 17:44 下午</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='%E6%95%B0%E6%8D%AE%E5%BA%93.html'>数据库</a></span>
-          				   
-                    
-
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
-
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-			<div class="article">
-                <a class="clearlink" href="15867683690240.html">
-                
-                  <h1>从优化数据库查询速度谈起---MySQL优化相关知识梳理</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<h2 id="toc_0">0. 如何优化数据库查询速度？</h2>
+      <div class="article-content">
+      <h2 id="toc_0">0. 如何优化数据库查询速度？</h2>
 
 <p>优化数据库查询是一个老生常谈的问题。为了回答好这个问题，我们需要从以下几个方面来分析系统中的数据库查询问题。</p>
 
@@ -456,96 +307,62 @@ system &gt; const &gt; eq_ref &gt; ref &gt; fulltext &gt; ref_or_null &gt; index
 
 <p>//TODO:</p>
 
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                  
-                    <span class="date">2020/04/13 16:59 下午</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='%E6%95%B0%E6%8D%AE%E5%BA%93.html'>数据库</a></span>
-          				   
-                    
 
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
+    
 
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-			<div class="article">
-                <a class="clearlink" href="15500645018755.html">
-                
-                  <h1>数据库分库分表技术</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<h1 id="toc_0">1. 基本概念</h1>
+      </div>
 
-<h2 id="toc_1">1.1. 拆分方式</h2>
+      <div class="row">
+        <div class="large-6 columns">
+        <p class="text-left" style="padding:15px 0px;">
+      
+          <a href="15542090064870.html" 
+          title="Previous Post: 从logger.isDebugEnabled()谈起">&laquo; 从logger.isDebugEnabled()谈起</a>
+      
+        </p>
+        </div>
+        <div class="large-6 columns">
+      <p class="text-right" style="padding:15px 0px;">
+      
+          <a  href="15693167161716.html" 
+          title="Next Post: 从使用fastjson替换springboot框架默认的json解析工具说起">从使用fastjson替换springboot框架默认的json解析工具说起 &raquo;</a>
+      
+      </p>
+        </div>
+      </div>
+      <div class="comments-wrap">
+        <div class="share-comments">
+          <div id="disqus_thread"></div>
+<script>
 
-<ul>
-<li><p>垂直拆分</p>
-<p>将一个库（表）拆分成多个库（表），每个库（表）的结构和原有的结构不同。</p>
-<p>这实际上可以认为是一种数据库的重新设计。拆分的原则可以是：</p>
-<pre><code class="language-text">1. 根据业务的具体情况，将热门的数据和冷门的数据分开。达到提高性能的目的。（库或者表的拆分都可以遵循这样一条原则）
-</code></pre></li>
-<li><p>水平拆分</p>
-<p>根据分片算法，将一个库（表）拆分成多个库（表），每个库（表）的结构和原有的结构相同。</p></li>
-</ul>
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+/*
+var disqus_config = function () {
+this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+*/
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://nimitz-007.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 
+          
 
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                   <a href="15500645018755.html">Read more</a>&nbsp;&nbsp; 
-                    <span class="date">2019/02/13 21:28 下午</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='%E6%95%B0%E6%8D%AE%E5%BA%93.html'>数据库</a></span>
-          				   
-                    
-
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
-
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-              
+          
+        </div>
+      </div>
+    </div><!-- article-wrap -->
+  </div><!-- large 8 -->
 
 
-			<div class="row">
-			  <div class="large-6 columns">
-			  <p class="text-left" style="padding-top:25px;">
-			   
-			  </p>
-			  </div>
-			  <div class="large-6 columns">
-			<p class="text-right" style="padding-top:25px;">
-			
-			</p>
-			  </div>
-			</div>
-		</div>
-	</div><!-- large 8 -->
+
 
  <div class="large-4 medium-4 columns">
   <div class="hide-for-small">
@@ -702,6 +519,8 @@ Theme used <a target="_blank" href="http://github.com">GitHub CSS</a>.</p>
 
 
 
+
+<script src="asset/prism.js"></script>
 
 
 <style type="text/css">
