@@ -110,97 +110,6 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="15842883217984.html">
-                
-                  <h1>Java序列化的那些事</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<h2 id="toc_0">1. 什么是序列化和反序列化</h2>
-
-<p>（1）Java序列化是指把Java对象转换为字节序列的过程，而Java反序列化是指把字节序列恢复为Java对象的过程；</p>
-
-<p>（2）<strong>序列化：</strong>对象序列化的最主要的用处就是在传递和保存对象的时候，保证对象的完整性和可传递性。序列化是把对象转换成有序字节流，以便在网络上传输或者保存在本地文件中。序列化后的字节流保存了Java对象的状态以及相关的描述信息。序列化机制的核心作用就是对象状态的保存与重建。</p>
-
-<p>（3）<strong>反序列化：</strong>客户端从文件中或网络上获得序列化后的对象字节流后，根据字节流中所保存的对象状态及描述信息，通过反序列化重建对象。</p>
-
-<p>（4）本质上讲，序列化就是把实体对象状态按照一定的格式写入到有序字节流，反序列化就是从有序字节流重建对象，恢复对象状态。</p>
-
-<h2 id="toc_1">2、为什么需要序列化与反序列化</h2>
-
-<p>我们知道，当两个进程进行远程通信时，可以相互发送各种类型的数据，包括文本、图片、音频、视频等， 而这些数据都会以二进制序列的形式在网络上传送。</p>
-
-<p>那么当两个Java进程进行通信时，能否实现进程间的对象传送呢？答案是可以的！如何做到呢？这就需要Java序列化与反序列化了！</p>
-
-<p>换句话说，一方面，发送方需要把这个Java对象转换为字节序列，然后在网络上传送；另一方面，接收方需要从字节序列中恢复出Java对象。</p>
-
-<p>当我们明晰了为什么需要Java序列化和反序列化后，我们很自然地会想Java序列化的好处。其好处一是实现了数据的持久化，通过序列化可以把数据永久地保存到硬盘上（通常存放在文件里），二是，利用序列化实现远程通信，即在网络上传送对象的字节序列。</p>
-
-<p>总的来说可以归结为以下几点：</p>
-
-<p>（1）永久性保存对象，保存对象的字节序列到本地文件或者数据库中；<br/>
-（2）通过序列化以字节流的形式使对象在网络中进行传递和接收；<br/>
-（3）通过序列化在进程间传递对象；</p>
-
-<h2 id="toc_2">3、实现Java对象序列化与反序列化的方法</h2>
-
-<p>假定一个User类，它的对象需要序列化，可以有如下三种方法：</p>
-
-<p>（1）若User类仅仅实现了Serializable接口，则可以按照以下方式进行序列化和反序列化</p>
-
-<p>ObjectOutputStream采用默认的序列化方式，对User对象的非transient的实例变量进行序列化。<br/>
-ObjcetInputStream采用默认的反序列化方式，对对User对象的非transient的实例变量进行反序列化。</p>
-
-<p>（2）若User类仅仅实现了Serializable接口，并且还定义了readObject(ObjectInputStream in)和writeObject(ObjectOutputSteam out)，则采用以下方式进行序列化与反序列化。</p>
-
-<p>ObjectOutputStream调用User对象的writeObject(ObjectOutputStream out)的方法进行序列化。<br/>
-ObjectInputStream会调用User对象的readObject(ObjectInputStream in)的方法进行反序列化。</p>
-
-<p>（3）若User类实现了Externalnalizable接口，且User类必须实现readExternal(ObjectInput in)和writeExternal(ObjectOutput out)方法，则按照以下方式进行序列化与反序列化。</p>
-
-<p>ObjectOutputStream调用User对象的writeExternal(ObjectOutput out))的方法进行序列化。<br/>
-ObjectInputStream会调用User对象的readExternal(ObjectInput in)的方法进行反序列化。</p>
-
-<h2 id="toc_3">4. serialVersionUID</h2>
-
-<p>序列化运行时使用一个称为 serialVersionUID 的版本号与每个可序列化类相关联，该序列号在反序列化过程中用于验证序列化对象的发送者和接收者是否为该对象加载了与序列化兼容的类。为它赋予明确的值。显式地定义serialVersionUID有两种用途：</p>
-
-<p>在某些场合，希望类的不同版本对序列化兼容，因此需要确保类的不同版本具有相同的serialVersionUID；</p>
-
-<p>在某些场合，不希望类的不同版本对序列化兼容，因此需要确保类的不同版本具有不同的serialVersionUID。</p>
-
-<h2 id="toc_4">参考资料</h2>
-
-<p>原文链接：<a href="https://blog.csdn.net/xlgen157387/article/details/79840134">https://blog.csdn.net/xlgen157387/article/details/79840134</a><br/>
-<a href="https://blog.csdn.net/u014750606/article/details/80040130">https://blog.csdn.net/u014750606/article/details/80040130</a></p>
-
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                  
-                    <span class="date">2020/03/16 00:05 上午</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='%E6%95%B0%E6%8D%AE%E5%BA%93.html'>数据库</a></span>
-          				   
-                    
-
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
-
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-			<div class="article">
                 <a class="clearlink" href="15840062967421.html">
                 
                   <h1>从@Transactional，@Async 失效说起</h1>
@@ -342,6 +251,7 @@ AopContext.currentProxy()</p>
 <li>普通索引</li>
 <li>联合索引</li>
 <li>聚簇索引</li>
+<li>二级索引，辅助索引</li>
 </ol>
 
 <p>接下来让我们一个一个了解。</p>
@@ -360,6 +270,8 @@ AopContext.currentProxy()</p>
 
 <p><a href="https://blog.csdn.net/weixin_41699562/article/details/104139458">为什么InnoDB表必须有主键，并且推荐使用整型的自增主键？</a></p>
 
+<p><a href="https://www.jianshu.com/p/6c70402993eb">InnoDB如果没有主键或者随机主键真的很可怕吗？</a></p>
+
 <p>引申知识点（MySQL中的B+树）</p>
 
 <h3 id="toc_7">3.2. 唯一索引&amp;普通索引</h3>
@@ -377,7 +289,9 @@ AopContext.currentProxy()</p>
 
 <p>聚簇索引并不是一种单独的索引类型，而是一种数据存储方式。具体的细节依赖于其实现方式，但InnoDB的聚簇索引实际上在同一个结构中保存了B-Tree索引和数据行。当表有聚簇索引时，他的数据行实际上存放在索引的叶子页（leaf page）中。术语 “聚簇”表示数据行和相邻的键值紧凑地存储在一起（这并非总成立）。</p>
 
-<h3 id="toc_10">3.6. 索引优化</h3>
+<h3 id="toc_10">3.5.</h3>
+
+<h3 id="toc_11">3.6. 索引优化</h3>
 
 <p><strong>1. 开启慢查询记录</strong></p>
 
@@ -419,16 +333,16 @@ system &gt; const &gt; eq_ref &gt; ref &gt; fulltext &gt; ref_or_null &gt; index
 <p>比较常见的是const eq_ref ref range index all<br/>
 通常需要将语句优化到index以上。</p>
 
-<h2 id="toc_11">4. 引申知识</h2>
+<h2 id="toc_12">4. 引申知识</h2>
 
-<h3 id="toc_12">4.1. 回表查询</h3>
+<h3 id="toc_13">4.1. 回表查询</h3>
 
 <p>通常发生在select * 的查询下。在这种情况下，即使我们定义了很好的索引，where子句已经找到了他需要的数据。由于我们要查询*，也就是所有的数据。而这些数据没有存在索引表中，所以我们需要返回到聚集索引根据主键在查找一次才可以获取所需的信息。</p>
 
 <p>应该要注意到，不只是select * 会触发回表操作，只要select的字段没有建立索引就会触发回表操作。<br/>
 与回表查询相对应的是覆盖索引。</p>
 
-<h3 id="toc_13">4.2. 覆盖索引</h3>
+<h3 id="toc_14">4.2. 覆盖索引</h3>
 
 <p>索引覆盖是一种避免回表查询的优化策略。具体的做法就是将要查询的数据作为索引列建立普通索引（可以是单列索引，也可以一个索引语句定义所有要查询的列，即联合索引），这样的话就可以直接返回索引中的的数据，不需要再通过聚集索引去定位行记录，避免了回表的情况发生。</p>
 
@@ -436,7 +350,7 @@ system &gt; const &gt; eq_ref &gt; ref &gt; fulltext &gt; ref_or_null &gt; index
 
 <p>要注意的是，不是所有类型的索引都可以成为覆盖索引的。因为覆盖索引必须要存储索引的列值，而哈希索引、空间索引和全文索引等都不存储索引列值，索引MySQL只能使用B-Tree索引做覆盖索引。</p>
 
-<h3 id="toc_14">4.3. 索引下推</h3>
+<h3 id="toc_15">4.3. 索引下推</h3>
 
 <p>索引下推是一种数据库内的自我优化手段。有了索引下推优化，可以在有like条件查询的情况下，减少回表次数。</p>
 
@@ -452,7 +366,7 @@ system &gt; const &gt; eq_ref &gt; ref &gt; fulltext &gt; ref_or_null &gt; index
 
 <p>明显的，第二种方式需要回表查询的全行数据比较少，这就是mysql的索引下推。</p>
 
-<h3 id="toc_15">4.4. B+ Tree的优势</h3>
+<h3 id="toc_16">4.4. B+ Tree的优势</h3>
 
 <p>//TODO:</p>
 

@@ -473,6 +473,97 @@ public class BookProxyLib implements MethodInterceptor {
               </div><!-- article -->
         
 			<div class="article">
+                <a class="clearlink" href="15842883217984.html">
+                
+                  <h1>Java序列化的那些事</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<h2 id="toc_0">1. 什么是序列化和反序列化</h2>
+
+<p>（1）Java序列化是指把Java对象转换为字节序列的过程，而Java反序列化是指把字节序列恢复为Java对象的过程；</p>
+
+<p>（2）<strong>序列化：</strong>对象序列化的最主要的用处就是在传递和保存对象的时候，保证对象的完整性和可传递性。序列化是把对象转换成有序字节流，以便在网络上传输或者保存在本地文件中。序列化后的字节流保存了Java对象的状态以及相关的描述信息。序列化机制的核心作用就是对象状态的保存与重建。</p>
+
+<p>（3）<strong>反序列化：</strong>客户端从文件中或网络上获得序列化后的对象字节流后，根据字节流中所保存的对象状态及描述信息，通过反序列化重建对象。</p>
+
+<p>（4）本质上讲，序列化就是把实体对象状态按照一定的格式写入到有序字节流，反序列化就是从有序字节流重建对象，恢复对象状态。</p>
+
+<h2 id="toc_1">2、为什么需要序列化与反序列化</h2>
+
+<p>我们知道，当两个进程进行远程通信时，可以相互发送各种类型的数据，包括文本、图片、音频、视频等， 而这些数据都会以二进制序列的形式在网络上传送。</p>
+
+<p>那么当两个Java进程进行通信时，能否实现进程间的对象传送呢？答案是可以的！如何做到呢？这就需要Java序列化与反序列化了！</p>
+
+<p>换句话说，一方面，发送方需要把这个Java对象转换为字节序列，然后在网络上传送；另一方面，接收方需要从字节序列中恢复出Java对象。</p>
+
+<p>当我们明晰了为什么需要Java序列化和反序列化后，我们很自然地会想Java序列化的好处。其好处一是实现了数据的持久化，通过序列化可以把数据永久地保存到硬盘上（通常存放在文件里），二是，利用序列化实现远程通信，即在网络上传送对象的字节序列。</p>
+
+<p>总的来说可以归结为以下几点：</p>
+
+<p>（1）永久性保存对象，保存对象的字节序列到本地文件或者数据库中；<br/>
+（2）通过序列化以字节流的形式使对象在网络中进行传递和接收；<br/>
+（3）通过序列化在进程间传递对象；</p>
+
+<h2 id="toc_2">3、实现Java对象序列化与反序列化的方法</h2>
+
+<p>假定一个User类，它的对象需要序列化，可以有如下三种方法：</p>
+
+<p>（1）若User类仅仅实现了Serializable接口，则可以按照以下方式进行序列化和反序列化</p>
+
+<p>ObjectOutputStream采用默认的序列化方式，对User对象的非transient的实例变量进行序列化。<br/>
+ObjcetInputStream采用默认的反序列化方式，对对User对象的非transient的实例变量进行反序列化。</p>
+
+<p>（2）若User类仅仅实现了Serializable接口，并且还定义了readObject(ObjectInputStream in)和writeObject(ObjectOutputSteam out)，则采用以下方式进行序列化与反序列化。</p>
+
+<p>ObjectOutputStream调用User对象的writeObject(ObjectOutputStream out)的方法进行序列化。<br/>
+ObjectInputStream会调用User对象的readObject(ObjectInputStream in)的方法进行反序列化。</p>
+
+<p>（3）若User类实现了Externalnalizable接口，且User类必须实现readExternal(ObjectInput in)和writeExternal(ObjectOutput out)方法，则按照以下方式进行序列化与反序列化。</p>
+
+<p>ObjectOutputStream调用User对象的writeExternal(ObjectOutput out))的方法进行序列化。<br/>
+ObjectInputStream会调用User对象的readExternal(ObjectInput in)的方法进行反序列化。</p>
+
+<h2 id="toc_3">4. serialVersionUID</h2>
+
+<p>序列化运行时使用一个称为 serialVersionUID 的版本号与每个可序列化类相关联，该序列号在反序列化过程中用于验证序列化对象的发送者和接收者是否为该对象加载了与序列化兼容的类。为它赋予明确的值。显式地定义serialVersionUID有两种用途：</p>
+
+<p>在某些场合，希望类的不同版本对序列化兼容，因此需要确保类的不同版本具有相同的serialVersionUID；</p>
+
+<p>在某些场合，不希望类的不同版本对序列化兼容，因此需要确保类的不同版本具有不同的serialVersionUID。</p>
+
+<h2 id="toc_4">参考资料</h2>
+
+<p>原文链接：<a href="https://blog.csdn.net/xlgen157387/article/details/79840134">https://blog.csdn.net/xlgen157387/article/details/79840134</a><br/>
+<a href="https://blog.csdn.net/u014750606/article/details/80040130">https://blog.csdn.net/u014750606/article/details/80040130</a></p>
+
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                  
+                    <span class="date">2020/03/16 00:05 上午</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='Java.html'>Java</a></span>
+          				   
+                    
+
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
                 <a class="clearlink" href="15819118469978.html">
                 
                   <h1>一道LeetCode线程题引出Java线程协作的经典案例</h1>
@@ -1315,6 +1406,90 @@ JDK动态代理，CGLib<br/>
                   <div class="more-left left">
                   
                     <span class="date">2020/03/12 10:46 上午</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='Java.html'>Java</a></span>
+          				   
+                    
+
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="15877086715482.html">
+                
+                  <h1>线程安全的对象你用对了吗？</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<p>HashMap是线程不安全的，如果我们需要线程安全的使用场景，通常会使用ConcurrentHashMap来代替HashMap来保证线程安全。可是这样就够了吗？</p>
+
+<p>我们用Mybatis源码中的一个例子来说明。</p>
+
+<pre><code class="language-text">BlockingCache.java
+
+private final ConcurrentHashMap&lt;Object, ReentrantLock&gt; locks;
+
+// MyBatis的这个blocking cache保证同一个时间对于一个查询key只有一个线程可以获得锁。锁放在了locks这个ConcurrentHashMap中。每个线程要操作前需要尝试获取锁。以下就是获取锁的核心逻辑。注意这个方法本身是没有加锁保护的。
+private ReentrantLock getLockForKey(Object key) {
+    ReentrantLock lock = new ReentrantLock();
+    ReentrantLock previous = locks.putIfAbsent(key, lock);
+    return previous == null ? lock : previous;
+    return locks.computeIfAbsent(key, (k) -&gt; new ReentrantLock());
+}
+</code></pre>
+
+<p>关键是这一句</p>
+
+<pre><code class="language-text">locks.putIfAbsent(key, lock);
+</code></pre>
+
+<p><code>putIfAbsent()</code> 是啥作用呢? 按照字面意思，就是如果key不存在，则set，否则不插入。为啥会用这样一个看起来有点复杂的接口呢?如果我们没有熟读ConcurrentHashMap提供的接口，我们可能会这么写：</p>
+
+<pre><code class="language-text">private ReentrantLock getLockForKey(Object key) {
+    ReentrantLock lock = locks.get(key); //  从map里读取一下是否key已经存放了
+    if (lock == null) { // 不存在，则新建一个锁，加入到map中
+      lock = new ReentrantLock();
+      locks.put(key, lock);
+    }
+    return lock;
+}
+</code></pre>
+
+<p>这段代码是我们日常很有可能写出的逻辑，逻辑清楚，代码也还算简洁。那这段代码会有什么问题呢？<br/>
+<img src="media/15876583681202/15876624402012.jpg" alt="" style="width:768px;"/><br/>
+一个有点挫的流程图，来解释一下。这段代码没有同步锁的保护，所以可能有多个线程同一时间都进入了这段代码。A线程先执行了1，2步骤，判断了map中没有key，准备创建线程并添加。这时候发生了线程切换，B线程开始执行这段代码。B线程也去判断map中有没有key，显然也是没有的。然后B线程走完了整个逻辑。然后A线程再一次获取到时间片。最终结果，A线程和B线程都往map中插入了他们自己创建的锁。很明显B线程的锁被覆盖了。</p>
+
+<p>回过头来看一下源码中是怎么写的。</p>
+
+<pre><code class="language-text">locks.putIfAbsent(key, lock);
+</code></pre>
+
+<p>源码使用了ConncurrentHashMap的一个接口来达到两个目的，1. 查询一下map中是否包含某个key值。2.不存在则插入。而调用这个接口，ConncurrentHashMap保证了两个步骤的原子性，即要么都做要么都不做。</p>
+
+<h2 id="toc_0">总结</h2>
+
+<p>ConncurrentHashMap虽然是线程安全的，但是用不好一样也会有线程不安全的问题。像这种线程安全的类，他们的单个接口是可以保证线程安全的，但是如果调用了多个接口，又没有用锁来保护，则仍然有可能发生线程不安全的问题。</p>
+
+<p>引申一下，这个问题和Redis用lua脚本来保证多个redis命令的线程安全是有类似的地方。Redis执行单个命令是线程安全的。执行多个组合命令则要使用Lua脚本。这是因为执行Lua脚本命令是安全的。因此可以用Lua脚本来执行多个Redis命令来达到对多个Redis命令的原子性操作。</p>
+
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                  
+                    <span class="date">2020/04/24 14:11 下午</span>
                     <span>posted in&nbsp;</span> 
           				  
           					    <span class="posted-in"><a href='Java.html'>Java</a></span>
